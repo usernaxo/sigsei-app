@@ -10,7 +10,7 @@ import 'package:http/http.dart' as http;
 
 class ProveedorEstado extends ChangeNotifier {
 
-  String servidor = "backup.seiconsultores.cl";
+  String servidor = "sig.seiconsultores.cl";
 
   String iniciarSesionEndpoint = "/v2/login";
   String cerrarSesionEndpoint = "/v2/logout";

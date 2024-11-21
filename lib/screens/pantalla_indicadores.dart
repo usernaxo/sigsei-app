@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:sigsei/helpers/modulo.dart';
 import 'package:sigsei/models/indicador.dart';
+import 'package:sigsei/models/titular.dart';
 import 'package:sigsei/models/usuario.dart';
 import 'package:sigsei/providers/proveedor_estado.dart';
 import 'package:sigsei/themes/tema.dart';
@@ -165,7 +166,7 @@ class PantallaIndicadoresState extends State<PantallaIndicadores> {
                   children: [
                     Expanded(
                       flex: 1,
-                      child: formatearCelda("Estado\nReporte", Colors.white)
+                      child: formatearCelda("Estado\nAvance", Colors.white)
                     ),
                     Expanded(
                       flex: 1,
@@ -265,6 +266,7 @@ class _FilaIndicadorState extends State<FilaIndicador> {
 
   bool mostrarAvance = false;
   bool mostrarResumen = true;
+  bool mostrarTitulares = false;
   bool filaExpandida = false;
 
   @override
@@ -355,6 +357,13 @@ class _FilaIndicadorState extends State<FilaIndicador> {
               Expanded(
                 flex: 1,
                 child: GestureDetector(
+                  onTap: !filaExpandida ? null : () {
+                    setState(() {
+                      mostrarAvance = true;
+                      mostrarTitulares = false;
+                      mostrarResumen = false;
+                    });
+                  },
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(5),
                     child: ColoredBox(
@@ -362,12 +371,6 @@ class _FilaIndicadorState extends State<FilaIndicador> {
                       child: formatearCelda(widget.indicador.storeNumber!, Colors.black, TextAlign.right),
                     ),
                   ),
-                  onTap: () {
-                    setState(() {
-                      mostrarAvance = true;
-                      mostrarResumen = false;
-                    });
-                  },
                 )
               ),
               const SizedBox(
@@ -376,6 +379,13 @@ class _FilaIndicadorState extends State<FilaIndicador> {
               Expanded(
                 flex: 2,
                 child: GestureDetector(
+                  onTap: !filaExpandida ? null : () {
+                    setState(() {
+                      mostrarResumen = true;
+                      mostrarAvance = false;
+                      mostrarTitulares = false;
+                    });
+                  },
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(5),
                     child: ColoredBox(
@@ -383,12 +393,6 @@ class _FilaIndicadorState extends State<FilaIndicador> {
                       child: formatearCelda(widget.indicador.storeName!, Colors.black, TextAlign.left),
                     ),
                   ),
-                  onTap: () {
-                    setState(() {
-                      mostrarResumen = true;
-                      mostrarAvance = false;
-                    });
-                  },
                 )
               ),
               Expanded(
@@ -397,7 +401,22 @@ class _FilaIndicadorState extends State<FilaIndicador> {
               ),
               Expanded(
                 flex: 1,
-                child: formatearCelda(widget.indicador.obtenerSeiError, Colors.black, TextAlign.center)
+                child: GestureDetector(
+                  onTap: (widget.indicador.obtenerTitulares!.isEmpty) ? null : !filaExpandida ? null : () {
+                    setState(() {
+                      mostrarTitulares = true;
+                      mostrarResumen = false;
+                      mostrarAvance = false;
+                    });
+                  },
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: ColoredBox(
+                      color: mostrarTitulares && filaExpandida ? Colors.black26 : Colors.transparent,
+                      child: formatearCelda(widget.indicador.obtenerSeiError, Colors.black, TextAlign.center)
+                    ),
+                  ),
+                )
               ),
               Expanded(
                 flex: 1,
@@ -406,7 +425,12 @@ class _FilaIndicadorState extends State<FilaIndicador> {
             ],
           ),
           children: [
-            mostrarAvance ? ContenidoAvance(indicador: widget.indicador) : ContenidoResumen(indicador: widget.indicador)
+            if (mostrarAvance)
+              ContenidoAvance(indicador: widget.indicador),
+            if (mostrarResumen)
+              ContenidoResumen(indicador: widget.indicador),
+            if (mostrarTitulares)
+              ContenidoTitulares(indicador: widget.indicador)
           ],
           onExpansionChanged: (value) {
 
@@ -562,6 +586,121 @@ class ContenidoResumen extends StatelessWidget {
         ),
       ),
     );
+
+  }
+
+}
+
+class ContenidoTitulares extends StatelessWidget {
+
+  final Indicador indicador;
+  
+  const ContenidoTitulares({
+    super.key,
+    required this.indicador
+  });
+
+  @override
+  Widget build(BuildContext context) {
+
+    Widget buildRow(List<String> listaCadenas, {bool esBold = false, bool esLider = false}) {
+
+      return Row(
+        children: listaCadenas.asMap().entries.map((entry) {
+
+          final cadena = entry.value;
+          final indice = entry.key;
+
+          final alineacion = (indice == 0) ? TextAlign.start : TextAlign.center;
+
+          return Expanded(
+            flex: indice == 0 || indice == 1 ? 2 : 1,
+            child: Text(
+              cadena,
+              textAlign: alineacion,
+              style: TextStyle(
+                fontSize: 11,
+                color: esLider ? Colors.teal.shade300 : Colors.white,
+                fontWeight: esBold ? FontWeight.bold : FontWeight.normal,
+              )
+            ),
+          );
+          
+        }).toList(),
+      );
+
+    }
+
+    if (indicador.obtenerTitulares!.isNotEmpty) {
+
+      int? conteoLider = int.tryParse(indicador.obtenerLider!.obtenerConteo!.replaceAll(".", ""));
+      int? conteoLiderError = int.tryParse(indicador.obtenerLider!.obtenerCantidadError!);
+      int? unidadesContadas = int.tryParse(indicador.obtenerUnitsCounted!.replaceAll(".", ""));
+
+      int conteoTotal = 0;
+      int conteoOtros = 0;
+
+      int conteoTotalError = 0;
+
+      for (Titular titular in indicador.obtenerTitulares!) {
+
+        int? conteoTitular = int.tryParse(titular.obtenerConteo!.replaceAll(".", ""));
+        int? conteoTitularError = int.tryParse(titular.obtenerCantError!);
+
+        if (conteoTitular != null) {
+
+          conteoTotal = conteoTotal + conteoTitular;
+          conteoTotalError = conteoTotalError + conteoTitularError!;
+
+        }
+
+      }
+
+      if (conteoLider != null) {
+
+        conteoTotal = conteoTotal + conteoLider;
+
+      }
+
+      if (conteoLiderError != null) {
+
+        conteoTotalError = conteoTotalError + conteoLiderError;
+
+      }
+
+      if (unidadesContadas != null) {
+
+        conteoOtros = unidadesContadas - conteoTotal;
+
+      }
+
+      return Padding(
+        padding: const EdgeInsets.all(10),
+        child: Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: Colors.black87,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Column(
+            children: [
+              buildRow(["Nombre", "Cantidad Error", "Error", "Conteo", "EXP"], esBold: true),
+              if (indicador.obtenerLider != null)
+                buildRow([indicador.obtenerLider!.obtenerTitular!, indicador.obtenerLider!.obtenerCantidadError!, indicador.obtenerLider!.obtenerError!, indicador.obtenerLider!.obtenerConteo!, ""], esLider: true),
+              for (Titular titular in indicador.obtenerTitulares!)
+                buildRow([titular.obtenerTitular!, titular.obtenerCantError!, titular.obtenerError!, titular.obtenerConteo!, titular.obtenerExp!]),
+              const Divider(color: Colors.white),
+              buildRow(["Otros", "-", "-", NumberFormat("#,###", "es_ES").format(int.parse(conteoOtros.toString())), "-"], esBold: true),
+              buildRow(["Totales", conteoTotalError.toString(), "-", indicador.obtenerUnitsCounted!, "-"], esBold: true)
+
+            ],
+          ),
+        ),
+      );
+
+    }
+
+    return Container();
 
   }
 

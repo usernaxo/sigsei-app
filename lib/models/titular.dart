@@ -1,13 +1,15 @@
 import 'dart:convert';
 
+import 'package:intl/intl.dart';
+
 class Titular {
 
   String? titular;
   String? comuna;
-  double? error;
-  String? cantError;
-  int? conteo;
-  int? exp;
+  dynamic error;
+  dynamic cantError;
+  dynamic conteo;
+  dynamic exp;
 
   Titular({
     this.titular,
@@ -25,7 +27,7 @@ class Titular {
   factory Titular.fromMap(Map<String, dynamic> json) => Titular(
     titular: json["Titular"],
     comuna: json["Comuna"],
-    error: json["Error"]?.toDouble(),
+    error: json["Error"],
     cantError: json["CantError"],
     conteo: json["Conteo"],
     exp: json["EXP"],
@@ -39,5 +41,87 @@ class Titular {
     "Conteo": conteo,
     "EXP": exp,
   };
+
+  String? get obtenerTitular {
+
+    return titular;
+
+  }
+
+  String? get obtenerComuna {
+
+    return comuna;
+
+  }
+
+  String? get obtenerError {
+
+    return formatearPorcentaje(error, 2);
+
+  }
+
+  String? get obtenerCantError {
+
+    return formatearCantidad(cantError);
+
+  }
+
+  String? get obtenerConteo {
+
+    return formatearCantidad(conteo);
+
+  }
+
+  String? get obtenerExp {
+
+    return formatearCantidad(exp);
+
+  }
+
+  String formatearPorcentaje(dynamic porcentaje, int cantidadDecimal) {
+
+    if (porcentaje is String || porcentaje is int || porcentaje is double) {
+
+      try {
+
+        return "${double.parse(porcentaje.toString().replaceAll("%", "")).toStringAsFixed(cantidadDecimal)} %";
+
+      } catch (excepcion) {
+
+        return porcentaje.toString();
+
+      }
+
+    }
+
+    return "";
+
+  }
+
+  String formatearCantidad(dynamic cantidad) {
+
+    if (cantidad is String) {
+
+      cantidad = cantidad.replaceAll(",", ".").split(".")[0];
+
+    }
+
+    if (cantidad is int || cantidad is String) {
+
+      try {
+
+        return NumberFormat("#,###", "es_ES").format(int.parse(cantidad.toString()));
+
+      } catch (excepcion) {
+
+        return cantidad.toString();
+
+      }
+
+    }
+
+    return "";
+
+  }
 
 }

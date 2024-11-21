@@ -3,7 +3,9 @@ import 'dart:convert';
 import 'package:intl/intl.dart';
 import 'package:sigsei/models/avance.dart';
 import 'package:sigsei/models/indicator.dart';
+import 'package:sigsei/models/lider.dart';
 import 'package:sigsei/models/log.dart';
+import 'package:sigsei/models/titular.dart';
 
 class Indicador {
 
@@ -125,7 +127,7 @@ class Indicador {
 
     if (indicator != null) {
 
-      return indicator!.unitsCounted;
+      return formatearCantidad(indicator!.unitsCounted);
 
     }
 
@@ -154,6 +156,30 @@ class Indicador {
     }
 
     return "";
+
+  }
+
+  List<Titular>? get obtenerTitulares {
+
+    if (indicator != null) {
+
+      return indicator!.tooltipTitulares;
+
+    }
+
+    return [];
+
+  }
+
+  Lider? get obtenerLider {
+
+    if (indicator != null) {
+
+      return indicator!.tooltipLider;
+
+    }
+
+    return null;
 
   }
 
@@ -194,7 +220,7 @@ class Indicador {
 
     if (cantidad is String) {
 
-      cantidad = cantidad.replaceAll(",", ".").split(".")[0];
+      cantidad = cantidad.replaceAll(",", ".").replaceAll(".", "");
 
     }
 

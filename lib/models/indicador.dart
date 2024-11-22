@@ -55,7 +55,7 @@ class Indicador {
 
     if (indicator != null) {
 
-      return formatearPorcentaje(indicator!.seiError);
+      return formatearPorcentaje(indicator!.seiError, 1);
 
     }
 
@@ -67,7 +67,7 @@ class Indicador {
 
     if (indicator != null) {
 
-      return formatearPorcentaje(indicator!.seiStandard);
+      return formatearPorcentaje(indicator!.seiStandard, 1);
 
     }
 
@@ -79,7 +79,7 @@ class Indicador {
 
     if (indicator != null) {
 
-      return formatearPorcentaje(indicator!.variance);
+      return formatearPorcentaje(indicator!.variance, 1);
 
     }
 
@@ -204,11 +204,11 @@ class Indicador {
     avance: null
   );
 
-  String formatearPorcentaje(dynamic porcentaje) {
+  String formatearPorcentaje(dynamic porcentaje, int cantidadDecimal) {
 
     if (porcentaje is String || porcentaje is int || porcentaje is double) {
 
-      return "${double.parse(porcentaje.toString().replaceAll("%", "")).toStringAsFixed(1)} %";
+      return "${double.parse(porcentaje.toString().replaceAll("%", "")).toStringAsFixed(cantidadDecimal)} %";
       
     }
 

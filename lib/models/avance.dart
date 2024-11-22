@@ -40,25 +40,25 @@ class Avance {
 
   String get obtenerPorAvance {
 
-    return formatearPorcentaje(porAvance);
+    return formatearPorcentaje(porAvance, 2);
 
   }
 
   String get obtenerPorAvanceAuditoria {
 
-    return formatearPorcentaje(porAvanceAuditoria);
+    return formatearPorcentaje(porAvanceAuditoria, 2);
 
   }
 
   String get obtenerPorNivelError {
 
-    return formatearPorcentaje(porNivelError);
+    return formatearPorcentaje(porNivelError, 2);
 
   }
 
   String get obtenerPorAvanceUnidades {
 
-    return formatearPorcentaje(porAvanceUnidades);
+    return formatearPorcentaje(porAvanceUnidades, 2);
 
   }
 
@@ -154,11 +154,11 @@ class Avance {
 
   }
 
-  String formatearPorcentaje(dynamic porcentaje) {
+  String formatearPorcentaje(dynamic porcentaje, int cantidadDecimal) {
 
     if (porcentaje is String || porcentaje is int || porcentaje is double) {
 
-      return "${double.parse(porcentaje.toString().replaceAll("%", "")).toStringAsFixed(1)} %";
+      return "${double.parse(porcentaje.toString().replaceAll("%", "")).toStringAsFixed(cantidadDecimal)} %";
       
     }
 

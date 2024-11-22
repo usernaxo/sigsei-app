@@ -226,6 +226,7 @@ class PantallaIndicadoresState extends State<PantallaIndicadores> {
                   } else {
 
                     return ListView(
+                      padding: const EdgeInsets.only(bottom: 50),
                       children: snapshot.data!.map((indicador) {
 
                         return FilaIndicador(indicador: indicador);
@@ -272,7 +273,7 @@ class _FilaIndicadorState extends State<FilaIndicador> {
   @override
   Widget build(BuildContext context) {
 
-    Text formatearCelda(String? cadena, Color color, TextAlign alineacion) {
+    Text formatearCelda(String? cadena, Color color, TextAlign alineacion, {esBold = false}) {
 
       String cadenaSinEspacios = cadena!.replaceAll(" ", "");
 
@@ -307,6 +308,7 @@ class _FilaIndicadorState extends State<FilaIndicador> {
         style: TextStyle(
           fontSize: 11,
           color: color,
+          fontWeight: esBold ? FontWeight.bold : FontWeight.normal
         ),
       );
 
@@ -325,6 +327,29 @@ class _FilaIndicadorState extends State<FilaIndicador> {
       return Colors.black;
 
     }
+    
+    Widget progresoAvance(String porcentaje) {
+
+      double? porcentajeAvance = double.tryParse(porcentaje.replaceAll("%", ""));
+
+      if (porcentajeAvance != null) {
+
+        return LinearProgressIndicator(
+          value: porcentajeAvance / 100,
+          backgroundColor: Colors.red,
+          valueColor: const AlwaysStoppedAnimation<Color>(Colors.green),
+          borderRadius: BorderRadius.circular(10),
+        );
+
+      }
+      
+      return LinearProgressIndicator(
+        value: 0,
+        backgroundColor: Colors.red,
+        borderRadius: BorderRadius.circular(10),
+      );
+
+    }
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
@@ -334,7 +359,7 @@ class _FilaIndicadorState extends State<FilaIndicador> {
         ),
         margin: const EdgeInsets.all(3),
         child: ExpansionTile(
-          tilePadding: EdgeInsets.zero,
+          tilePadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
           childrenPadding: EdgeInsets.zero,
           showTrailingIcon: false,
           shape: const RoundedRectangleBorder(
@@ -344,15 +369,11 @@ class _FilaIndicadorState extends State<FilaIndicador> {
             children: [
               Expanded(
                 flex: 1,
-                child: Icon(
-                  Icons.circle_rounded,
-                  size: 10,
-                  color: widget.indicador.avance!.estaCompletado() ? Colors.green : Colors.red,
-                )
+                child: progresoAvance(widget.indicador.avance!.obtenerPorAvanceUnidades)
               ),
               Expanded(
                 flex: 1,
-                child: formatearCelda(widget.indicador.clientName!, Tema.primary, TextAlign.center)
+                child: formatearCelda(widget.indicador.clientName!, Tema.primary, TextAlign.center, esBold: true)
               ),
               Expanded(
                 flex: 1,
@@ -469,12 +490,11 @@ class ContenidoAvance extends StatelessWidget {
           final cadena = entry.value;
           final indice = entry.key;
 
-          final alineacion = (indice >= listaCadenas.length - 2) ? TextAlign.end : TextAlign.start;
-
           return Expanded(
+            flex: indice == 0 ? 2 : 1,
             child: Text(
               cadena,
-              textAlign: alineacion,
+              textAlign: indice == 0 ? TextAlign.start : TextAlign.end,
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: esBold ? FontWeight.bold : FontWeight.normal,
@@ -487,6 +507,56 @@ class ContenidoAvance extends StatelessWidget {
 
     }
 
+    Text formatearCadena(String cadena, {bool esBold = false}) {
+
+      return Text(
+        cadena,
+        style: TextStyle(
+          fontSize: 11,
+          fontWeight: esBold ? FontWeight.bold : FontWeight.normal,
+        )
+      );
+
+    }
+
+    Widget progresoAvance() {
+
+      double? porcentajeAvance = double.tryParse(indicador.avance!.obtenerPorAvanceUnidades.replaceAll("%", ""));
+
+      if (porcentajeAvance != null) {
+
+        return Expanded(
+          flex: 1,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  CircularProgressIndicator(
+                    value: porcentajeAvance / 100,
+                    valueColor: const AlwaysStoppedAnimation(Colors.green),
+                    backgroundColor: Colors.red,
+                  ),
+                  Text(
+                    "${indicador.avance!.obtenerPorAvanceUnidades.split(".")[0]} %",
+                    style: const TextStyle(
+                      fontSize: 11, 
+                      fontWeight: FontWeight.bold, 
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+
+      }
+
+      return Container();
+      
+    }
+
     return Padding(
       padding: const EdgeInsets.all(10),
       child: Container(
@@ -497,16 +567,42 @@ class ContenidoAvance extends StatelessWidget {
         ),
         child: Column(
           children: [
-            buildRow(["Avance de Inventario", "Conteo", "Avance %"], esBold: true),
-            buildRow(["Hora de Inicio Programada", indicador.avance!.horaInicioProgramada!, ""]),
-            buildRow(["Hora de Comienzo", indicador.avance!.horaInicioReal!, ""]),
-            buildRow(["Dotación", indicador.avance!.dotacionDiferencia!, ""]),
-            buildRow(["Avance Patentes o TAG", "", indicador.avance!.obtenerPorAvanceAuditoria]),
+            Row(
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      formatearCadena("Avance de Inventario", esBold: true),
+                      formatearCadena("Hora de Inicio Programada"),
+                      formatearCadena("Hora de Comienzo"),
+                      formatearCadena("Dotación"),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      formatearCadena("Conteo", esBold: true),
+                      formatearCadena(indicador.avance!.horaInicioProgramada!),
+                      formatearCadena(indicador.avance!.horaInicioReal!),
+                      formatearCadena(indicador.avance!.dotacionDiferencia!),
+                    ],
+                  ),
+                ),
+                progresoAvance()
+              ],
+            ),
+            Divider(color: Colors.green.shade200),
+            buildRow(["Avance Patentes o TAG", "", indicador.avance!.obtenerPorAvance]),
             buildRow(["Avance Uni. Contadas", indicador.avance!.obtenerCantidadFisica, indicador.avance!.obtenerPorAvanceUnidades]),
-            buildRow(["Stock Teórico", indicador.avance!.obtenerCantidadTeorica, indicador.avance!.obtenerPorAvance]),
+            buildRow(["Stock Teórico", indicador.avance!.obtenerCantidadTeorica, "100.00 %"]),
             Divider(color: Colors.green.shade200),
             buildRow(["Auditoría", "", "Avance %"], esBold: true),
-            buildRow(["Avance Items", "", indicador.avance!.obtenerPorAvanceUnidades]),
+            buildRow(["Avance Items", "", indicador.avance!.obtenerPorAvanceAuditoria]),
             buildRow(["Error", "", indicador.avance!.obtenerPorNivelError]),
             Divider(color: Colors.green.shade200),
             buildRow(["Jefe Local", indicador.obtenerTooltipJl!, ""]),

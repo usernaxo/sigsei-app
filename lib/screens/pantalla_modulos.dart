@@ -31,31 +31,26 @@ class PantallaModulos extends StatelessWidget {
     List<Modulo> modulos = [
       Modulo(
         titulo: "Indicadores de Inventarios",
-        descripcion: "Seleccione esta opción para visualizar los indicadores de gestión de inventarios",
         ruta: "pantalla_indicadores",
         icono: Icons.inventory_rounded
       ),
       Modulo(
+        titulo: "Programación",
+        ruta: "pantalla_indicadores",
+        icono: Icons.av_timer_rounded
+      ),
+      Modulo(
         titulo: "Otro módulo",
-        descripcion: "Descripción de otro módulo aquí",
         ruta: "pantalla_indicadores",
         icono: Icons.settings_rounded
       ),
       Modulo(
         titulo: "Otro módulo",
-        descripcion: "Descripción de otro módulo aquí",
         ruta: "pantalla_indicadores",
         icono: Icons.settings_rounded
       ),
       Modulo(
         titulo: "Otro módulo",
-        descripcion: "Descripción de otro módulo aquí",
-        ruta: "pantalla_indicadores",
-        icono: Icons.settings_rounded
-      ),
-      Modulo(
-        titulo: "Otro módulo",
-        descripcion: "Descripción de otro módulo aquí",
         ruta: "pantalla_indicadores",
         icono: Icons.settings_rounded
       )
@@ -138,7 +133,6 @@ class PantallaModulos extends StatelessWidget {
                                   leading: Icon(modulos[index].icono),
                                   trailing: const Icon(Icons.arrow_right_rounded),
                                   title: Text(modulos[index].titulo),
-                                  subtitle: Text(modulos[index].descripcion),
                                   onTap: () {
 
                                     Navigator.pushNamed(context, modulos[index].ruta, arguments: {

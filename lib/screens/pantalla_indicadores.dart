@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:sigsei/helpers/indicador_deficiente.dart';
 import 'package:sigsei/helpers/modulo.dart';
 import 'package:sigsei/models/indicador.dart';
 import 'package:sigsei/models/titular.dart';
@@ -23,8 +24,8 @@ class PantallaIndicadoresState extends State<PantallaIndicadores> {
   late Future<List<Indicador>?> listaIndicadores;
 
   TextEditingController controladorFecha = TextEditingController();
-
-  String formatoFecha = DateFormat('EEEE d \'de\' MMMM \'de\' yyyy', 'es_ES').format(DateTime.now());
+  
+  String? formatoFecha;
 
   @override
   void initState() {
@@ -33,11 +34,25 @@ class PantallaIndicadoresState extends State<PantallaIndicadores> {
 
     final proveedorEstado = Provider.of<ProveedorEstado>(context, listen: false);
 
-    String fechaActualFormateada = DateFormat("yyyy-MM-dd").format(DateTime.now());
+    DateTime fechaActual = DateTime.now();
 
-    listaIndicadores = proveedorEstado.obtenerIndicadores(fechaActualFormateada, fechaActualFormateada);
+    String fechaFormateada;
 
-    controladorFecha.text = fechaActualFormateada;
+    if (fechaActual.hour >= 15) {
+
+      fechaFormateada = DateFormat("yyyy-MM-dd").format(DateTime.now());
+      formatoFecha = DateFormat('EEEE d \'de\' MMMM \'de\' yyyy', 'es_ES').format(DateTime.now());
+
+    } else {
+
+      fechaFormateada = DateFormat("yyyy-MM-dd").format(DateTime.now().subtract(const Duration(days: 1)));
+      formatoFecha = DateFormat('EEEE d \'de\' MMMM \'de\' yyyy', 'es_ES').format(DateTime.now().subtract(const Duration(days: 1)));
+
+    }
+
+    listaIndicadores = proveedorEstado.obtenerIndicadores(fechaFormateada, fechaFormateada);
+
+    controladorFecha.text = fechaFormateada;
 
   }
 
@@ -166,7 +181,7 @@ class PantallaIndicadoresState extends State<PantallaIndicadores> {
                   children: [
                     Expanded(
                       flex: 1,
-                      child: formatearCelda("Estado\nAvance", Colors.white)
+                      child: formatearCelda("Estado\nIndicador", Colors.white)
                     ),
                     Expanded(
                       flex: 1,
@@ -268,6 +283,7 @@ class _FilaIndicadorState extends State<FilaIndicador> {
   bool mostrarAvance = false;
   bool mostrarResumen = true;
   bool mostrarTitulares = false;
+  bool mostrarDeficiencias = false;
   bool filaExpandida = false;
 
   @override
@@ -328,7 +344,7 @@ class _FilaIndicadorState extends State<FilaIndicador> {
 
     }
     
-    Widget progresoAvance(String porcentaje) {
+    /*Widget progresoAvance(String porcentaje) {
 
       double? porcentajeAvance = double.tryParse(porcentaje.replaceAll("%", ""));
 
@@ -349,6 +365,87 @@ class _FilaIndicadorState extends State<FilaIndicador> {
         borderRadius: BorderRadius.circular(10),
       );
 
+    }*/
+
+    bool indicadorDeficiente(Indicador indicador) {
+
+      String horasIg = indicador.obtenerIgHours!;
+      String notaPromedio = indicador.obtenerAvgScores!;
+      String errorSei = indicador.obtenerSeiError!;
+      String estandarSei = indicador.obtenerSeiStandard!;
+      String varianza = indicador.obtenerVariance!;
+
+      if (indicador.indicator == null || IndicadorDeficiente.esHorasIgDeficiente(horasIg) || IndicadorDeficiente.esNotaPromedioDeficiente(notaPromedio) || IndicadorDeficiente.esErrorSeiDeficiente(errorSei) || IndicadorDeficiente.esEstandarSeiDeficiente(estandarSei) || IndicadorDeficiente.esVarianzaDeficiente(varianza)) {
+
+        return true;
+
+      }
+
+      return false;
+
+    }
+
+    bool indicadorSuspendido(Indicador indicador) {
+
+      if (indicador.leader!.toLowerCase().contains("suspendido")) {
+
+        return true;
+
+      }
+
+      return false;
+
+    }
+
+    Widget estadoIndicador(Indicador indicador) {
+
+      return Row(
+        children: [
+          Expanded(
+            child: Icon(
+              Icons.circle,
+              size: 10,
+              color: indicadorDeficiente(indicador) ? Colors.red : Colors.red.shade100.withAlpha(170),
+            ),
+          ),
+          Expanded(
+            child: Icon(
+              Icons.circle,
+              size: 10,
+              color: indicadorSuspendido(indicador) ? Colors.yellow : Colors.yellow.shade100.withAlpha(170),
+            ),
+          ),
+          Expanded(
+            child: Icon(
+              Icons.circle,
+              size: 10,
+              color: !indicadorDeficiente(indicador) ? Colors.green : Colors.green.shade100.withAlpha(170),
+            ),
+          )
+        ],
+      );
+
+      /*if (IndicadorDeficiente.esHorasIgDeficiente(horasIg) || IndicadorDeficiente.esNotaPromedioDeficiente(notaPromedio) || IndicadorDeficiente.esErrorSeiDeficiente(errorSei) || IndicadorDeficiente.esEstandarSeiDeficiente(estandarSei) || IndicadorDeficiente.esVarianzaDeficiente(varianza)) {
+
+        return LinearProgressIndicator(
+          value: porcentajeAvance / 100,
+          backgroundColor: Colors.red,
+          valueColor: const AlwaysStoppedAnimation<Color>(Colors.green),
+          borderRadius: BorderRadius.circular(10),
+        );      
+
+      }*/
+
+      //return Container();
+
+      /*
+      
+      return LinearProgressIndicator(
+        value: 0,
+        backgroundColor: Colors.red,
+        borderRadius: BorderRadius.circular(10),
+      );*/
+
     }
 
     return Padding(
@@ -362,14 +459,18 @@ class _FilaIndicadorState extends State<FilaIndicador> {
           tilePadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
           childrenPadding: EdgeInsets.zero,
           showTrailingIcon: false,
-          shape: const RoundedRectangleBorder(
-            side: BorderSide.none
+          shape: RoundedRectangleBorder(
+            side: BorderSide(
+              color: Tema.primary,
+              width: 2
+            ),
+            borderRadius: BorderRadius.circular(10)
           ),
           title: Row(
             children: [
               Expanded(
                 flex: 1,
-                child: progresoAvance(widget.indicador.avance!.obtenerPorAvanceUnidades)
+                child: estadoIndicador(widget.indicador)
               ),
               Expanded(
                 flex: 1,
@@ -377,44 +478,14 @@ class _FilaIndicadorState extends State<FilaIndicador> {
               ),
               Expanded(
                 flex: 1,
-                child: GestureDetector(
-                  onTap: !filaExpandida ? null : () {
-                    setState(() {
-                      mostrarAvance = true;
-                      mostrarTitulares = false;
-                      mostrarResumen = false;
-                    });
-                  },
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(5),
-                    child: ColoredBox(
-                      color: mostrarAvance && filaExpandida ? Colors.green.shade100 : Colors.transparent,
-                      child: formatearCelda(widget.indicador.storeNumber!, Colors.black, TextAlign.right),
-                    ),
-                  ),
-                )
+                child: formatearCelda(widget.indicador.storeNumber!, Colors.black, TextAlign.right),
               ),
               const SizedBox(
                 width: 10,
               ),
               Expanded(
                 flex: 2,
-                child: GestureDetector(
-                  onTap: !filaExpandida ? null : () {
-                    setState(() {
-                      mostrarResumen = true;
-                      mostrarAvance = false;
-                      mostrarTitulares = false;
-                    });
-                  },
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(5),
-                    child: ColoredBox(
-                      color: mostrarResumen && filaExpandida ? Colors.deepPurple.shade100 : Colors.transparent,
-                      child: formatearCelda(widget.indicador.storeName!, Colors.black, TextAlign.left),
-                    ),
-                  ),
-                )
+                child: formatearCelda(widget.indicador.storeName!, Colors.black, TextAlign.left)
               ),
               Expanded(
                 flex: 1,
@@ -422,22 +493,7 @@ class _FilaIndicadorState extends State<FilaIndicador> {
               ),
               Expanded(
                 flex: 1,
-                child: GestureDetector(
-                  onTap: (widget.indicador.obtenerTitulares!.isEmpty) ? null : !filaExpandida ? null : () {
-                    setState(() {
-                      mostrarTitulares = true;
-                      mostrarResumen = false;
-                      mostrarAvance = false;
-                    });
-                  },
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: ColoredBox(
-                      color: mostrarTitulares && filaExpandida ? Colors.black26 : Colors.transparent,
-                      child: formatearCelda(widget.indicador.obtenerSeiError, Colors.black, TextAlign.center)
-                    ),
-                  ),
-                )
+                child: formatearCelda(widget.indicador.obtenerSeiError, Colors.black, TextAlign.center)
               ),
               Expanded(
                 flex: 1,
@@ -446,12 +502,171 @@ class _FilaIndicadorState extends State<FilaIndicador> {
             ],
           ),
           children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Row(
+                children: [
+                  if (indicadorDeficiente(widget.indicador))
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          mostrarDeficiencias = true;
+                          mostrarTitulares = false;
+                          mostrarAvance = false;
+                          mostrarResumen = false;
+                        });
+                      },
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(7),
+                        child: ColoredBox(
+                          color: mostrarDeficiencias ? Colors.red.shade100 : Colors.transparent,
+                          child: const Padding(
+                            padding: EdgeInsets.all(10),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.warning_rounded,
+                                  size: 11,
+                                  color: Colors.red,
+                                ),
+                                SizedBox(
+                                  width: 5,
+                                ),
+                                Text(
+                                  "Deficiencias",
+                                  style: TextStyle(
+                                    fontSize: 11
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),            
+                  GestureDetector(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(7),
+                      child: ColoredBox(
+                        color: mostrarAvance ? Colors.green.shade100 : Colors.transparent,
+                        child: const Padding(
+                          padding: EdgeInsets.all(10),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.timeline_rounded,
+                                size: 11,
+                                color: Colors.green,
+                              ),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              Text(
+                                "Avance",
+                                style: TextStyle(
+                                  fontSize: 11
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    onTap: () {
+                      setState(() {
+                        mostrarAvance = true;
+                        mostrarResumen = false;
+                        mostrarTitulares = false;
+                        mostrarDeficiencias = false;
+                      });
+                    },
+                  ),
+                  GestureDetector(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(7),
+                      child: ColoredBox(
+                        color: mostrarResumen ? Colors.deepPurple.shade100 : Colors.transparent,
+                        child: const Padding(
+                          padding: EdgeInsets.all(10),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.assessment_outlined,
+                                size: 11,
+                                color: Colors.deepPurple,
+                              ),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              Text(
+                                "Resumen",
+                                style: TextStyle(
+                                  fontSize: 11
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    onTap: () {
+                      setState(() {
+                        mostrarResumen = true;
+                        mostrarAvance = false;
+                        mostrarTitulares = false;
+                        mostrarDeficiencias = false;
+                      });
+                    },
+                  ),
+                  if (widget.indicador.obtenerTitulares!.isNotEmpty)
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          mostrarTitulares = true;
+                          mostrarAvance = false;
+                          mostrarResumen = false;
+                          mostrarDeficiencias = false;
+                        });
+                      },
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(7),
+                        child: ColoredBox(
+                          color: mostrarTitulares ? Colors.black12 : Colors.transparent,
+                          child: const Padding(
+                            padding: EdgeInsets.all(10),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.people_alt_rounded,
+                                  size: 11,
+                                  color: Colors.teal,
+                                ),
+                                SizedBox(
+                                  width: 5,
+                                ),
+                                Text(
+                                  "Operadores",
+                                  style: TextStyle(
+                                    fontSize: 11
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
             if (mostrarAvance)
               ContenidoAvance(indicador: widget.indicador),
             if (mostrarResumen)
               ContenidoResumen(indicador: widget.indicador),
             if (mostrarTitulares)
-              ContenidoTitulares(indicador: widget.indicador)
+              ContenidoTitulares(indicador: widget.indicador),
+            if (mostrarDeficiencias)
+              ContenidoDeficiencias(indicador: widget.indicador),
           ],
           onExpansionChanged: (value) {
 
@@ -797,6 +1012,76 @@ class ContenidoTitulares extends StatelessWidget {
     }
 
     return Container();
+
+  }
+
+}
+
+class ContenidoDeficiencias extends StatelessWidget {
+
+  final Indicador indicador;
+  
+  const ContenidoDeficiencias({
+    super.key,
+    required this.indicador
+  });
+
+  @override
+  Widget build(BuildContext context) {
+
+    Widget buildRow(List<String> listaCadenas, {bool esBold = false}) {
+
+      return Row(
+        children: listaCadenas.asMap().entries.map((entry) {
+
+          final cadena = entry.value;
+          final indice = entry.key;
+
+          final alineacion = (indice >= listaCadenas.length - 2) ? TextAlign.end : TextAlign.start;
+
+          return Expanded(
+            child: Text(
+              cadena,
+              textAlign: alineacion,
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: esBold ? FontWeight.bold : FontWeight.normal,
+              )
+            ),
+          );
+          
+        }).toList(),
+      );
+
+    }
+
+    return Padding(
+      padding: const EdgeInsets.all(10),
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: Colors.red.shade100,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Column(
+          children: [
+            buildRow(["Deficiencia", "Obtenido", "Esperado"], esBold: true),
+            if (indicador.indicator == null)
+              buildRow(["Archivo ZIP", "No Cargado", "Subir ZIP"]),
+            if (IndicadorDeficiente.esHorasIgDeficiente(indicador.obtenerIgHours!))
+              buildRow(["Horas IG", indicador.obtenerIgHours!, "≤ ${IndicadorDeficiente.limiteHorasIg} Horas"]),
+            if (IndicadorDeficiente.esNotaPromedioDeficiente(indicador.obtenerAvgScores!))
+              buildRow(["Nota Promedio", indicador.obtenerAvgScores!, "≥ ${IndicadorDeficiente.limiteNotaPromedio} Nota"]),
+            if (IndicadorDeficiente.esErrorSeiDeficiente(indicador.obtenerSeiError!))
+              buildRow(["Error SEI", indicador.obtenerSeiError!, "< ${IndicadorDeficiente.limiteErrorSei} %"]),
+            if (IndicadorDeficiente.esEstandarSeiDeficiente(indicador.obtenerSeiStandard!))
+              buildRow(["Estándar SEI", indicador.obtenerSeiStandard!, "≥ ${IndicadorDeficiente.limiteEstandarSei} %"]),
+            if (IndicadorDeficiente.esVarianzaDeficiente(indicador.obtenerVariance!))
+              buildRow(["Varianza", indicador.obtenerVariance!, "< ${IndicadorDeficiente.limiteVarianza} %"]),
+          ],
+        ),
+      ),
+    );
 
   }
 

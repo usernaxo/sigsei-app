@@ -19,7 +19,7 @@ void main() async {
   final tokenUsuario = await almacenamiento.read(key: "tokenUsuario");
 
   await initializeDateFormatting("es_ES", null);
-
+  print(tokenUsuario);
   runApp(AppState(logueado: tokenUsuario != null));
 
 }

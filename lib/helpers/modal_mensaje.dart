@@ -60,17 +60,20 @@ class ModalMensaje {
       transitionDuration: const Duration(milliseconds: 300),
       pageBuilder: (context, animation1, animation2) {
 
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+        return PopScope(
+          canPop: cancelable,
+          child: AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            title: Center(
+              child: SizedBox(
+                height: 40,
+                child: widget
+              )
+            ),
+            content: Text(titulo, textAlign: TextAlign.center)
           ),
-          title: Center(
-            child: SizedBox(
-              height: 40,
-              child: widget
-            )
-          ),
-          content: Text(titulo, textAlign: TextAlign.center)
         );
 
       },

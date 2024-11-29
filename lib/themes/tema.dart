@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class Tema {
 
   static Color primary = Colors.lightBlue.shade900;
-  static Color primaryLight = const Color.fromARGB(255, 230, 230, 230);
+  static Color primaryLight = Colors.black12;
 
   static ThemeData light = ThemeData.light().copyWith(
     primaryColor: primary,
@@ -41,7 +41,7 @@ class Tema {
       )
     ),
     iconTheme: IconThemeData(
-      color: primary
+      color: primary,
     ),
     dataTableTheme: DataTableThemeData(
       headingRowColor: WidgetStateProperty.all(primary),
@@ -85,6 +85,15 @@ class Tema {
       headerForegroundColor: Tema.primary,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
+      ),
+    ),
+    sliderTheme: const SliderThemeData(
+      trackHeight: 2,
+      thumbShape: RoundSliderThumbShape(
+        enabledThumbRadius: 5,
+      ),
+      overlayShape: RoundSliderOverlayShape(
+        overlayRadius: 0,
       ),
     )
   );

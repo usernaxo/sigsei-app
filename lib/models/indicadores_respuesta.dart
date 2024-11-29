@@ -2,17 +2,17 @@ import 'dart:convert';
 
 import 'package:sigsei/models/indicador.dart';
 
-class IndicadoresResponse {
+class IndicadoresRespuesta {
 
   List<Indicador>? listaIndicadores;
 
-  IndicadoresResponse({
+  IndicadoresRespuesta({
     this.listaIndicadores,
   });
 
-  factory IndicadoresResponse.fromJson(String str) => IndicadoresResponse.fromMap(json.decode(str));
+  factory IndicadoresRespuesta.fromJson(String str) => IndicadoresRespuesta.fromMap(json.decode(str));
 
-  factory IndicadoresResponse.fromMap(Map<String, dynamic> json) => IndicadoresResponse(
+  factory IndicadoresRespuesta.fromMap(Map<String, dynamic> json) => IndicadoresRespuesta(
     listaIndicadores: json["indicadores"] == null ? [] : List<Indicador>.from(json["indicadores"]!.map((x) => Indicador.fromMap(x))),
   );
 

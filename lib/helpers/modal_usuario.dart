@@ -37,7 +37,7 @@ class ModalUsuario {
                 shape: BoxShape.circle
               ),
               child: CircleAvatar(
-                backgroundColor: Tema.primaryLight,
+                backgroundColor: Colors.white,
                 foregroundColor: Tema.primary,
                 child: const Icon(Icons.person_rounded),
               ),

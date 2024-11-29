@@ -6,6 +6,11 @@ class IndicadorDeficiente {
   static double limiteEstandarSei = 98;
   static double limiteVarianza = 0.2;
 
+  static double limiteConteo = 5;
+  static double limiteChecklist = 90;
+
+  static double limiteErrorAbs = 3;
+
   static bool esHorasIgDeficiente(String horasIg) { 
 
     int? valorHorasIg = int.tryParse(horasIg.split(":")[0]);
@@ -43,6 +48,30 @@ class IndicadorDeficiente {
     double? valorVarianza = double.tryParse(varianza.replaceAll(",", ".").replaceAll("%", ""));
 
     return valorVarianza != null ? ((valorVarianza >= limiteVarianza) ? true : false) : false;
+
+  }
+
+  static bool esConteoDeficiente(String conteo) {
+
+    double? valorConteo = double.tryParse(conteo.replaceAll(",", ".").replaceAll("%", ""));
+
+    return valorConteo != null ? ((valorConteo > limiteConteo) ? true : false) : false;
+
+  }
+
+  static bool esChecklistDeficiente(String checklist) {
+
+    double? valorChecklist = double.tryParse(checklist.replaceAll(",", ".").replaceAll("%", ""));
+
+    return valorChecklist != null ? ((valorChecklist < limiteChecklist) ? true : false) : false;
+
+  }
+
+  static bool esErrorAbsDeficiente(String errorAbs) {
+
+    double? valorErrorAbs = double.tryParse(errorAbs.replaceAll(",", ".").replaceAll("%", ""));
+
+    return valorErrorAbs != null ? ((valorErrorAbs >= limiteErrorAbs) ? true : false) : false;
 
   }
 

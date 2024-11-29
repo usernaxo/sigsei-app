@@ -5,23 +5,24 @@ import 'package:provider/provider.dart';
 import 'package:sigsei/helpers/indicador_deficiente.dart';
 import 'package:sigsei/helpers/modulo.dart';
 import 'package:sigsei/models/indicador.dart';
+import 'package:sigsei/models/inventario_general.dart';
 import 'package:sigsei/models/usuario.dart';
 import 'package:sigsei/providers/proveedor_estado.dart';
 import 'package:sigsei/themes/tema.dart';
 import 'package:sigsei/widgets/barra_usuario.dart';
 
-class PantallaIndicadores extends StatefulWidget {
+class PantallaInventarioGeneral extends StatefulWidget {
 
-  const PantallaIndicadores({super.key});
+  const PantallaInventarioGeneral({super.key});
 
   @override
-  PantallaIndicadoresState createState() => PantallaIndicadoresState();
+  PantallaInventarioGeneralState createState() => PantallaInventarioGeneralState();
 
 }
 
-class PantallaIndicadoresState extends State<PantallaIndicadores> {
+class PantallaInventarioGeneralState extends State<PantallaInventarioGeneral> {
 
-  late Future<List<Indicador>?> listaIndicadores;
+  late Future<List<InventarioGeneral>?> listaInventarioGeneral;
   
   String? formatoFecha;
   String fechaFormateada = "";
@@ -56,7 +57,7 @@ class PantallaIndicadoresState extends State<PantallaIndicadores> {
 
     }
 
-    listaIndicadores = proveedorEstado.obtenerIndicadores(fechaFormateada, fechaFormateada);
+    listaInventarioGeneral = proveedorEstado.obtenerInventarioGeneral("2024-11-20", "2024-11-25");
 
   }
 
@@ -79,7 +80,7 @@ class PantallaIndicadoresState extends State<PantallaIndicadores> {
 
         formatoFecha = DateFormat('EEEE d \'de\' MMMM \'de\' yyyy', 'es_ES').format(fechaInicial);
 
-        listaIndicadores = proveedorEstado.obtenerIndicadores(fechaFormateada, fechaFormateada);
+        listaInventarioGeneral = proveedorEstado.obtenerInventarioGeneral("2024-11-20", "2024-11-25");
 
       });
 
@@ -127,18 +128,8 @@ class PantallaIndicadoresState extends State<PantallaIndicadores> {
                     )
                   ),
                   Expanded(
-                    child: Text.rich(
-                      TextSpan(
-                        text: "${modulo.titulo} ",
-                        children: [
-                          TextSpan(
-                            text: formatoFecha,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold
-                            )
-                          )
-                        ]
-                      ),
+                    child: Text(
+                      modulo.titulo,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -146,7 +137,7 @@ class PantallaIndicadoresState extends State<PantallaIndicadores> {
                 ],
               )
             ),
-            Padding(
+            /*Padding(
               padding: const EdgeInsets.all(10),
               child: Row(
                 children: [
@@ -244,8 +235,8 @@ class PantallaIndicadoresState extends State<PantallaIndicadores> {
             ),
             Expanded(
               child: FutureBuilder(
-                future: listaIndicadores,
-                builder: (context, AsyncSnapshot<List<Indicador>?> snapshot) {
+                future: listaInventarioGeneral,
+                builder: (context, AsyncSnapshot<List<InventarioGeneral>?> snapshot) {
 
                   if (snapshot.connectionState == ConnectionState.waiting) {
 
@@ -275,7 +266,7 @@ class PantallaIndicadoresState extends State<PantallaIndicadores> {
                       padding: const EdgeInsets.only(bottom: 50),
                       children: snapshot.data!.map((indicador) {
 
-                        return FilaIndicador(indicador: indicador);
+                        return Container();
 
                       }).toList(),
                     );
@@ -284,7 +275,7 @@ class PantallaIndicadoresState extends State<PantallaIndicadores> {
 
                 },
               )
-            )
+            )*/
           ]
         ),
       )
@@ -312,7 +303,7 @@ class _FilaIndicadorState extends State<FilaIndicador> {
 
   bool mostrarAvance = false;
   bool mostrarResumen = true;
-  bool mostrarOperadores = false;
+  bool mostrarTitulares = false;
   bool mostrarEstadoAmarillo = false;
   bool filaExpandida = false;
 
@@ -404,7 +395,6 @@ class _FilaIndicadorState extends State<FilaIndicador> {
       padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
       child: Card(
         elevation: 0,
-        color: widget.indicador.obtenerEsDia! ? Colors.amber.shade50 : null,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
           side: BorderSide(
@@ -469,7 +459,7 @@ class _FilaIndicadorState extends State<FilaIndicador> {
                       onTap: () {
                         setState(() {
                           mostrarEstadoAmarillo = true;
-                          mostrarOperadores = false;
+                          mostrarTitulares = false;
                           mostrarAvance = false;
                           mostrarResumen = false;
                         });
@@ -535,7 +525,7 @@ class _FilaIndicadorState extends State<FilaIndicador> {
                       setState(() {
                         mostrarAvance = true;
                         mostrarResumen = false;
-                        mostrarOperadores = false;
+                        mostrarTitulares = false;
                         mostrarEstadoAmarillo = false;
                       });
                     },
@@ -573,7 +563,7 @@ class _FilaIndicadorState extends State<FilaIndicador> {
                       setState(() {
                         mostrarResumen = true;
                         mostrarAvance = false;
-                        mostrarOperadores = false;
+                        mostrarTitulares = false;
                         mostrarEstadoAmarillo = false;
                       });
                     },
@@ -583,7 +573,7 @@ class _FilaIndicadorState extends State<FilaIndicador> {
                       borderRadius: BorderRadius.circular(7),
                       onTap: () {
                         setState(() {
-                          mostrarOperadores = true;
+                          mostrarTitulares = true;
                           mostrarAvance = false;
                           mostrarResumen = false;
                           mostrarEstadoAmarillo = false;
@@ -592,7 +582,7 @@ class _FilaIndicadorState extends State<FilaIndicador> {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(7),
                         child: ColoredBox(
-                          color: mostrarOperadores ? Colors.black12 : Colors.transparent,
+                          color: mostrarTitulares ? Colors.black12 : Colors.transparent,
                           child: const Padding(
                             padding: EdgeInsets.all(10),
                             child: Row(
@@ -624,8 +614,8 @@ class _FilaIndicadorState extends State<FilaIndicador> {
               ContenidoAvance(indicador: widget.indicador),
             if (mostrarResumen)
               ContenidoResumen(indicador: widget.indicador),
-            if (mostrarOperadores)
-              ContenidoOperadores(indicador: widget.indicador),
+            if (mostrarTitulares)
+              ContenidoTitulares(indicador: widget.indicador),
             if (mostrarEstadoAmarillo)
               ContenidoEstadoAmarillo(indicador: widget.indicador),
             if (widget.indicador.obtenerTitulares!.isNotEmpty)
@@ -867,11 +857,11 @@ class ContenidoResumen extends StatelessWidget {
 
 }
 
-class ContenidoOperadores extends StatelessWidget {
+class ContenidoTitulares extends StatelessWidget {
 
   final Indicador indicador;
   
-  const ContenidoOperadores({
+  const ContenidoTitulares({
     super.key,
     required this.indicador
   });
@@ -968,6 +958,7 @@ class ContenidoOperadores extends StatelessWidget {
               const Divider(color: Colors.white),
               buildRow(["Otros", "-", "-", NumberFormat("#,###", "es_ES").format(int.parse(conteoOtros.toString())), "-"], esBold: true),
               buildRow(["Totales", conteoTotalError.toString(), "-", indicador.obtenerUnitsCounted!, "-"], esBold: true)
+
             ],
           ),
         ),
@@ -1066,17 +1057,16 @@ class _BotonesDescargarArchivosState extends State<BotonesDescargarArchivos> {
   Widget build(BuildContext context) {
 
     final proveedorEstado = Provider.of<ProveedorEstado>(context);
-    String resultadoDescargarArchivo = "";
 
     void descargarArchivo(int idArchivo, String tipoArchivo) async {
 
-      var status = await Permission.storage.status;
+      while (true) {
 
-      if (status.isGranted) {
+        var status = await Permission.storage.status;
 
-        try {
+        if (status.isGranted) {
 
-          resultadoDescargarArchivo = await proveedorEstado.descargarArchivoConProgreso(
+          String resultadoDescargarArchivo = await proveedorEstado.descargarArchivoConProgreso(
             idArchivo,
             tipoArchivo,
             (progresoDescarga) {
@@ -1086,12 +1076,9 @@ class _BotonesDescargarArchivosState extends State<BotonesDescargarArchivos> {
             },
           );
 
-        } finally {
-
           if (mounted) {
 
             setState(() {
-              progreso = 0.0;
               descargaIniciada = false;
               archivoDescargando = "";
               colorBarraProgreso = Tema.primary;
@@ -1119,43 +1106,43 @@ class _BotonesDescargarArchivosState extends State<BotonesDescargarArchivos> {
 
           }
 
+          return;
+
         }
 
-        return;
+        await Permission.storage.request();
 
-      }
+        status = await Permission.storage.status;
 
-      await Permission.storage.request();
+        if (status.isPermanentlyDenied) {
 
-      status = await Permission.storage.status;
+          if (mounted) {
 
-      if (status.isPermanentlyDenied) {
-
-        if (mounted) {
-
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              backgroundColor: Tema.primary,
-              content: const Row(
-                children: [
-                  Icon(
-                    Icons.warning_rounded,
-                    color: Colors.white,
-                    size: 12,
-                  ),
-                  SizedBox(width: 5),
-                  Text(
-                    "Habilite permisos en configuración",
-                    style: TextStyle(fontSize: 11),
-                  ),
-                ],
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                backgroundColor: Tema.primary,
+                content: const Row(
+                  children: [
+                    Icon(
+                      Icons.warning_rounded,
+                      color: Colors.white,
+                      size: 12,
+                    ),
+                    SizedBox(width: 5),
+                    Text(
+                      "Habilite permisos de almacenamiento",
+                      style: TextStyle(fontSize: 11),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          );
+            );
+
+          }
+
+          return;
 
         }
-
-        return;
 
       }
 
@@ -1210,12 +1197,10 @@ class _BotonesDescargarArchivosState extends State<BotonesDescargarArchivos> {
             InkWell(
               borderRadius: BorderRadius.circular(7),
               onTap: () async {
-                setState(() {
-                  descargarArchivo(widget.indicador.indicator!.idFile!, "descargar-acta");
-                  descargaIniciada = true;
-                  archivoDescargando = "Acta";
-                  colorBarraProgreso = Tema.primary;
-                });
+                descargarArchivo(widget.indicador.indicator!.idFile!, "descargar-acta");
+                descargaIniciada = true;
+                archivoDescargando = "Acta";
+                colorBarraProgreso = Tema.primary;
               },
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(7),
@@ -1247,12 +1232,10 @@ class _BotonesDescargarArchivosState extends State<BotonesDescargarArchivos> {
             InkWell(
               borderRadius: BorderRadius.circular(7),
               onTap: () async {
-                setState(() {
-                  descargarArchivo(widget.indicador.indicator!.idFile!, "descargar-checklist");
-                  descargaIniciada = true;
-                  archivoDescargando = "Checklist";
-                  colorBarraProgreso = Colors.teal;
-                });
+                descargarArchivo(widget.indicador.indicator!.idFile!, "descargar-checklist");
+                descargaIniciada = true;
+                archivoDescargando = "Checklist";
+                colorBarraProgreso = Colors.teal;
               },
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(7),
@@ -1284,12 +1267,10 @@ class _BotonesDescargarArchivosState extends State<BotonesDescargarArchivos> {
             InkWell(
               borderRadius: BorderRadius.circular(7),
               onTap: () async {
-                setState(() {
-                  descargarArchivo(widget.indicador.indicator!.idFile!, "descargar");
-                  descargaIniciada = true;
-                  archivoDescargando = "ZIP";
-                  colorBarraProgreso = Colors.green;
-                });
+                descargarArchivo(widget.indicador.indicator!.idFile!, "descargar");
+                descargaIniciada = true;
+                archivoDescargando = "ZIP";
+                colorBarraProgreso = Colors.green;
               },
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(7),

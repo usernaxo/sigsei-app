@@ -37,8 +37,8 @@ class BarraUsuario extends StatelessWidget {
                     onTap: () => Navigator.of(context).pop(),
                     child: Container(
                       padding: const EdgeInsets.all(0),
-                      decoration: BoxDecoration(
-                        color: Tema.primaryLight,
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
@@ -50,15 +50,15 @@ class BarraUsuario extends StatelessWidget {
                 Image.asset(
                   width: 80,
                   "assets/images/sei.png",
-                  color: Tema.primaryLight,
+                  color: Colors.white,
                 ),
-                Row(
+                const Row(
                   children: [
                     Text(
                       "Consultores",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        color: Tema.primaryLight
+                        color: Colors.white
                       ),
                     ),
                   ],
@@ -69,8 +69,8 @@ class BarraUsuario extends StatelessWidget {
               children: [
                 Text(
                   usuario.nombre1,
-                  style: TextStyle(
-                    color: Tema.primaryLight
+                  style: const TextStyle(
+                    color: Colors.white
                   ),
                 ),
                 const SizedBox(width: 5),

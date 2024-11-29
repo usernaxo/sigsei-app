@@ -1,32 +1,86 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:sigsei/helpers/indicador_deficiente.dart';
 import 'package:sigsei/helpers/modulo.dart';
+import 'package:sigsei/models/indicador.dart';
 import 'package:sigsei/models/usuario.dart';
+import 'package:sigsei/providers/proveedor_estado.dart';
 import 'package:sigsei/themes/tema.dart';
 import 'package:sigsei/widgets/barra_usuario.dart';
 
-class PantallaModulos extends StatelessWidget {
+class PantallaModulos extends StatefulWidget {
   
   const PantallaModulos({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  State<PantallaModulos> createState() => _PantallaModulosState();
 
-    Future<Usuario?> obtenerUsuario() async {
+}
 
-      const almacenamiento = FlutterSecureStorage();
+class _PantallaModulosState extends State<PantallaModulos> {
 
-      String? usuario = await almacenamiento.read(key: "usuario");
+  late Future<List<Indicador>?> listaIndicadores;
+  late Future<Usuario?> usuario;
 
-      if (usuario != null) {
+    @override
+  void initState() {
 
-        return Usuario.fromJson(usuario);
-        
-      }
+    super.initState();
 
-      return null;
+    listaIndicadores = obtenerIndicadores();
+    usuario = obtenerDatos();
+
+  }
+
+  Future<Usuario?> obtenerDatos() async {
+
+    const almacenamiento = FlutterSecureStorage();
+
+    String? usuario = await almacenamiento.read(key: "usuario");
+
+    if (usuario != null) {
+
+      return Usuario.fromJson(usuario);
 
     }
+
+    return null;
+
+  }
+
+  Future<List<Indicador>?> obtenerIndicadores() async {
+
+    final proveedorEstado = Provider.of<ProveedorEstado>(context, listen: false);
+    DateTime fechaActual = DateTime.now();
+    
+    String fechaFormateada;
+
+    if (fechaActual.weekday == DateTime.monday && fechaActual.hour < 16) {
+
+      fechaFormateada = DateFormat("yyyy-MM-dd").format(DateTime.now().subtract(const Duration(days: 3)));
+
+    } else {
+
+      if (fechaActual.hour >= 16) {
+
+        fechaFormateada = DateFormat("yyyy-MM-dd").format(DateTime.now());
+
+      } else {
+
+        fechaFormateada = DateFormat("yyyy-MM-dd").format(DateTime.now().subtract(const Duration(days: 1)));
+
+      }
+
+    }
+
+    return await proveedorEstado.obtenerIndicadores(fechaFormateada, fechaFormateada);
+
+  }
+
+  @override
+  Widget build(BuildContext context) {
     
     List<Modulo> modulos = [
       Modulo(
@@ -35,30 +89,76 @@ class PantallaModulos extends StatelessWidget {
         icono: Icons.inventory_rounded
       ),
       Modulo(
-        titulo: "Programación",
-        ruta: "pantalla_indicadores",
-        icono: Icons.av_timer_rounded
+        titulo: "Programación Auditorias SMU",
+        ruta: "pantalla_auditorias_smu",
+        icono: Icons.content_paste_search_rounded
       ),
       Modulo(
-        titulo: "Otro módulo",
-        ruta: "pantalla_indicadores",
-        icono: Icons.settings_rounded
+        titulo: "Programación Semanal IG",
+        ruta: "pantalla_inventario_general",
+        icono: Icons.fact_check_outlined
       ),
-      Modulo(
-        titulo: "Otro módulo",
-        ruta: "pantalla_indicadores",
-        icono: Icons.settings_rounded
-      ),
-      Modulo(
-        titulo: "Otro módulo",
-        ruta: "pantalla_indicadores",
-        icono: Icons.settings_rounded
-      )
     ];
+
+    bool indicadorRojo(Indicador indicador) {
+
+      String horasIg = indicador.obtenerIgHours!;
+      String notaPromedio = indicador.obtenerAvgScores!;
+      String errorSei = indicador.obtenerSeiError!;
+      String estandarSei = indicador.obtenerSeiStandard!;
+      String varianza = indicador.obtenerVariance!;
+
+      if (IndicadorDeficiente.esHorasIgDeficiente(horasIg) || IndicadorDeficiente.esNotaPromedioDeficiente(notaPromedio) || IndicadorDeficiente.esErrorSeiDeficiente(errorSei) || IndicadorDeficiente.esEstandarSeiDeficiente(estandarSei) || IndicadorDeficiente.esVarianzaDeficiente(varianza)) {
+
+        return true;
+
+      }
+
+      return false;
+
+    }
+
+    Widget estadoIndicador(List<Indicador> indicadores) {
+
+      bool indicadoresVacios = indicadores.every((indicador) => indicador.indicator == null);
+
+      if (indicadoresVacios) {
+
+        return const Icon(
+          Icons.circle,
+          size: 10,
+          color: Colors.yellow,
+        );
+
+      }
+
+      bool existenIndicadoresDeficientes = false;
+
+      for (Indicador indicador in indicadores) {
+
+        if (indicadorRojo(indicador)) {
+
+          existenIndicadoresDeficientes = true;
+
+          break;
+
+        }
+
+      }
+
+      return Icon(
+
+        Icons.circle,
+        size: 10,
+        color: existenIndicadoresDeficientes ? Colors.red : Colors.green,
+
+      );
+      
+    }
 
     return Scaffold(
       body: FutureBuilder(
-        future: obtenerUsuario(),
+        future: Future.wait([usuario, listaIndicadores]),
         builder: (context, snapshot) {
 
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -70,6 +170,9 @@ class PantallaModulos extends StatelessWidget {
             return const Center(child: Text("Error"));
 
           } else if (snapshot.hasData) {
+
+            final usuarioData = snapshot.data?[0] as Usuario;
+            final indicadoresData = snapshot.data?[1] as List<Indicador>;
 
             return Stack(
               children: [
@@ -88,7 +191,7 @@ class PantallaModulos extends StatelessWidget {
                 SafeArea(
                   child: Column(
                     children: [
-                      BarraUsuario(usuario: snapshot.data!, botonRetroceso: false),
+                      BarraUsuario(usuario: usuarioData, botonRetroceso: false),
                       const Padding(
                         padding: EdgeInsets.all(10),
                         child: Column(
@@ -98,7 +201,7 @@ class PantallaModulos extends StatelessWidget {
                                 Icon(Icons.arrow_drop_down_rounded),
                                 Text.rich(
                                   TextSpan(
-                                    text: "Módulos ",
+                                    text: "Gestión Operacional ",
                                     children: [
                                       TextSpan(
                                         text: "SIG",
@@ -129,15 +232,33 @@ class PantallaModulos extends StatelessWidget {
                             itemBuilder: (context, index) {
 
                               return Card(
+                                elevation: 0,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  side: BorderSide(
+                                    color: Tema.primaryLight
+                                  )
+                                ),
                                 child: ListTile(
-                                  leading: Icon(modulos[index].icono),
-                                  trailing: const Icon(Icons.arrow_right_rounded),
-                                  title: Text(modulos[index].titulo),
+                                  contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+                                  trailing: index == 0 ? estadoIndicador(indicadoresData) : null,
+                                  title: Row(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: 5),
+                                        child: Icon(
+                                          modulos[index].icono,
+                                          size: 15,
+                                        ),
+                                      ),
+                                      Text(modulos[index].titulo),
+                                    ],
+                                  ),
                                   onTap: () {
 
                                     Navigator.pushNamed(context, modulos[index].ruta, arguments: {
                                       "modulo" : modulos[index],
-                                      "usuario" : snapshot.data
+                                      "usuario" : usuarioData
                                     });
                               
                                   }
@@ -164,7 +285,6 @@ class PantallaModulos extends StatelessWidget {
     );
 
   }
-
 }
 
 class CurvaFondoInferior extends CustomClipper<Path> {

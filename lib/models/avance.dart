@@ -19,6 +19,8 @@ class Avance {
   dynamic porAvance;
   dynamic porAvanceAuditoria;
   dynamic porNivelError;
+  dynamic porAvanceBodega;
+  dynamic porAvanceSala;
   String? nombreLider;
   String? nombreArchivoOriginal;
   String? nombreLocal;
@@ -56,6 +58,18 @@ class Avance {
 
   }
 
+  String get obtenerPorAvanceBodega {
+
+    return formatearPorcentaje(porAvanceBodega, 2);
+
+  }
+
+  String get obtenerPorAvanceSala {
+
+    return formatearPorcentaje(porAvanceSala, 2);
+
+  }
+
   String get obtenerPorAvanceUnidades {
 
     return formatearPorcentaje(porAvanceUnidades, 2);
@@ -90,6 +104,8 @@ class Avance {
     this.porAvance,
     this.porAvanceAuditoria,
     this.porNivelError,
+    this.porAvanceBodega,
+    this.porAvanceSala,
     this.nombreLider,
     this.nombreArchivoOriginal,
     this.nombreLocal,
@@ -132,6 +148,8 @@ class Avance {
       porAvance: json['por_avance'],
       porAvanceAuditoria: json['por_avance_auditoria'],
       porNivelError: json['por_nivel_error'],
+      porAvanceBodega: json["por_avance_bodega"],
+      porAvanceSala: json["por_avance_sala"],
       nombreLider: json['nombre_lider'],
       nombreArchivoOriginal: json['nombre_archivo_original'],
       nombreLocal: json['nombre_local'],

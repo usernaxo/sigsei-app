@@ -1,14 +1,14 @@
 import 'dart:convert';
-import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:sigsei/models/auditoria_bodega.dart';
 import 'package:sigsei/models/auditoria_smu.dart';
 import 'package:sigsei/models/avance.dart';
 import 'package:sigsei/models/indicador.dart';
-import 'package:sigsei/models/indicadores_respuesta.dart';
 import 'package:sigsei/models/inventario_general.dart';
 import 'package:sigsei/models/token.dart';
 import 'package:http/http.dart' as http;
@@ -29,7 +29,6 @@ class ProveedorEstado extends ChangeNotifier {
   bool cargando = false;
 
   Token? tokenUsuario;
-  IndicadoresRespuesta? indicadores;
   List<Indicador>? listaIndicadores = [];
   List<AuditoriaSmu> listaAuditoriasSmu = [];
   List<AuditoriaBodega> listaAuditoriasBodega = [];
@@ -180,9 +179,9 @@ class ProveedorEstado extends ChangeNotifier {
 
       if (respuestaObtenerIndicadores.statusCode == 200) {
 
-        final indicadores = IndicadoresRespuesta.fromJson(respuestaObtenerIndicadores.body);
+        List<dynamic> indicadores = json.decode(respuestaObtenerIndicadores.body)["indicadores"];
 
-        listaIndicadores = indicadores.listaIndicadores;
+        listaIndicadores = indicadores.map((json) => Indicador.fromJson(json)).toList();
 
         Uri peticionObtenerAvances = Uri.https(servidor, avancesEndpoint, {
           "fecha_inicio": fechaInicio,
@@ -256,49 +255,43 @@ class ProveedorEstado extends ChangeNotifier {
 
     try {
 
+      Dio dio = Dio();
+      
+      dio.options.headers["Authorization"] = "Bearer $tokenUsuario";
+
       Uri peticionDescargarArchivo = Uri.https(servidor, "/v2/inventario/archivo-final/$idArchivo/$endpoint");
 
-      final peticionDescargarArchivoCliente = http.Request("GET", peticionDescargarArchivo);
+      final respuestaDescargarArchivo = await dio.head(peticionDescargarArchivo.toString());
+      final nombreArchivo = obtenerNombreArchivo(respuestaDescargarArchivo.headers.value("content-disposition"));
 
-      peticionDescargarArchivoCliente.headers["Authorization"] = "Bearer $tokenUsuario";
+      final rutaDescargas = await getExternalStorageDirectory();
 
-      final respuestaDescargarArchivo = await http.Client().send(peticionDescargarArchivoCliente);
+      if (rutaDescargas == null) {
 
-      if (respuestaDescargarArchivo.statusCode == 200) {
+        return "Sin acceso a directorio";
 
-        final tamanoContenido = respuestaDescargarArchivo.contentLength;
-        final nombreArchivo = obtenerNombreArchivo(respuestaDescargarArchivo.headers["content-disposition"]);
-        final rutaDescargas = Directory("/storage/emulated/0/Download");
+      }
 
-        if (!rutaDescargas.existsSync()) {
+      final rutaArchivo = "${rutaDescargas.path}/$nombreArchivo";
 
-          await rutaDescargas.create(recursive: true);
+      Response response = await dio.download(
+        peticionDescargarArchivo.toString(),
+        rutaArchivo,
+        onReceiveProgress: (received, total) {
 
-        }
+          if (total != -1) {
 
-        final rutaArchivo = "${rutaDescargas.path}/$nombreArchivo";
-        final archivo = File(rutaArchivo);
-        final sink = archivo.openWrite();
+            double progreso = (received / total) * 100;
 
-        int bytesLeidos = 0;
-        
-        await for (var chunk in respuestaDescargarArchivo.stream) {
-
-          bytesLeidos += chunk.length;
-          sink.add(chunk);
-
-          if (tamanoContenido != null) {
-
-            double progreso = (bytesLeidos / tamanoContenido) * 100;
-            
             onProgreso(progreso);
 
           }
 
-        }
+        },
 
-        await sink.flush();
-        await sink.close();
+      );
+
+      if (response.statusCode == 200) {
 
         final resultadoAbrirArchivo = await OpenFile.open(rutaArchivo);
 
@@ -308,11 +301,11 @@ class ProveedorEstado extends ChangeNotifier {
 
         }
 
-        return "Archivo Descargado: $nombreArchivo";
+        return "$nombreArchivo";
 
       } else {
 
-        return "Error al descargar el archivo: ${respuestaDescargarArchivo.statusCode}";
+        return "Error al descargar el archivo: ${response.statusCode}";
 
       }
 
@@ -437,6 +430,49 @@ class ProveedorEstado extends ChangeNotifier {
 
   }
 
+  Future<Excluyente?> obtenerExcluyenteAuditoriaBodega(int auditoriaBodegaId) async {
+
+    const almacenamiento = FlutterSecureStorage();
+    
+    final tokenUsuario = await almacenamiento.read(key: "tokenUsuario");
+
+    try {
+
+      Uri peticionObtenerExcluyenteAuditoriaBodega = Uri.https(servidor, "/v2/auditoriasSMU/bodega/$auditoriaBodegaId/get-data-cierre");
+
+      final respuestaObtenerExcluyenteAuditoriaBodega = await http.get(
+        peticionObtenerExcluyenteAuditoriaBodega,
+        headers: {
+          "Authorization": "Bearer $tokenUsuario"
+        }
+      );
+
+      if (respuestaObtenerExcluyenteAuditoriaBodega.statusCode == 200) {
+
+        Excluyente excluyente = Excluyente.fromJson(json.decode(respuestaObtenerExcluyenteAuditoriaBodega.body));
+
+        return excluyente;
+          
+      } else {
+
+        return null;
+
+      }
+
+    } catch (excepcion) {
+
+      return null;
+
+    } finally {
+
+      cargando = false;
+
+      notifyListeners();
+
+    }
+
+  }
+
   Future<List<InventarioGeneral>?> obtenerInventarioGeneral(String fechaInicio, String fechaFin) async {
 
     const almacenamiento = FlutterSecureStorage();
@@ -462,8 +498,6 @@ class ProveedorEstado extends ChangeNotifier {
 
       if (respuestaObtenerInventarioGeneralSemanal.statusCode == 200) {
 
-        print(respuestaObtenerInventarioGeneralSemanal.body);
-
         List<dynamic> inventarioGeneral = json.decode(respuestaObtenerInventarioGeneralSemanal.body);
 
         listaInventarioGeneral = inventarioGeneral.map((json) => InventarioGeneral.fromJson(json)).toList();
@@ -476,9 +510,7 @@ class ProveedorEstado extends ChangeNotifier {
 
       }
 
-    } catch (excepcion, stack) {
-
-      print(stack);
+    } catch (excepcion) {
 
       return [];
 

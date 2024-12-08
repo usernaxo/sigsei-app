@@ -8,6 +8,11 @@ class Tema {
   static ThemeData light = ThemeData.light().copyWith(
     primaryColor: primary,
     primaryColorLight: primaryLight,
+    textTheme: const TextTheme(
+      bodySmall: TextStyle(fontSize: 12, color: Colors.black),
+      bodyMedium: TextStyle(fontSize: 12, color: Colors.black),
+      bodyLarge: TextStyle(fontSize: 12, color: Colors.black),
+    ),
     colorScheme: ThemeData.light().colorScheme.copyWith(
       primary: primary
     ),
@@ -15,45 +20,44 @@ class Tema {
       filled: true,
       fillColor: primaryLight,
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(7),
         borderSide: BorderSide.none
       ),
       labelStyle: TextStyle(
-        fontSize: 14,
-        color: primary
+        fontSize: 12,
+        color: primary,
+      ),
+      hintStyle: TextStyle(
+        fontSize: 12,
+        color: primary,
       ),
     ),
     filledButtonTheme: FilledButtonThemeData(
       style: TextButton.styleFrom(
+        textStyle: const TextStyle(
+          fontSize: 12
+        ),
         backgroundColor: primary,
         foregroundColor: Colors.white,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10)
+          borderRadius: BorderRadius.circular(7)
         )
       )
     ),
     listTileTheme: ListTileThemeData(
       dense: true,
-      contentPadding: const EdgeInsets.all(10),
+      contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
       iconColor: primary,
+      titleTextStyle: TextStyle(
+        fontSize: 12,
+        color: Colors.grey.shade800
+      ),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10), 
+        borderRadius: BorderRadius.circular(7), 
       )
     ),
     iconTheme: IconThemeData(
       color: primary,
-    ),
-    dataTableTheme: DataTableThemeData(
-      headingRowColor: WidgetStateProperty.all(primary),
-      headingTextStyle: const TextStyle(
-        fontSize: 11,
-        fontWeight: FontWeight.bold,
-        color: Colors.white,
-      ),
-      dataTextStyle: const TextStyle(
-        fontSize: 11,
-        color: Colors.black,
-      ),
     ),
     textSelectionTheme: TextSelectionThemeData(
       cursorColor: primary
@@ -65,7 +69,7 @@ class Tema {
         backgroundColor: WidgetStateProperty.resolveWith((state) => Tema.primaryLight),
         shape: WidgetStateProperty.resolveWith((state) {
           return RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(7),
           );
         })
       ),
@@ -74,7 +78,7 @@ class Tema {
         backgroundColor: WidgetStateProperty.resolveWith((state) => Tema.primaryLight),
         shape: WidgetStateProperty.resolveWith((state) {
           return RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10)
+            borderRadius: BorderRadius.circular(7)
           );
         })
       ),
@@ -84,7 +88,7 @@ class Tema {
       ),
       headerForegroundColor: Tema.primary,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(7),
       ),
     ),
     sliderTheme: const SliderThemeData(
@@ -95,6 +99,6 @@ class Tema {
       overlayShape: RoundSliderOverlayShape(
         overlayRadius: 0,
       ),
-    )
+    ),
   );
 }

@@ -2,7 +2,7 @@ class IndicadorDeficiente {
 
   static int limiteHorasIg = 09;
   static double limiteNotaPromedio = 6.0;
-  static double limiteErrorSei = 0.6;
+  static double limiteErrorSei = 1.0;
   static double limiteEstandarSei = 98;
   static double limiteVarianza = 0.2;
 
@@ -31,7 +31,7 @@ class IndicadorDeficiente {
 
     double? valorErrorSei = double.tryParse(errorSei.replaceAll(",", ".").replaceAll("%", ""));
 
-    return valorErrorSei != null ? ((valorErrorSei >= limiteErrorSei) ? true : false) : false;
+    return valorErrorSei != null ? ((valorErrorSei > limiteErrorSei) ? true : false) : false;
 
   }
 

@@ -3,12 +3,12 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:sigsei/helpers/indicador_deficiente.dart';
-import 'package:sigsei/helpers/modulo.dart';
+import 'package:sigsei/models/modulo.dart';
 import 'package:sigsei/models/indicador.dart';
 import 'package:sigsei/models/usuario.dart';
 import 'package:sigsei/providers/proveedor_estado.dart';
 import 'package:sigsei/themes/tema.dart';
-import 'package:sigsei/widgets/barra_usuario.dart';
+import 'package:sigsei/widgets/pantalla_general/barra_usuario.dart';
 
 class PantallaModulos extends StatefulWidget {
   
@@ -106,7 +106,7 @@ class _PantallaModulosState extends State<PantallaModulos> {
       String notaPromedio = indicador.obtenerAvgScores!;
       String errorSei = indicador.obtenerSeiError!;
       String estandarSei = indicador.obtenerSeiStandard!;
-      String varianza = indicador.obtenerVariance!;
+      String varianza = indicador.obtenerVarianza!;
 
       if (IndicadorDeficiente.esHorasIgDeficiente(horasIg) || IndicadorDeficiente.esNotaPromedioDeficiente(notaPromedio) || IndicadorDeficiente.esErrorSeiDeficiente(errorSei) || IndicadorDeficiente.esEstandarSeiDeficiente(estandarSei) || IndicadorDeficiente.esVarianzaDeficiente(varianza)) {
 
@@ -130,29 +130,31 @@ class _PantallaModulosState extends State<PantallaModulos> {
           color: Colors.yellow,
         );
 
-      }
+      } else {
 
-      bool existenIndicadoresDeficientes = false;
+        bool existenIndicadoresDeficientes = false;
 
-      for (Indicador indicador in indicadores) {
+        for (Indicador indicador in indicadores) {
 
-        if (indicadorRojo(indicador)) {
+          if (indicadorRojo(indicador)) {
 
-          existenIndicadoresDeficientes = true;
+            existenIndicadoresDeficientes = true;
 
-          break;
+            break;
+
+          }
 
         }
 
+        return Icon(
+
+          Icons.circle,
+          size: 10,
+          color: existenIndicadoresDeficientes ? Colors.red : Colors.green,
+
+        );
+
       }
-
-      return Icon(
-
-        Icons.circle,
-        size: 10,
-        color: existenIndicadoresDeficientes ? Colors.red : Colors.green,
-
-      );
       
     }
 
@@ -163,7 +165,15 @@ class _PantallaModulosState extends State<PantallaModulos> {
 
           if (snapshot.connectionState == ConnectionState.waiting) {
 
-            return const Center(child: CircularProgressIndicator());
+            return const Center(
+              child: SizedBox(
+                width: 25,
+                height: 25,
+                child: CircularProgressIndicator(
+                  strokeWidth: 1.5
+                ),
+              )
+            );
 
           } else if (snapshot.hasError) {
 
@@ -193,7 +203,7 @@ class _PantallaModulosState extends State<PantallaModulos> {
                     children: [
                       BarraUsuario(usuario: usuarioData, botonRetroceso: false),
                       const Padding(
-                        padding: EdgeInsets.all(10),
+                        padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                         child: Column(
                           children: [
                             Row(
@@ -234,7 +244,7 @@ class _PantallaModulosState extends State<PantallaModulos> {
                               return Card(
                                 elevation: 0,
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(7),
                                   side: BorderSide(
                                     color: Tema.primaryLight
                                   )

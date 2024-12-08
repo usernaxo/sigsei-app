@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:intl/intl.dart';
 import 'package:sigsei/models/avance.dart';
 
@@ -18,7 +16,7 @@ class Indicador {
   int? dotacion;
   bool? deterioro;
   String? horario;
-  DateTime? fecha;
+  String? fecha;
   List<Log>? logs;
   Avance? avance;
 
@@ -41,9 +39,45 @@ class Indicador {
     this.avance
   });
 
-  String get obtenerStockTeorico {
+  String? get obtenerNombreCliente {
+
+    return clientName;
+
+  }
+
+  String? get obtenerCE {
+
+    return storeNumber;
+
+  }
+
+  String? get obtenerNombreLocal {
+
+    return storeName!;
+
+  }
+
+  String? get obtenerNombreLocalCorto {
+
+    return storeName!.length > 14 ? storeName!.substring(0, 14) : storeName!;
+
+  }
+
+  String? get obtenerStockTeorico {
 
     return formatearCantidad(stockTeorico);
+
+  }
+
+  String? get obtenerVarianza {
+
+    if (indicator != null) {
+
+      return formatearPorcentaje(indicator!.variance, 1);
+
+    }
+
+    return "-";
 
   }
 
@@ -64,18 +98,6 @@ class Indicador {
     if (indicator != null) {
 
       return formatearPorcentaje(indicator!.seiStandard, 1);
-
-    }
-
-    return "-";
-
-  }
-
-  String? get obtenerVariance {
-
-    if (indicator != null) {
-
-      return formatearPorcentaje(indicator!.variance, 1);
 
     }
 
@@ -185,26 +207,34 @@ class Indicador {
 
   }
 
-  factory Indicador.fromJson(String str) => Indicador.fromMap(json.decode(str));
+  factory Indicador.fromJson(Map<String, dynamic> json) {
 
-  factory Indicador.fromMap(Map<String, dynamic> json) => Indicador(
-    clientName: json["client_name"],
-    storeNumber: json["store_number"],
-    storeName: json["store_name"],
-    storeCommune: json["store_commune"],
-    leader: json["leader"],
-    indicator: (json["indicator"] != null && json["indicator"] is! List) ? Indicator.fromMap(json["indicator"]) : null,
-    inv: json["inv"],
-    invReport: json["inv_report"],
-    stockTeorico: json["stock_teorico"],
-    esDia: json["es_dia"],
-    dotacion: json["dotacion"],
-    deterioro: json["deterioro"],
-    horario: json["horario"],
-    fecha: json["fecha"] == null ? null : DateTime.parse(json["fecha"]),
-    logs: json["logs"] == null ? [] : List<Log>.from(json["logs"]!.map((x) => Log.fromMap(x))),
-    avance: null
-  );
+    Indicator? objetoIndicador = json["indicator"] == null || json["indicator"] is List ? null : Indicator.fromJson(json["indicator"] as Map<String, dynamic>);
+
+    var logsLista = json['logs'] as List;
+
+    List<Log> listaLogs = logsLista.map((log) => Log.fromJson(log)).toList();
+
+    return Indicador(
+      clientName: json["client_name"],
+      storeNumber: json["store_number"],
+      storeName: json["store_name"],
+      storeCommune: json["store_commune"],
+      leader: json["leader"],
+      indicator: objetoIndicador,
+      inv: json["inv"],
+      invReport: json["inv_report"],
+      stockTeorico: json["stock_teorico"],
+      esDia: json["es_dia"],
+      dotacion: json["dotacion"],
+      deterioro: json["deterioro"],
+      horario: json["horario"],
+      fecha: json["fecha"],
+      logs: listaLogs,
+      avance: null
+    );
+
+  }
 
   String formatearPorcentaje(dynamic porcentaje, int cantidadDecimal) {
 
@@ -290,33 +320,42 @@ class Indicator {
     this.tooltipNomina,
   });
 
-  factory Indicator.fromJson(String str) => Indicator.fromMap(json.decode(str));
+  factory Indicator.fromJson(Map<String, dynamic> json) {
 
-  factory Indicator.fromMap(Map<String, dynamic> json) => Indicator(
-    idFile: json["id_file"],
-    unitsCounted: json["units_counted"],
-    durationCount: json["duration_count"],
-    durationProcess: json["duration_process"],
-    igHours: json["ig_hours"],
-    avgScores: json["avg_scores"],
-    seiError: json["sei_error"],
-    seiStandard: json["sei_standard"]?.toDouble(),
-    variance: json["variance"],
-    diffCountedInformed: json["diff_counted_informed"],
-    pttRevRate: json["ptt_rev_rate"],
-    itemsRevRate: json["items_rev_rate"],
-    errorClient: json["error_client"],
-    clientStandard: json["client_standard"],
-    differenceNeto: json["difference_neto"],
-    errorOperadores: json["error_operadores"],
-    notaConteo: json["nota_conteo"],
-    tiempoConteo: json["tiempo_conteo"],
-    tooltipTitulares: json["tooltip_titulares"] == null ? [] : List<Titular>.from(json["tooltip_titulares"]!.map((x) => Titular.fromMap(x))),
-    tooltipLider: json["tooltip_lider"] == null ? null : Lider.fromMap(json["tooltip_lider"]),
-    tooltipJl: json["tooltip_jl"],
-    inventario: json["inventario"],
-    tooltipNomina: json["tooltip_nomina"] == null ? null : Nomina.fromMap(json["tooltip_nomina"]),
-  );
+    var titularesLista = json['tooltip_titulares'] == null ? [] : json['tooltip_titulares'] as List;
+
+    List<Titular> listaTitulares = titularesLista.map((titular) => Titular.fromJson(titular)).toList();
+
+    Lider? objetoLider = json["tooltip_lider"] == null ? null : Lider.fromJson(json["tooltip_lider"] as Map<String, dynamic>);
+    Nomina? objetoNomina = json["tooltip_nomina"] == null ? null : Nomina.fromJson(json["tooltip_nomina"] as Map<String, dynamic>);
+
+    return Indicator(
+      idFile: json["id_file"],
+      unitsCounted: json["units_counted"],
+      durationCount: json["duration_count"],
+      durationProcess: json["duration_process"],
+      igHours: json["ig_hours"],
+      avgScores: json["avg_scores"],
+      seiError: json["sei_error"],
+      seiStandard: json["sei_standard"],
+      variance: json["variance"],
+      diffCountedInformed: json["diff_counted_informed"],
+      pttRevRate: json["ptt_rev_rate"],
+      itemsRevRate: json["items_rev_rate"],
+      errorClient: json["error_client"],
+      clientStandard: json["client_standard"],
+      differenceNeto: json["difference_neto"],
+      errorOperadores: json["error_operadores"],
+      notaConteo: json["nota_conteo"],
+      tiempoConteo: json["tiempo_conteo"],
+      tooltipTitulares: listaTitulares,
+      tooltipLider: objetoLider,
+      tooltipJl: json["tooltip_jl"],
+      inventario: json["inventario"],
+      tooltipNomina: objetoNomina,
+    );
+
+  }
 
 }
 
@@ -344,33 +383,21 @@ class Nomina {
     this.totalTeorico,
   });
 
-  factory Nomina.fromJson(String str) => Nomina.fromMap(json.decode(str));
+  factory Nomina.fromJson(Map<String, dynamic> json) {
 
-  String toJson() => json.encode(toMap());
+    return Nomina(
+      prodSugerida: json["prod_sugerida"],
+      horaLlegada: json["hora_llegada"],
+      totalHorasConteo: json["total_horas_conteo"],
+      dotacion: json["dotacion"],
+      totalSala: json["total_sala"],
+      totalBodega: json["total_bodega"],
+      notaPresentacion: json["nota_presentacion"],
+      notaSupervisor: json["nota_supervisor"],
+      totalTeorico: json["total_teorico"],
+    );
 
-  factory Nomina.fromMap(Map<String, dynamic> json) => Nomina(
-    prodSugerida: json["prod_sugerida"],
-    horaLlegada: json["hora_llegada"],
-    totalHorasConteo: json["total_horas_conteo"],
-    dotacion: json["dotacion"],
-    totalSala: json["total_sala"],
-    totalBodega: json["total_bodega"],
-    notaPresentacion: json["nota_presentacion"],
-    notaSupervisor: json["nota_supervisor"],
-    totalTeorico: json["total_teorico"],
-  );
-
-  Map<String, dynamic> toMap() => {
-    "prod_sugerida": prodSugerida,
-    "hora_llegada": horaLlegada,
-    "total_horas_conteo": totalHorasConteo,
-    "dotacion": dotacion,
-    "total_sala": totalSala,
-    "total_bodega": totalBodega,
-    "nota_presentacion": notaPresentacion,
-    "nota_supervisor": notaSupervisor,
-    "total_teorico": totalTeorico,
-  };
+  }
 
 }
 
@@ -388,23 +415,16 @@ class Lider {
     this.conteo,
   });
 
-  factory Lider.fromJson(String str) => Lider.fromMap(json.decode(str));
+  factory Lider.fromJson(Map<String, dynamic> json) {
 
-  String toJson() => json.encode(toMap());
+    return Lider(
+      titular: json["Titular"],
+      error: json["Error"],
+      cantError: json["CantError"],
+      conteo: json["Conteo"],
+    );
 
-  factory Lider.fromMap(Map<String, dynamic> json) => Lider(
-    titular: json["Titular"],
-    error: json["Error"],
-    cantError: json["CantError"],
-    conteo: json["Conteo"],
-  );
-
-  Map<String, dynamic> toMap() => {
-    "Titular": titular,
-    "Error": error,
-    "CantError": cantError,
-    "Conteo": conteo,
-  };
+  }
 
   String? get obtenerTitular {
 
@@ -484,7 +504,7 @@ class Log {
   String? log;
   int? tipo;
   int? idInventario;
-  DateTime? createdAt;
+  String? createdAt;
 
   Log({
     this.id,
@@ -494,25 +514,17 @@ class Log {
     this.createdAt,
   });
 
-  factory Log.fromJson(String str) => Log.fromMap(json.decode(str));
+  factory Log.fromJson(Map<String, dynamic> json) {
 
-  String toJson() => json.encode(toMap());
+    return Log(
+      id: json["id"],
+      log: json["log"],
+      tipo: json["tipo"],
+      idInventario: json["idInventario"],
+      createdAt: json["created_at"],
+    );
 
-  factory Log.fromMap(Map<String, dynamic> json) => Log(
-    id: json["id"],
-    log: json["log"],
-    tipo: json["tipo"],
-    idInventario: json["idInventario"],
-    createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
-  );
-
-  Map<String, dynamic> toMap() => {
-    "id": id,
-    "log": log,
-    "tipo": tipo,
-    "idInventario": idInventario,
-    "created_at": createdAt?.toIso8601String(),
-  };
+  }
 
 }
 
@@ -546,39 +558,24 @@ class Reporte {
     this.auditoria,
   });
 
-  factory Reporte.fromJson(String str) => Reporte.fromMap(json.decode(str));
+  factory Reporte.fromJson(Map<String, dynamic> json) {
 
-  String toJson() => json.encode(toMap());
+    return Reporte(
+      idMarca: json["idMarca"],
+      idInventario: json["idInventario"],
+      idDescripcionReportesIg: json["idDescripcionReportesIG"],
+      idDescripcionReportesLocal: json["idDescripcionReportesLocal"],
+      tipo: json["tipo"],
+      hora: json["hora"],
+      dotacion: json["dotacion"],
+      avance: json["avance"],
+      error: json["error"],
+      comentario: json["comentario"],
+      idUser: json["idUser"],
+      auditoria: json["auditoria"],
+    );
 
-  factory Reporte.fromMap(Map<String, dynamic> json) => Reporte(
-    idMarca: json["idMarca"],
-    idInventario: json["idInventario"],
-    idDescripcionReportesIg: json["idDescripcionReportesIG"],
-    idDescripcionReportesLocal: json["idDescripcionReportesLocal"],
-    tipo: json["tipo"],
-    hora: json["hora"],
-    dotacion: json["dotacion"],
-    avance: json["avance"],
-    error: json["error"],
-    comentario: json["comentario"],
-    idUser: json["idUser"],
-    auditoria: json["auditoria"]?.toDouble(),
-  );
-
-  Map<String, dynamic> toMap() => {
-    "idMarca": idMarca,
-    "idInventario": idInventario,
-    "idDescripcionReportesIG": idDescripcionReportesIg,
-    "idDescripcionReportesLocal": idDescripcionReportesLocal,
-    "tipo": tipo,
-    "hora": hora,
-    "dotacion": dotacion,
-    "avance": avance,
-    "error": error,
-    "comentario": comentario,
-    "idUser": idUser,
-    "auditoria": auditoria,
-  };
+  }
 
 }
 
@@ -600,27 +597,18 @@ class Titular {
     this.exp,
   });
 
-  factory Titular.fromJson(String str) => Titular.fromMap(json.decode(str));
+  factory Titular.fromJson(Map<String, dynamic> json) {
 
-  String toJson() => json.encode(toMap());
+    return Titular(
+      titular: json["Titular"],
+      comuna: json["Comuna"],
+      error: json["Error"],
+      cantError: json["CantError"],
+      conteo: json["Conteo"],
+      exp: json["EXP"],
+    );
 
-  factory Titular.fromMap(Map<String, dynamic> json) => Titular(
-    titular: json["Titular"],
-    comuna: json["Comuna"],
-    error: json["Error"],
-    cantError: json["CantError"],
-    conteo: json["Conteo"],
-    exp: json["EXP"],
-  );
-
-  Map<String, dynamic> toMap() => {
-    "Titular": titular,
-    "Comuna": comuna,
-    "Error": error,
-    "CantError": cantError,
-    "Conteo": conteo,
-    "EXP": exp,
-  };
+  }
 
   String? get obtenerTitular {
 

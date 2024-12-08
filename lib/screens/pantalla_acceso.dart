@@ -91,9 +91,9 @@ class _PantallaAccesoState extends State<PantallaAcceso> {
                           children: [
                             Image.asset(
                               "assets/images/sei.png",
-                              color: Tema.light.primaryColor,
+                              color: Tema.primary,
                               height: 100,
-                              width: 130,
+                              width: 100,
                             ),
                             Text(
                               "Consultores",
@@ -110,54 +110,67 @@ class _PantallaAccesoState extends State<PantallaAcceso> {
                             children: [
                               const Divider(),
                               const Padding(
-                                padding: EdgeInsets.symmetric(vertical: 10),
+                                padding: EdgeInsets.symmetric(vertical: 7),
                                 child: Row(
                                   children: [
-                                    Icon(Icons.info_outline_rounded),
+                                    Icon(
+                                      Icons.info_outline_rounded,
+                                      size: 15,
+                                    ),
                                     SizedBox(width: 5),
                                     Text("Ingrese email y clave para acceder")
                                   ],
                                 ),
                               ),
                               Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 10),
+                                padding: const EdgeInsets.symmetric(vertical: 7),
                                 child: TextFormField(
                                   keyboardType: TextInputType.emailAddress,
                                   initialValue: "igomez@seiconsultores.cl",
                                   decoration: const InputDecoration(
+                                    contentPadding: EdgeInsets.zero,
                                     hintText: "Email",
-                                    prefixIcon: Icon(Icons.person_rounded)
+                                    prefixIcon: Icon(
+                                      Icons.person_rounded,
+                                      size: 15,
+                                    )
                                   ),
                                   onSaved: (value) => email = value,
                                 ),
                               ),
                               Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 10),
+                                padding: const EdgeInsets.symmetric(vertical: 7),
                                 child: TextFormField(
                                   obscureText: true,
                                   initialValue: "ignaciosei2024",
                                   decoration: const InputDecoration(
+                                    contentPadding: EdgeInsets.zero,
                                     hintText: "Clave",
-                                    prefixIcon: Icon(Icons.lock_rounded)
+                                    prefixIcon: Icon(
+                                      Icons.lock_rounded,
+                                      size: 15,
+                                    )
                                   ),
                                   onSaved: (value) => clave = value,
                                 ),
                               ),
                               const Divider(),
                               Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 20),
+                                padding: const EdgeInsets.symmetric(vertical: 15),
                                 child: SizedBox(
                                   width: double.infinity,
                                   child: FilledButton.icon(
                                     label: provedor.estaCargando ? const Text("Validando...") : const Text("Acceder"),
-                                    icon: provedor.estaCargando ? null : const Icon(Icons.arrow_forward),
+                                    icon: provedor.estaCargando ? null : const Icon(
+                                      Icons.arrow_forward_rounded,
+                                      size: 15,
+                                    ),
                                     style: TextButton.styleFrom(
-                                      padding: const EdgeInsets.symmetric(vertical: 15),
+                                      padding: const EdgeInsets.symmetric(vertical: 10),
                                       side: const BorderSide(
                                         color: Colors.white,
-                                        width: 2
+                                        width: 1.5
                                       ),
-                                      elevation: 3
                                     ),
                                     onPressed: provedor.estaCargando ? null : () => iniciarSesion()
                                   ),

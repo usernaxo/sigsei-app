@@ -1,3 +1,6 @@
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+
 class InventarioGeneral {
 
   dynamic invIdInventario;
@@ -407,6 +410,227 @@ class InventarioGeneral {
 
   }
 
+  String? get obtenerNombreCliente {
+
+    return clienteNombreCorto;
+
+  }
+
+  String? get obtenerCE {
+
+    return localCeco;
+
+  }
+
+  String? get obtenerNombreLocal {
+
+    return localNombre;
+
+  }
+
+  String? get obtenerComuna {
+
+    return localComuna;
+
+  }
+
+  String? get obtenerRegion {
+
+    return localRegion;
+
+  }
+
+  String? get obtenerDireccion {
+
+    return localDireccion;
+
+  }
+
+  String? get obtenerLider {
+
+    return esNoche! ? nnocheLider : ndiaLider;
+
+  }
+
+  String? get obtenerHorarioLider {
+
+    return esNoche! ? nnocheHrLider : ndiaHrLider;
+
+  }
+
+  String? get obtenerHorarioEquipo {
+
+    return esNoche! ? nnocheHrEquipo : ndiaHrEquipo;
+
+  }
+
+  String? get obtenerHoraEgreso {
+
+    return storeDepartureTime;
+
+  }
+
+  String? get obtenerPTT {
+
+    return invPatentes.toString();
+
+  }
+
+  String? get obtenerPDA {
+
+    return invPda.toString();
+
+  }
+
+  String? get obtenerStockTeorico {
+
+    return NumberFormat("#,###", "es_ES").format(invStockTeorico);
+
+  }
+
+  String? get obtenerStockConteo {
+
+    return NumberFormat("#,###", "es_ES").format(invUnidadesReales);
+
+  }
+
+  bool? get esNoche {
+
+    return invJornada!.toLowerCase().contains("noche");
+
+  }
+
+  bool? get contieneDadosBaja {
+
+    return esNoche! ? (nnocheTotalDadosBaja!.isNotEmpty ? true : false) : (ndiaTotalDadosBaja!.isNotEmpty ? true : false);
+
+  }
+
+  Map<String, dynamic> get obtenerEstadoNomina {
+
+    final estadoNomina = {
+      2: {"estado": "Pendiente", "fontColor": contieneDadosBaja! ? Colors.white : Colors.black ,"backgroundColor": contieneDadosBaja! ? Colors.black : Colors.amber.shade100},
+      3: {"estado": "Aceptada", "fontColor": contieneDadosBaja! ? Colors.white : Colors.black ,"backgroundColor": contieneDadosBaja! ? Colors.black : Colors.green.shade100},
+      4: {"estado": "Aprobada", "fontColor": contieneDadosBaja! ? Colors.white : Colors.black ,"backgroundColor": contieneDadosBaja! ? Colors.black : Colors.blue.shade100},
+      5: {"estado": "Informada", "fontColor": contieneDadosBaja! ? Colors.white : Colors.black ,"backgroundColor": contieneDadosBaja! ? Colors.black : Colors.blue.shade300},
+    };
+
+    final estado = esNoche! ? estadoNomina[nnocheIdEstadoNomina] : estadoNomina[ndiaIdEstadoNomina];
+
+    return estado ?? {"estado": "Pendiente", "color": Colors.amber.shade200};
+
+  }
+
+  Map<String, dynamic> get obtenerEstadoMensajeInventario {
+
+    final mensajes = {
+      "optimo": {"valor": "OP", "backgroundColor": Colors.green.shade300},
+      "sobredotación": {"valor": "SD", "backgroundColor": Colors.blue.shade300},
+      "sobredotación alta": {"valor": "SDA", "backgroundColor": Colors.blue.shade300},
+      "precaución": {"valor": "PR", "backgroundColor": Colors.deepOrange.shade300},
+      "peligro": {"valor": "PE", "backgroundColor": Colors.red.shade300},
+    };
+
+    final mensaje = esNoche! ? nnocheMensaje!.toLowerCase() : ndiaMensaje!.toLowerCase();
+
+    final mensajesOrdenados = mensajes.keys.toList()..sort((a, b) => b.length.compareTo(a.length));
+    
+    final mensajeEncontrado = mensajesOrdenados.firstWhere(
+      (clave) => mensaje.startsWith(clave),
+      orElse: () => "desconocido",
+    );
+
+    return mensajes[mensajeEncontrado] ?? {"valor": "UNK", "backgroundColor": Colors.black};
+
+  }
+
+  List<Map<String, dynamic>> get obtenerTitulares {
+    
+    final List<Map<String, dynamic>> mensajes = [];
+
+    final titulares = esNoche! ? nnocheTotalTitulares : ndiaTotalTitulares;
+    final titularesBaja = esNoche! ? nnocheTotalDadosBaja : ndiaTotalDadosBaja;
+
+    for (var titular in titulares!) {
+
+      mensajes.add({
+        "operador": titular,
+        "colorEstadoOperador": titular.estadoAsistencia! < 3 ? Colors.red : Colors.green,
+        "baja": false
+      });
+
+    }
+
+    if (titularesBaja != null) {
+
+      for (var titularBaja in titularesBaja) {
+
+        mensajes.add({
+          "operador": titularBaja,
+          "colorEstadoOperador": Colors.red,
+          "baja": true
+        });
+
+      }
+
+    }
+
+    return mensajes;
+
+  }
+
+  String? get obtenerMensajeInventario {
+
+    return esNoche! ? nnocheMensaje : ndiaMensaje;
+
+  }
+
+  bool? get estadoInventarioVerde {
+
+    if (esNoche!) {
+
+      return nnocheTotalTitulares!.every((titular) => titular.estadoAsistencia! >= 3) ? true : false;
+
+    } else {
+
+      return ndiaTotalTitulares!.every((titular) => titular.estadoAsistencia! >= 3) ? true : false;
+
+    }
+
+  }
+
+  double? get obtenerLocalLatitud {
+
+    if (localGmapLatitud != null) {
+
+      if (localGmapLatitud is String) {
+
+        return double.tryParse(localGmapLatitud!);
+
+      }
+
+    }
+
+    return null;
+
+  }
+
+  double? get obtenerLocalLongitud {
+
+    if (localGmapLongitud != null) {
+
+      if (localGmapLongitud is String) {
+
+        return double.tryParse(localGmapLongitud!);
+
+      }
+
+    }
+
+    return null;
+
+  }
+
 }
 
 class InvComentario {
@@ -554,6 +778,54 @@ class NdiaTotalDadosBaja {
       estadoAsistencia: json["estado_asistencia"] ?? 0,
       captador: json["captador"] ?? 0
     );
+
+  }
+
+  String? get obtenerNombreCorto {
+
+    return nombreCorto;
+
+  }
+
+  String? get obtenerComuna {
+
+    return comuna;
+
+  }
+
+  String? get obtenerExp {
+
+    return experienciaComoOperador.toString();
+
+  }
+
+  String? get obtenerError {
+
+    return formatearPorcentaje(error, 2);
+
+  }
+
+  String? get obtenerUnidadesSugeridas {
+
+    return NumberFormat("#,###", "es_ES").format(unidadesContadas);
+
+  }
+
+  String? get obtenerUnidadesReal {
+
+    return NumberFormat("#,###", "es_ES").format(unidadesContadasReal);
+
+  }
+
+  String formatearPorcentaje(dynamic porcentaje, int cantidadDecimal) {
+
+    if (porcentaje is String || porcentaje is int || porcentaje is double) {
+
+      return "${double.parse(porcentaje.toString().replaceAll("%", "")).toStringAsFixed(cantidadDecimal)} %";
+      
+    }
+
+    return "";
 
   }
 

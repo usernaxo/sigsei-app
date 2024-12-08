@@ -76,11 +76,35 @@ class AuditoriaSmu {
 
   }
 
+  String? get obtenerNombreCorto {
+
+    if (local != null) {
+
+      return local!.nombre!.length > 14 ? local!.nombre!.substring(0, 14) : local!.nombre;
+
+    }
+
+    return "";
+
+  }
+
   String? get obtenerAuditor {
 
     if (auditor != null) {
 
       return auditor!.nombre;
+
+    }
+
+    return "";
+
+  }
+
+  String? get obtenerAuditorCorto {
+
+    if (auditor != null) {
+
+      return auditor!.nombre!.length > 14 ? auditor!.nombre!.substring(0, 14) : auditor!.nombre;
 
     }
 

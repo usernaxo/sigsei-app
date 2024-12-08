@@ -1,4 +1,4 @@
-package com.example.sigsei
+package com.sei.sigsei
 
 import io.flutter.embedding.android.FlutterActivity
 

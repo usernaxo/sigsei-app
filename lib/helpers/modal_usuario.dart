@@ -27,7 +27,7 @@ class ModalUsuario {
 
         return AlertDialog(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(7),
           ),
           title: Center(
             child: Container(
@@ -75,7 +75,10 @@ class ModalUsuario {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   FilledButton.icon(
-                    icon: proveedorEstado.estaCargando ? null : const Icon(Icons.power_settings_new_rounded),
+                    icon: proveedorEstado.estaCargando ? null : const Icon(
+                      Icons.power_settings_new_rounded,
+                      size: 15,
+                    ),
                     label: proveedorEstado.estaCargando ? const Text("Cerrando...") : const Text("Cerrar Sesión"),
                     onPressed: proveedorEstado.estaCargando ? null : () async {
 

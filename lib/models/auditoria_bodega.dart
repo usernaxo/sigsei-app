@@ -1,4 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:sigsei/themes/tema.dart';
 
 class AuditoriaBodega {
 
@@ -74,11 +76,36 @@ class AuditoriaBodega {
 
   }
 
+
+  String? get obtenerNombreCorto {
+
+    if (local != null) {
+
+      return local!.nombre!.length > 14 ? local!.nombre!.substring(0, 14) : local!.nombre;
+
+    }
+
+    return "";
+
+  }
+
   String? get obtenerAuditor {
 
     if (auditor != null) {
 
       return auditor!.nombre;
+
+    }
+
+    return "";
+
+  }
+
+  String? get obtenerAuditorCorto {
+
+    if (auditor != null) {
+
+      return auditor!.nombre!.length > 14 ? auditor!.nombre!.substring(0, 14) : auditor!.nombre;
 
     }
 
@@ -180,17 +207,29 @@ class AuditoriaBodega {
 
   }
 
+  String? get obtenerRegistro {
+
+    if (cantidadRegistros != 0 && fechaMuestra!.isNotEmpty) {
+
+      return "$cantidadRegistros $fechaMuestra";
+
+    }
+
+    return "";
+
+  }
+
   String? get obtenerHoraCierre {
 
     return horaCierre ?? "";
 
   }
 
-  String? get obtenerRegistro {
+  String? get obtenerNombreCargadorArchivos {
 
-    if (cantidadRegistros != 0 && fechaMuestra!.isNotEmpty) {
+    if (archivosEstado != null) {
 
-      return "$cantidadRegistros $fechaMuestra";
+      return archivosEstado!.report is bool ? "" : archivosEstado!.report;
 
     }
 
@@ -231,6 +270,18 @@ class AuditoriaBodega {
     }
 
     return false;
+
+  }
+
+  Color get obtenerEstado {
+
+    return obtenerMuestra! ? (obtenerHoraCierre!.isNotEmpty ? Colors.green : Colors.deepOrange.shade400) : Tema.primaryLight;
+
+  }
+
+  String? get obtenerEstadoCierre {
+
+    return estadoCierre;
 
   }
 
@@ -829,6 +880,48 @@ class Detalle {
     this.createdAt,
   });
 
+  String? get obtenerPatente {
+
+    return patente;
+
+  }
+
+  String? get obtenerSku {
+
+    return sku;
+
+  }
+
+  String? get obtenerDescripcion {
+
+    return descripcion;
+
+  }
+
+  String? get obtenerConteoZmig {
+
+    return NumberFormat("#,###", "es_ES").format(conteoZmig);
+
+  }
+
+  String? get obtenerConteoSei {
+
+    return NumberFormat("#,###", "es_ES").format(conteoSei);
+
+  }
+
+  String? get obtenerDiferenciaUnidades {
+
+    return NumberFormat("#,###", "es_ES").format(difUnd);
+
+  }
+
+  String? get obtenerValorAjuste {
+
+    return NumberFormat("#,###", "es_ES").format(valorAjuste);
+
+  }
+
   factory Detalle.fromJson(Map<String, dynamic> json) {
 
     return Detalle(
@@ -844,6 +937,375 @@ class Detalle {
       porDifAbsUni: json["por_dif_abs_uni"],
       porDesvValorAbs: json["por_desv_valor_abs"],
       createdAt: json["created_at"]
+    );
+
+  }
+
+}
+
+class Excluyente {
+
+  GeneralConteo? generalConteo;
+  bool? cierre;
+  ResumenCierre? resumenCierre;
+  List<DetalleConteo>? detalleConteo;
+  LocalExcluyente? local;
+  Observacion? observacion;
+
+  Excluyente({
+    this.generalConteo,
+    this.cierre,
+    this.resumenCierre,
+    this.detalleConteo,
+    this.local,
+    this.observacion,
+  });
+
+  factory Excluyente.fromJson(Map<String, dynamic> json) {
+
+    GeneralConteo? objetoGeneralConteo = json["generalConteo"] == null ? null : GeneralConteo.fromJson(json["generalConteo"] as Map<String, dynamic>);
+    ResumenCierre? objetoResumenCierre = json["resumen_cierre"] == null ? null : ResumenCierre.fromJson(json["resumen_cierre"] as Map<String, dynamic>);
+    LocalExcluyente? objetoLocal = json["local"] == null ? null : LocalExcluyente.fromJson(json["local"] as Map<String, dynamic>);
+    Observacion? objetoObservacion = json["observacion"] == null ? null : Observacion.fromJson(json["observacion"] as Map<String, dynamic>);
+
+    var detalleConteoLista = json["detalleConteo"] == null ? [] : json["detalleConteo"] as List;
+    List<DetalleConteo> listaDetalleConteo = detalleConteoLista.map((d) => DetalleConteo.fromJson(d)).toList();
+
+    return Excluyente(
+      generalConteo: objetoGeneralConteo,
+      cierre: json["cierre"],
+      resumenCierre: objetoResumenCierre,
+      detalleConteo: listaDetalleConteo,
+      local: objetoLocal,
+      observacion: objetoObservacion,
+    );
+
+  }
+
+  List<DetalleConteo>? get obtenerDetalleConteo {
+
+    return detalleConteo!.where((detalleConteo) => detalleConteo.excluir == 1).toList();
+
+  }
+
+  String? get obtenerTotalUnidadAbs {
+
+    int? cantidadTotal = 0;
+
+    for (var detalleConteo in detalleConteo!) {
+
+      cantidadTotal = cantidadTotal! + detalleConteo.difUnd!.abs();
+
+    }
+
+    return NumberFormat("#,###", "es_ES").format(cantidadTotal);
+
+  }
+
+  String? get obtenerTotalValorAbs {
+
+    int? valorTotal = 0;
+
+    for (var detalleConteo in detalleConteo!) {
+
+      valorTotal = valorTotal! + detalleConteo.valorAjuste!.abs();
+
+    }
+
+    return NumberFormat("#,###", "es_ES").format(valorTotal);
+
+  }
+
+  String? get obtenerObservacion {
+
+    return observacion != null ? observacion!.observacion : "Sin observación";
+
+  }
+
+}
+
+class DetalleConteo {
+
+  int? id;
+  int? excluir;
+  String? patente;
+  String? sku;
+  String? descripcion;
+  int? conteoZmig;
+  int? conteoSei;
+  int? difUnd;
+  int? valorAjuste;
+  String? porDifAbsUni;
+  String? porDesvValorAbs;
+
+  DetalleConteo({
+    this.id,
+    this.excluir,
+    this.patente,
+    this.sku,
+    this.descripcion,
+    this.conteoZmig,
+    this.conteoSei,
+    this.difUnd,
+    this.valorAjuste,
+    this.porDifAbsUni,
+    this.porDesvValorAbs,
+  });
+
+  factory DetalleConteo.fromJson(Map<String, dynamic> json) {
+
+    return DetalleConteo(
+      id: json["id"],
+      excluir: json["excluir"],
+      patente: json["patente"],
+      sku: json["sku"],
+      descripcion: json["descripcion"],
+      conteoZmig: json["conteo_zmig"],
+      conteoSei: json["conteo_sei"],
+      difUnd: json["dif_und"],
+      valorAjuste: json["valor_ajuste"],
+      porDifAbsUni: json["por_dif_abs_uni"],
+      porDesvValorAbs: json["por_desv_valor_abs"],
+    );
+
+  }
+
+  String? get obtenerPatente {
+
+    return patente;
+
+  }
+
+  String? get obtenerSku {
+
+    return sku;
+
+  }
+
+  String? get obtenerDescripcion {
+
+    return descripcion;
+
+  }
+
+  String? get obtenerConteoZmig {
+
+    return NumberFormat("#,###", "es_ES").format(conteoZmig);
+
+  }
+
+  String? get obtenerConteoSei {
+
+    return NumberFormat("#,###", "es_ES").format(conteoSei);
+
+  }
+
+  String? get obtenerDiferenciaUnidades {
+
+    return NumberFormat("#,###", "es_ES").format(difUnd);
+
+  }
+
+  bool? get esExcluido {
+
+    return excluir == 0 ? false : true;
+
+  }
+
+}
+
+class GeneralConteo {
+
+  int? id;
+  int? auditoriaId;
+  String? local;
+  String? fecha;
+  String? avanceGeneral;
+  String? errorGeneralAbs;
+  String? avancePatentesCantidad;
+  String? avancePatentesPorcentaje;
+  int? totalUnidadesMuestra;
+  int? totalValorizadaMuestra;
+  int? detalleConteoZmig;
+  int? detalleConteoSei;
+  int? detalleDifUnd;
+  int? detalleValorAjuste;
+  String? createdAt;
+  double? detalleDesvValorAbs;
+
+  GeneralConteo({
+    this.id,
+    this.auditoriaId,
+    this.local,
+    this.fecha,
+    this.avanceGeneral,
+    this.errorGeneralAbs,
+    this.avancePatentesCantidad,
+    this.avancePatentesPorcentaje,
+    this.totalUnidadesMuestra,
+    this.totalValorizadaMuestra,
+    this.detalleConteoZmig,
+    this.detalleConteoSei,
+    this.detalleDifUnd,
+    this.detalleValorAjuste,
+    this.createdAt,
+    this.detalleDesvValorAbs,
+  });
+
+  factory GeneralConteo.fromJson(Map<String, dynamic> json) {
+
+    return GeneralConteo(
+      id: json["id"],
+      auditoriaId: json["auditoria_id"],
+      local: json["local"],
+      fecha: json["fecha"],
+      avanceGeneral: json["avance_general"],
+      errorGeneralAbs: json["error_general_abs"],
+      avancePatentesCantidad: json["avance_patentes_cantidad"],
+      avancePatentesPorcentaje: json["avance_patentes_porcentaje"],
+      totalUnidadesMuestra: json["total_unidades_muestra"],
+      totalValorizadaMuestra: json["total_valorizada_muestra"],
+      detalleConteoZmig: json["detalle_conteo_zmig"],
+      detalleConteoSei: json["detalle_conteo_sei"],
+      detalleDifUnd: json["detalle_dif_und"],
+      detalleValorAjuste: json["detalle_valor_ajuste"],
+      createdAt: json["created_at"],
+      detalleDesvValorAbs: json["detalle_desv_valor_abs"],
+    );
+
+  }
+
+  String? get obtenerTotalMuestraUnidades {
+
+    return NumberFormat("#,###", "es_ES").format(totalUnidadesMuestra);
+
+  }
+
+  String? get obtenerTotalMuestraValorizada {
+
+    return NumberFormat("#,###", "es_ES").format(totalValorizadaMuestra);
+
+  }
+
+  String? get obtenerTotalConteoZmig {
+
+    return NumberFormat("#,###", "es_ES").format(detalleConteoZmig);
+
+  }
+
+  String? get obtenerTotalConteoSei {
+
+    return NumberFormat("#,###", "es_ES").format(detalleConteoSei);
+
+  }
+
+  String? get obtenerTotalDiferenciaUnidades {
+
+    return NumberFormat("#,###", "es_ES").format(detalleDifUnd);
+
+  }
+
+}
+
+class LocalExcluyente {
+
+  String? numero;
+  String? nombre;
+
+  LocalExcluyente({
+    this.numero,
+    this.nombre,
+  });
+
+  factory LocalExcluyente.fromJson(Map<String, dynamic> json) {
+
+    return LocalExcluyente(
+      numero: json["numero"],
+      nombre: json["nombre"],
+    );
+
+  }
+
+}
+
+class Observacion {
+
+  int? id;
+  int? idAuditoria;
+  String? observacion;
+  int? idUsuario;
+  String? createdAt;
+  String? updatedAt;
+
+  Observacion({
+    this.id,
+    this.idAuditoria,
+    this.observacion,
+    this.idUsuario,
+    this.createdAt,
+    this.updatedAt,
+  });
+
+  factory Observacion.fromJson(Map<String, dynamic> json) {
+
+    return Observacion(
+      id: json["id"],
+      idAuditoria: json["idAuditoria"],
+      observacion: json["observacion"],
+      idUsuario: json["idUsuario"],
+      createdAt: json["created_at"],
+      updatedAt: json["updated_at"],
+    );
+
+  }
+
+}
+
+class ResumenCierre {
+
+  int? id;
+  int? auditoriaId;
+  int? valida;
+  String? errorUnidadesAbs;
+  String? errorValorAbs;
+  int? excluirUnidadesAbs;
+  int? excluirTotalRegistros;
+  int? usuarioId;
+  String? createdAt;
+  String? updatedAt;
+  String? observacion;
+  String? usuario;
+
+  ResumenCierre({
+    this.id,
+    this.auditoriaId,
+    this.valida,
+    this.errorUnidadesAbs,
+    this.errorValorAbs,
+    this.excluirUnidadesAbs,
+    this.excluirTotalRegistros,
+    this.usuarioId,
+    this.createdAt,
+    this.updatedAt,
+    this.observacion,
+    this.usuario,
+  });
+
+  factory ResumenCierre.fromJson(Map<String, dynamic> json) {
+
+    return ResumenCierre(
+      id: json["id"],
+      auditoriaId: json["auditoria_id"],
+      valida: json["valida"],
+      errorUnidadesAbs: json["error_unidades_abs"],
+      errorValorAbs: json["error_valor_abs"],
+      excluirUnidadesAbs: json["excluir_unidades_abs"],
+      excluirTotalRegistros: json["excluir_total_registros"],
+      usuarioId: json["usuario_id"],
+      createdAt: json["created_at"],
+      updatedAt: json["updated_at"],
+      observacion: json["observacion"],
+      usuario: json["usuario"],
     );
 
   }

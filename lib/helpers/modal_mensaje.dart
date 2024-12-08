@@ -43,7 +43,7 @@ class ModalMensaje {
       
       case cargando:
 
-        widget = CircularProgressIndicator(color: Tema.primary);
+        widget = CircularProgressIndicator(color: Tema.primary, strokeWidth: 1.5);
 
         cancelable = false;
         
@@ -64,11 +64,12 @@ class ModalMensaje {
           canPop: cancelable,
           child: AlertDialog(
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(7),
             ),
             title: Center(
               child: SizedBox(
-                height: 40,
+                height: 25,
+                width: 25,
                 child: widget
               )
             ),

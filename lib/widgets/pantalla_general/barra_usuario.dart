@@ -24,7 +24,7 @@ class BarraUsuario extends StatelessWidget {
         width: double.infinity,
         decoration: BoxDecoration(
           color: Tema.primary,
-          borderRadius: BorderRadius.circular(10)
+          borderRadius: BorderRadius.circular(7)
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

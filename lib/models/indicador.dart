@@ -117,6 +117,18 @@ class Indicador {
 
   }
 
+  String? get obtenerNotaConteo {
+
+    if (indicator != null) {
+
+      return indicator!.notaConteo;
+
+    }
+
+    return "-";
+
+  }
+
   String? get obtenerTooltipJl {
 
     if (indicator != null) {

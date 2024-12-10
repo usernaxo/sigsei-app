@@ -62,18 +62,35 @@ class ModalMensaje {
 
         return PopScope(
           canPop: cancelable,
-          child: AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(7),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: MediaQuery.sizeOf(context).width * 0.7,
+                maxHeight: MediaQuery.sizeOf(context).height * 0.5,
+              ),
+              child: Material(
+                borderRadius: BorderRadius.circular(7),
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    child: Column(
+                      children: [
+                        Center(
+                          child: SizedBox(
+                            height: 25,
+                            width: 25,
+                            child: widget
+                          )
+                        ),
+                        const SizedBox(height: 10),
+                        Text(titulo, textAlign: TextAlign.center)
+                      ],
+                    ),
+                  ),
+                ),
+              ),
             ),
-            title: Center(
-              child: SizedBox(
-                height: 25,
-                width: 25,
-                child: widget
-              )
-            ),
-            content: Text(titulo, textAlign: TextAlign.center)
           ),
         );
 

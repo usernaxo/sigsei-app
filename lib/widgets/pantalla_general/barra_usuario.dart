@@ -78,8 +78,11 @@ class BarraUsuario extends StatelessWidget {
                   child: CircleAvatar(
                     backgroundColor: Colors.white,
                     foregroundColor: Tema.primary,
-                    maxRadius: 17,
-                    child: const Icon(Icons.person_rounded),  
+                    maxRadius: 15,
+                    child: const Icon(
+                      Icons.person_rounded,
+                      size: 17,
+                    ),  
                   ),
                   onTap: () => ModalUsuario(usuario: usuario).show(context),
                 ),

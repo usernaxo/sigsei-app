@@ -160,11 +160,7 @@ class _PantallaAccesoState extends State<PantallaAcceso> {
                                 child: SizedBox(
                                   width: double.infinity,
                                   child: FilledButton.icon(
-                                    label: provedor.estaCargando ? const Text("Validando...") : const Text("Acceder"),
-                                    icon: provedor.estaCargando ? null : const Icon(
-                                      Icons.arrow_forward_rounded,
-                                      size: 15,
-                                    ),
+                                    label: provedor.estaCargando ? const Text("Validando...") : const Text("Iniciar Sesión"),
                                     style: TextButton.styleFrom(
                                       padding: const EdgeInsets.symmetric(vertical: 10),
                                       side: const BorderSide(

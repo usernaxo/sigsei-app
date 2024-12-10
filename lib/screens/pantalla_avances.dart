@@ -2,31 +2,29 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:sigsei/helpers/modal_fecha.dart';
+import 'package:sigsei/models/avance.dart';
 import 'package:sigsei/models/modulo.dart';
-import 'package:sigsei/models/inventario_general.dart';
 import 'package:sigsei/models/usuario.dart';
 import 'package:sigsei/providers/proveedor_estado.dart';
 import 'package:sigsei/themes/tema.dart';
+import 'package:sigsei/widgets/pantalla_avances/fila_avance.dart';
 import 'package:sigsei/widgets/pantalla_general/barra_usuario.dart';
-import 'package:sigsei/widgets/pantalla_inventario_general/fila_inventario_general.dart';
 
-class PantallaInventarioGeneral extends StatefulWidget {
+class PantallaAvances extends StatefulWidget {
 
-  const PantallaInventarioGeneral({super.key});
+  const PantallaAvances({super.key});
 
   @override
-  PantallaInventarioGeneralState createState() => PantallaInventarioGeneralState();
+  PantallaAvancesState createState() => PantallaAvancesState();
 
 }
 
-class PantallaInventarioGeneralState extends State<PantallaInventarioGeneral> {
+class PantallaAvancesState extends State<PantallaAvances> {
 
-  late Future<List<InventarioGeneral>?> listaInventarioGeneral;
-
-  List<InventarioGeneral>? inventarios;
+  late Future<List<Avance>?> listaAvances;
   
-  String fechaInicioFormateada = "";
-  String fechaFinFormateada = "";
+  String? formatoFecha;
+  String fechaFormateada = "";
   String selectedItem = "Todos";
 
   @override
@@ -38,35 +36,72 @@ class PantallaInventarioGeneralState extends State<PantallaInventarioGeneral> {
 
     DateTime fechaActual = DateTime.now();
 
-    fechaInicioFormateada = DateFormat("yyyy-MM-dd").format(fechaActual);
-    fechaFinFormateada = DateFormat("yyyy-MM-dd").format(fechaActual);
+    if (fechaActual.weekday == DateTime.monday && fechaActual.hour < 16) {
 
-    listaInventarioGeneral = proveedorEstado.obtenerInventarioGeneral(fechaInicioFormateada, fechaFinFormateada);
+      fechaFormateada = DateFormat("yyyy-MM-dd").format(DateTime.now().subtract(const Duration(days: 3)));
+      formatoFecha = DateFormat('EEEE d \'de\' MMMM \'de\' yyyy', 'es_ES').format(DateTime.now().subtract(const Duration(days: 3)));
+
+    } else {
+
+      if (fechaActual.hour >= 16) {
+
+        fechaFormateada = DateFormat("yyyy-MM-dd").format(DateTime.now());
+        formatoFecha = DateFormat('EEEE d \'de\' MMMM \'de\' yyyy', 'es_ES').format(DateTime.now());
+
+      } else {
+
+        fechaFormateada = DateFormat("yyyy-MM-dd").format(DateTime.now().subtract(const Duration(days: 1)));
+        formatoFecha = DateFormat('EEEE d \'de\' MMMM \'de\' yyyy', 'es_ES').format(DateTime.now().subtract(const Duration(days: 1)));
+
+      }
+
+    }
+
+    listaAvances = proveedorEstado.obtenerAvances(fechaFormateada, fechaFormateada);
 
   }
 
-  Future<void> modalRangoFechas() async {
+  String obtenerFechaFormateada() {
+
+    String fechaConMayusculas = formatoFecha!.split(' ').map((palabra) {
+
+      if (palabra.toLowerCase() == 'de') {
+
+        return palabra;
+
+      } else {
+
+        return palabra.substring(0, 1).toUpperCase() + palabra.substring(1);
+
+      }
+
+    }).join(' ');
+
+    return fechaConMayusculas;
+
+  }
+
+  Future<void> modalFecha1() async {
 
     ModalFecha(
       context: context,
-      tipoModalFecha: ModalFecha.rango,
-      fechaInicio: DateTime.parse(fechaInicioFormateada),
-      fechaFin: DateTime.parse(fechaFinFormateada),
+      tipoModalFecha: ModalFecha.simple,
+      fechaInicio: DateTime.parse(fechaFormateada),
       fechaSeleccionada: (fechaInicio, fechaFin) {
 
-        if (fechaInicio != null && fechaFin != null) {
+        if (fechaInicio != null) {
 
           setState(() {
 
-            String fechaDesde = DateFormat("yyyy-MM-dd").format(fechaInicio);
-            String fechaHasta = DateFormat("yyyy-MM-dd").format(fechaFin);
+            String fecha = DateFormat("yyyy-MM-dd").format(fechaInicio);
 
-            fechaInicioFormateada = fechaDesde;
-            fechaFinFormateada = fechaHasta;
+            fechaFormateada = fecha;
 
             final proveedorEstado = Provider.of<ProveedorEstado>(context, listen: false);
 
-            listaInventarioGeneral = proveedorEstado.obtenerInventarioGeneral(fechaDesde, fechaHasta);
+            formatoFecha = DateFormat('EEEE d \'de\' MMMM \'de\' yyyy', 'es_ES').format(fechaInicio);
+
+            listaAvances = proveedorEstado.obtenerAvances(fechaFormateada, fechaFormateada);
 
           });
 
@@ -74,6 +109,21 @@ class PantallaInventarioGeneralState extends State<PantallaInventarioGeneral> {
 
       },
     ).show();
+
+  }
+
+  Text formatearCelda(String cadena) {
+
+    return Text(
+      cadena,
+      textAlign: TextAlign.center,
+      maxLines: 2,
+      overflow: TextOverflow.ellipsis,
+      style: const TextStyle(
+        fontSize: 9,
+        color: Colors.white
+      ),
+    );
 
   }
 
@@ -85,28 +135,13 @@ class PantallaInventarioGeneralState extends State<PantallaInventarioGeneral> {
     Modulo modulo = argumentos["modulo"];
     Usuario usuario = argumentos["usuario"];
 
-    Text formatearCelda(String cadena) {
-
-      return Text(
-        cadena,
-        textAlign: TextAlign.center,
-        maxLines: 2,
-        overflow: TextOverflow.ellipsis,
-        style: const TextStyle(
-          fontSize: 9,
-          color: Colors.white
-        ),
-      );
-
-    }
-
     return Scaffold(
       body: SafeArea(
         child: Column(
           children: [
             BarraUsuario(usuario: usuario, botonRetroceso: true),
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               child: Row(
                 children: [
                   Padding(
@@ -117,8 +152,18 @@ class PantallaInventarioGeneralState extends State<PantallaInventarioGeneral> {
                     )
                   ),
                   Expanded(
-                    child: Text(
-                      modulo.titulo,
+                    child: Text.rich(
+                      TextSpan(
+                        text: "${modulo.titulo} - ",
+                        children: [
+                          TextSpan(
+                            text: obtenerFechaFormateada(),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold
+                            )
+                          )
+                        ]
+                      ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -133,7 +178,7 @@ class PantallaInventarioGeneralState extends State<PantallaInventarioGeneral> {
               )
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               child: Row(
                 children: [
                   Expanded(
@@ -160,7 +205,7 @@ class PantallaInventarioGeneralState extends State<PantallaInventarioGeneral> {
                                       TextSpan(
                                         children: [
                                           TextSpan(
-                                            text: "Desde ",
+                                            text: "Fecha ",
                                             style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               color: Tema.primary,
@@ -168,21 +213,7 @@ class PantallaInventarioGeneralState extends State<PantallaInventarioGeneral> {
                                             ),
                                           ),
                                           TextSpan(
-                                            text: fechaInicioFormateada,
-                                            style: const TextStyle(
-                                              fontSize: 11,
-                                            ),
-                                          ),
-                                          TextSpan(
-                                            text: " Hasta ",
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: Tema.primary,
-                                              fontSize: 11
-                                            ),
-                                          ),
-                                          TextSpan(
-                                            text: fechaFinFormateada,
+                                            text: fechaFormateada,
                                             style: const TextStyle(
                                               fontSize: 11,
                                             ),
@@ -196,59 +227,9 @@ class PantallaInventarioGeneralState extends State<PantallaInventarioGeneral> {
                                 ],
                               )
                             ),
-                            onTap: () => modalRangoFechas(),
+                            onTap: () => modalFecha1(),
                           ),
                         ),
-                        const SizedBox(width: 5),
-                        Expanded(
-                          flex: 1,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                            decoration: BoxDecoration(
-                              color: Tema.primaryLight,
-                              borderRadius: BorderRadius.circular(7)
-                            ),
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton<String>(
-                                isDense: true,
-                                value: selectedItem,
-                                style: const TextStyle(
-                                  fontSize: 11,
-                                  color: Colors.black
-                                ),
-                                isExpanded: true,
-                                icon: Icon(
-                                  Icons.arrow_drop_down_rounded,
-                                  color: Tema.primary,
-                                  size: 15,
-                                ),
-                                onChanged: (value) async {
-                                  setState(() {
-                                    selectedItem = value!;
-                                  });
-                                },
-                                items: <String>["Todos", "Diurnos", "Nocturnos"].map<DropdownMenuItem<String>>((String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Row(
-                                      children: [
-                                        Icon(
-                                          value == "Todos" ? Icons.fact_check_outlined : value == "Diurnos" ? Icons.wb_sunny_rounded : Icons.nightlight_round,
-                                          color: value == "Diurnos" ? Colors.amber : Tema.primary,
-                                          size: 15,
-                                        ),
-                                        const SizedBox(width: 5),
-                                        Text(
-                                          value
-                                        )
-                                      ],
-                                    ),
-                                  );
-                                }).toList(),
-                              ),
-                            ),
-                          ),
-                        )
                       ],
                     ),
                   ),
@@ -258,13 +239,17 @@ class PantallaInventarioGeneralState extends State<PantallaInventarioGeneral> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
               child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   color: Tema.primary,
                   borderRadius: BorderRadius.circular(7)
                 ),
                 child: Row(
                   children: [
+                    Expanded(
+                      flex: 1,
+                      child: formatearCelda("Estado\nAvance")
+                    ),
                     Expanded(
                       flex: 1,
                       child: formatearCelda("Nombre\nCliente")
@@ -279,19 +264,11 @@ class PantallaInventarioGeneralState extends State<PantallaInventarioGeneral> {
                     ),
                     Expanded(
                       flex: 1,
+                      child: formatearCelda("Hora\nInicio")
+                    ),
+                    Expanded(
+                      flex: 1,
                       child: formatearCelda("Dotación\nTotal")
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: formatearCelda("Stock\nConteo")
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: formatearCelda("Estado\nNómina")
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: formatearCelda("Estado\nReporte")
                     ),
                   ],
                 ),
@@ -299,8 +276,8 @@ class PantallaInventarioGeneralState extends State<PantallaInventarioGeneral> {
             ),
             Expanded(
               child: FutureBuilder(
-                future: listaInventarioGeneral,
-                builder: (context, AsyncSnapshot<List<InventarioGeneral>?> snapshot) {
+                future: listaAvances,
+                builder: (context, AsyncSnapshot<List<Avance>?> snapshot) {
 
                   if (snapshot.connectionState == ConnectionState.waiting) {
 
@@ -317,7 +294,7 @@ class PantallaInventarioGeneralState extends State<PantallaInventarioGeneral> {
                           ),
                         ),
                         const SizedBox(height: 20),
-                        const Text("Obteniendo Inventarios")
+                        const Text("Obteniendo Avances")
                       ],
                     );
 
@@ -327,27 +304,25 @@ class PantallaInventarioGeneralState extends State<PantallaInventarioGeneral> {
 
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
 
-                    return const Center(child: Text("Sin Inventarios"));
+                    return const Center(child: Text("Sin Avances"));
 
                   } else {
-
-                    inventarios = selectedItem == "Diurnos" ? snapshot.data!.where((i) => !i.esNoche!).toList() : selectedItem == "Nocturnos" ? snapshot.data!.where((i) => i.esNoche!).toList() : snapshot.data;
 
                     return RefreshIndicator(
                       onRefresh: () async {
                         final proveedorEstado = Provider.of<ProveedorEstado>(context, listen: false);
-                        final nuevaListaInventarioGeneral = await proveedorEstado.obtenerInventarioGeneral(fechaInicioFormateada, fechaFinFormateada);
+                        final nuevaListaAvances = await proveedorEstado.obtenerAvances(fechaFormateada, fechaFormateada);
                         if (mounted) {
                           setState(() {
-                            listaInventarioGeneral = Future.value(nuevaListaInventarioGeneral);
+                            listaAvances = Future.value(nuevaListaAvances);
                           });
                         }
                       },
                       child: ListView(
                         padding: const EdgeInsets.only(bottom: 50),
-                        children: inventarios!.map((inventarioGeneral) {
+                        children: snapshot.data!.map((avance) {
                       
-                          return FilaInventarioGeneral(inventarioGeneral: inventarioGeneral);
+                          return FilaAvance(avance: avance);
                       
                         }).toList(),
                       ),

@@ -588,6 +588,7 @@ class ContenidoResumen extends StatelessWidget {
             buildRow(["Diferencia Uni. Informadas", indicador.obtenerDiffCounted!]),
             Divider(color: Colors.deepPurple.shade200),
             buildRow(["Nota Promedio", indicador.obtenerAvgScores!], esDeficiente: IndicadorDeficiente.esNotaPromedioDeficiente(indicador.obtenerAvgScores!)),
+            buildRow(["Nota Conteo", indicador.obtenerNotaConteo!]),
             buildRow(["Error SEI", indicador.obtenerSeiError!], esDeficiente: IndicadorDeficiente.esErrorSeiDeficiente(indicador.obtenerSeiError!)),
             buildRow(["Estándar SEI", indicador.obtenerSeiStandard!], esDeficiente: IndicadorDeficiente.esEstandarSeiDeficiente(indicador.obtenerSeiStandard!)),
             buildRow(["Varianza", indicador.obtenerVarianza!], esDeficiente: IndicadorDeficiente.esVarianzaDeficiente(indicador.obtenerVarianza!)),

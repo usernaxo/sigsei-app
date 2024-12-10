@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class Tema {
 
   static Color primary = Colors.lightBlue.shade900;
-  static Color primaryLight = Colors.black12;
+  static Color primaryLight = Colors.grey.shade300;
 
   static ThemeData light = ThemeData.light().copyWith(
     primaryColor: primary,
@@ -27,9 +27,8 @@ class Tema {
         fontSize: 12,
         color: primary,
       ),
-      hintStyle: TextStyle(
+      hintStyle: const TextStyle(
         fontSize: 12,
-        color: primary,
       ),
     ),
     filledButtonTheme: FilledButtonThemeData(

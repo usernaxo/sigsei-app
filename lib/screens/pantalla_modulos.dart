@@ -84,6 +84,11 @@ class _PantallaModulosState extends State<PantallaModulos> {
     
     List<Modulo> modulos = [
       Modulo(
+        titulo: "Avance de Inventarios",
+        ruta: "pantalla_avances",
+        icono: Icons.autorenew_rounded
+      ),
+      Modulo(
         titulo: "Indicadores de Inventarios",
         ruta: "pantalla_indicadores",
         icono: Icons.inventory_rounded
@@ -251,7 +256,7 @@ class _PantallaModulosState extends State<PantallaModulos> {
                                 ),
                                 child: ListTile(
                                   contentPadding: const EdgeInsets.symmetric(horizontal: 10),
-                                  trailing: index == 0 ? estadoIndicador(indicadoresData) : null,
+                                  trailing: index == 1 ? estadoIndicador(indicadoresData) : null,
                                   title: Row(
                                     children: [
                                       Padding(

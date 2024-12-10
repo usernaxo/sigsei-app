@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:intl/intl.dart';
+
 class Usuario {
   
   int id;
@@ -43,5 +45,45 @@ class Usuario {
     "email": email,
     "telefono": telefono,
   };
+
+  String? get obtenerNombre {
+
+    return "$nombre1 $apellidoPaterno";
+
+  }
+
+  String? get obtenerFechaNacimiento {
+
+    String fechaFormateada = DateFormat('EEEE d \'de\' MMMM \'de\' yyyy', 'es_ES').format(fechaNacimiento);
+
+    String fechaConMayusculas = fechaFormateada.split(' ').map((palabra) {
+
+      if (palabra.toLowerCase() == 'de') {
+
+        return palabra;
+
+      } else {
+
+        return palabra.substring(0, 1).toUpperCase() + palabra.substring(1);
+
+      }
+
+    }).join(' ');
+
+    return fechaConMayusculas;
+
+  }
+
+  String? get obtenerEmail {
+
+    return email;
+
+  }
+
+  String? get obtenerTelefono {
+
+    return telefono;
+
+  }
 
 }

@@ -155,6 +155,56 @@ class ProveedorEstado extends ChangeNotifier {
 
   }
 
+  Future<List<Avance>?> obtenerAvances(String fechaInicio, String fechaFin) async {
+
+    const almacenamiento = FlutterSecureStorage();
+    
+    final tokenUsuario = await almacenamiento.read(key: "tokenUsuario");
+
+    try {
+
+      Uri peticionObtenerAvances = Uri.https(servidor, avancesEndpoint, {
+
+        "fecha_inicio": fechaInicio,
+        "fecha_fin": fechaFin
+
+      });
+
+      final respuestaObtenerAvances = await http.get(
+        peticionObtenerAvances,
+        headers: {
+          "Authorization": "Bearer $tokenUsuario"
+        }
+      );
+
+      if (respuestaObtenerAvances.statusCode == 200) {
+
+        List<dynamic> avances = json.decode(respuestaObtenerAvances.body);
+
+        List<Avance> listaAvances = avances.map((json) => Avance.fromJson(json)).toList();
+
+        return listaAvances;
+          
+      } else {
+
+        return [];
+
+      }
+
+    } catch (excepcion) {
+
+      return [];
+
+    } finally {
+
+      cargando = false;
+
+      notifyListeners();
+
+    }
+
+  }
+
   Future<List<Indicador>?> obtenerIndicadores(String fechaInicio, String fechaFin) async {
 
     const almacenamiento = FlutterSecureStorage();

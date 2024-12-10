@@ -68,6 +68,12 @@ class PantallaAuditoriasState extends State<PantallaAuditorias> {
               )
             ),
             Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              child: Divider(
+                color: Tema.primaryLight
+              )
+            ),
+            Padding(
               padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
               child: Row(
                 children: [         

@@ -172,6 +172,36 @@ class Avance {
 
   }
 
+  String? get obtenerNombreCliente {
+
+    return codCliente;
+
+  }
+
+  String? get obtenerCodigoCeco {
+
+    return codLocal;
+
+  }
+
+  String? get obtenerNombreLocal {
+
+    return nombreLocal;
+
+  }
+
+  String? get obtenerHoraInicio {
+
+    return horaInicioProgramada;
+
+  }
+
+  String? get obtenerDotacion {
+
+    return dotacionDiferencia;
+
+  }
+
   String formatearPorcentaje(dynamic porcentaje, int cantidadDecimal) {
 
     if (porcentaje is String || porcentaje is int || porcentaje is double) {

@@ -63,6 +63,26 @@ class PantallaIndicadoresState extends State<PantallaIndicadores> {
 
   }
 
+  String obtenerFechaFormateada() {
+
+    String fechaConMayusculas = formatoFecha!.split(' ').map((palabra) {
+
+      if (palabra.toLowerCase() == 'de') {
+
+        return palabra;
+
+      } else {
+
+        return palabra.substring(0, 1).toUpperCase() + palabra.substring(1);
+
+      }
+
+    }).join(' ');
+
+    return fechaConMayusculas;
+
+  }
+
   Future<void> modalFecha1() async {
 
     ModalFecha(
@@ -136,10 +156,10 @@ class PantallaIndicadoresState extends State<PantallaIndicadores> {
                   Expanded(
                     child: Text.rich(
                       TextSpan(
-                        text: "${modulo.titulo} ",
+                        text: "${modulo.titulo} - ",
                         children: [
                           TextSpan(
-                            text: formatoFecha,
+                            text: obtenerFechaFormateada(),
                             style: const TextStyle(
                               fontWeight: FontWeight.bold
                             )
@@ -151,6 +171,12 @@ class PantallaIndicadoresState extends State<PantallaIndicadores> {
                     ),
                   ),
                 ],
+              )
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              child: Divider(
+                color: Tema.primaryLight
               )
             ),
             Padding(

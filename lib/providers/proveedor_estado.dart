@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
@@ -155,6 +156,7 @@ class ProveedorEstado extends ChangeNotifier {
 
   }
 
+
   Future<List<Avance>?> obtenerAvances(String fechaInicio, String fechaFin) async {
 
     const almacenamiento = FlutterSecureStorage();
@@ -191,7 +193,9 @@ class ProveedorEstado extends ChangeNotifier {
 
       }
 
-    } catch (excepcion) {
+    } catch (excepcion, stack) {
+
+      print(stack);
 
       return [];
 

@@ -258,15 +258,17 @@ class PantallaAgendasState extends State<PantallaAgendas> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                              decoration: BoxDecoration(
-                                color: Tema.primaryLight,
-                                borderRadius: BorderRadius.circular(7),
-                              ),
+                            SizedBox(
+                              height: 40,
                               child: Row(
                                 children: [
-                                  Expanded(
+                                  Container(
+                                    height: double.infinity,
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      color: Tema.primaryLight,
+                                      borderRadius: BorderRadius.circular(7)
+                                    ),
                                     child: Row(
                                       children: [
                                         const Icon(
@@ -275,78 +277,98 @@ class PantallaAgendasState extends State<PantallaAgendas> {
                                         ),
                                         const SizedBox(width: 5),
                                         Text(
-                                          "Hora: ",
+                                          "Asignar Hora: ",
                                           style: TextStyle(
                                             fontSize: 10,
                                             color: Tema.primary,
                                             fontWeight: FontWeight.bold
                                           ),
                                         ),
-                                        Expanded(
-                                          child: SizedBox(
-                                            height: 30,
-                                            child: ListWheelScrollView.useDelegate(
-                                              controller: controladorHora,
-                                              itemExtent: 12,
-                                              physics: const FixedExtentScrollPhysics(),
-                                              onSelectedItemChanged: (value) {
-                                                setState(() {
-                                                  horaSeleccionada = value;
-                                                });
-                                              },
-                                              childDelegate: ListWheelChildBuilderDelegate(
-                                                builder: (context, index) {
-                                                  return Center(
-                                                    child: Text(
-                                                      index.toString().padLeft(2, '0'),
-                                                      style: TextStyle(
-                                                        fontSize: 10,
-                                                        fontWeight: horaSeleccionada == index ? FontWeight.bold : FontWeight.normal,
-                                                        color: horaSeleccionada == index ? Colors.black : Colors.grey,
-                                                      ),
-                                                    ),
-                                                  );
-                                                },
-                                                childCount: 24,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        const Text(
-                                          ':',
-                                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                                        ),
-                                        Expanded(
-                                          child: SizedBox(
-                                            height: 30,
-                                            child: ListWheelScrollView.useDelegate(
-                                              controller: controladorMinuto,
-                                              itemExtent: 12,
-                                              physics: const FixedExtentScrollPhysics(),
-                                              onSelectedItemChanged: (value) {
-                                                setState(() {
-                                                  minutoSeleccionado = value;
-                                                });
-                                              },
-                                              childDelegate: ListWheelChildBuilderDelegate(
-                                                builder: (context, index) {
-                                                  return Center(
-                                                    child: Text(
-                                                      index.toString().padLeft(2, '0'),
-                                                      style: TextStyle(
-                                                        fontSize: 10,
-                                                        fontWeight: minutoSeleccionado == index ? FontWeight.bold : FontWeight.normal,
-                                                        color: minutoSeleccionado == index ? Colors.black : Colors.grey,
-                                                      ),
-                                                    ),
-                                                  );
-                                                },
-                                                childCount: 60,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
                                       ],
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 5),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(7),
+                                          border: Border.all(
+                                            color: Tema.primaryLight,
+                                            width: 1.5
+                                          )
+                                        ),
+                                        height: double.infinity,
+                                        child: ListWheelScrollView.useDelegate(
+                                          controller: controladorHora,
+                                          itemExtent: 12,
+                                          physics: const FixedExtentScrollPhysics(),
+                                          onSelectedItemChanged: (value) {
+                                            setState(() {
+                                              horaSeleccionada = value;
+                                            });
+                                          },
+                                          childDelegate: ListWheelChildBuilderDelegate(
+                                            builder: (context, index) {
+                                              return Center(
+                                                child: Text(
+                                                  index.toString().padLeft(2, '0'),
+                                                  style: TextStyle(
+                                                    fontSize: 10,
+                                                    fontWeight: horaSeleccionada == index ? FontWeight.bold : FontWeight.normal,
+                                                    color: horaSeleccionada == index ? Colors.black : Colors.grey,
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                            childCount: 24,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const Text(
+                                    ':',
+                                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                                  ),
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 5),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(7),
+                                          border: Border.all(
+                                            color: Tema.primaryLight,
+                                            width: 1.5
+                                          )
+                                        ),
+                                        height: double.infinity,
+                                        child: ListWheelScrollView.useDelegate(
+                                          controller: controladorMinuto,
+                                          itemExtent: 12,
+                                          physics: const FixedExtentScrollPhysics(),
+                                          onSelectedItemChanged: (value) {
+                                            setState(() {
+                                              minutoSeleccionado = value;
+                                            });
+                                          },
+                                          childDelegate: ListWheelChildBuilderDelegate(
+                                            builder: (context, index) {
+                                              return Center(
+                                                child: Text(
+                                                  index.toString().padLeft(2, '0'),
+                                                  style: TextStyle(
+                                                    fontSize: 10,
+                                                    fontWeight: minutoSeleccionado == index ? FontWeight.bold : FontWeight.normal,
+                                                    color: minutoSeleccionado == index ? Colors.black : Colors.grey,
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                            childCount: 60,
+                                          ),
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -494,7 +516,7 @@ class PantallaAgendasState extends State<PantallaAgendas> {
                                               ),
                                               child: Icon(
                                                 Icons.circle,
-                                                color: Tema.primaryLight,
+                                                color: Colors.grey.shade300,
                                                 size: 15,
                                               ),
                                             ),
@@ -580,44 +602,44 @@ class PantallaAgendasState extends State<PantallaAgendas> {
               )
             ),
             if (listaCompletaAgendas.where((agenda) => DateFormat("yyyy-MM-dd").format(DateTime.parse(agenda.fecha)) == DateFormat("yyyy-MM-dd").format(fechaSeleccionada)).toList().isEmpty)
-              Expanded(
-                child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 10),
-                    child: Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(7),
-                        border: Border.all(
-                          color: Tema.primaryLight,
-                          width: 1.5
-                        )
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.sentiment_dissatisfied_rounded,
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 10),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 30),
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(7),
+                      border: Border.all(
+                        color: Tema.primaryLight,
+                        width: 1.5
+                      )
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.sentiment_dissatisfied_rounded,
+                          color: Colors.grey.shade500,
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          "No hay compromisos programados para",
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: Colors.grey.shade500
+                          ),
+                        ),
+                        Text(
+                          obtenerFechaFormateada(),
+                          style: TextStyle(
+                            fontSize: 10,
                             color: Colors.grey.shade500,
+                            fontWeight: FontWeight.bold
                           ),
-                          const SizedBox(height: 10),
-                          Text(
-                            "No hay compromisos programados para",
-                            style: TextStyle(
-                              fontSize: 10,
-                              color: Colors.grey.shade500
-                            ),
-                          ),
-                          Text(
-                            obtenerFechaFormateada(),
-                            style: TextStyle(
-                              fontSize: 10,
-                              color: Colors.grey.shade500,
-                              fontWeight: FontWeight.bold
-                            ),
-                          )
-                        ],
-                      ),
+                        )
+                      ],
                     ),
                   ),
                 ),

@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:intl/intl.dart';
 
 class Avance {
@@ -39,6 +37,109 @@ class Avance {
   String? fechaInicioAuditoria;
   bool? teoricoCargado;
   List<OperadorRendimiento>? operadorRendimiento;
+  List<TopDiferencia>? topDiferencias;
+  String? fechahoraSincroniza;
+  bool? online;
+
+  Avance({
+    this.idInventario,
+    this.jornada,
+    this.localMall,
+    this.localCerrado,
+    this.estadoInventario,
+    this.codCliente,
+    this.codLocal,
+    this.fechaInventario,
+    this.capturaUno,
+    this.cantidadFisica,
+    this.cantidadTeorica,
+    this.dotacionEfectiva,
+    this.porAvance,
+    this.porAvanceAuditoria,
+    this.porNivelError,
+    this.porAvanceBodega,
+    this.porAvanceSala,
+    this.nombreLider,
+    this.nombreArchivoOriginal,
+    this.nombreLocal,
+    this.ciudad,
+    this.fechaHoraInicioProgramada,
+    this.horaInicioProgramada,
+    this.horaInicioReal,
+    this.dotacionDiferencia,
+    this.tiempoDesfaceInicio,
+    this.porAvanceUnidades,
+    this.tiempoTranscurridoHoraCapturando,
+    this.tiempoFaltanteHoraCaptura,
+    this.tiempoTranscurrido,
+    this.tiempoFaltante,
+    this.fechaEstimadaCierre,
+    this.fechaInicioAuditoria,
+    this.teoricoCargado,
+    this.operadorRendimiento,
+    this.topDiferencias,
+    this.fechahoraSincroniza,
+    this.online
+  });
+
+  factory Avance.fromJson(Map<String, dynamic> json) {
+
+    var operadorRendimientoLista = json['operador_rendimiento'] == null ? [] : json['operador_rendimiento'] as List;
+
+    List<OperadorRendimiento> listaOperadorRendimiento = operadorRendimientoLista.map((operadorRendimiento) => OperadorRendimiento.fromJson(operadorRendimiento)).toList();
+
+    var topDiferenciasLista = json['top_diferencias'] == null ? [] : json['top_diferencias'] as List;
+
+    List<TopDiferencia> listaTopDiferencias = topDiferenciasLista.map((topDiferencia) => TopDiferencia.fromJson(topDiferencia)).toList();
+
+    return Avance(
+      idInventario: json['idInventario'],
+      jornada: json['jornada'],
+      localMall: json['local_mall'],
+      localCerrado: json['local_cerrado'],
+      estadoInventario: json['estadoInventario'],
+      codCliente: json['cod_cliente'],
+      codLocal: json['cod_local'],
+      fechaInventario: json['fecha_inventario'],
+      capturaUno: json['captura_uno'],
+      cantidadFisica: json['cantidad_fisica'],
+      cantidadTeorica: json['cantidad_teorica'],
+      dotacionEfectiva: json['dotacion_efectiva'],
+      porAvance: json['por_avance'],
+      porAvanceAuditoria: json['por_avance_auditoria'],
+      porNivelError: json['por_nivel_error'],
+      porAvanceBodega: json["por_avance_bodega"],
+      porAvanceSala: json["por_avance_sala"],
+      nombreLider: json['nombre_lider'],
+      nombreArchivoOriginal: json['nombre_archivo_original'],
+      nombreLocal: json['nombre_local'],
+      ciudad: json['ciudad'],
+      fechaHoraInicioProgramada: json['fecha_hora_inicio_programada'],
+      horaInicioProgramada: json['hora_inicio_programada'],
+      horaInicioReal: json['hora_inicio_real'],
+      dotacionDiferencia: json['dotacion_diferencia'],
+      tiempoDesfaceInicio: json['tiempo_desface_inicio'],
+      porAvanceUnidades: json['por_avance_unidades'],
+      tiempoTranscurridoHoraCapturando: json['tiempo_transcurrido_hora_capturando'],
+      tiempoFaltanteHoraCaptura: json['tiempo_faltante_hora_captura'],
+      tiempoTranscurrido: json['tiempo_transcurrido'],
+      tiempoFaltante: json['tiempo_faltante'],
+      fechaEstimadaCierre: json['fecha_estimada_cierre'],
+      fechaInicioAuditoria: json['fecha_inicio_auditoria'],
+      teoricoCargado: json['teorico_cargado'],
+      operadorRendimiento: listaOperadorRendimiento,
+      topDiferencias : listaTopDiferencias,
+      fechahoraSincroniza: json["fechahora_sincroniza"],
+      online: json["online"]
+    );
+
+  }
+
+  String get obtenerTiempoFaltante {
+
+    return tiempoFaltanteHoraCaptura!;
+
+  }
 
   String get obtenerPorAvance {
 
@@ -88,90 +189,6 @@ class Avance {
 
   }
 
-  Avance({
-    this.idInventario,
-    this.jornada,
-    this.localMall,
-    this.localCerrado,
-    this.estadoInventario,
-    this.codCliente,
-    this.codLocal,
-    this.fechaInventario,
-    this.capturaUno,
-    this.cantidadFisica,
-    this.cantidadTeorica,
-    this.dotacionEfectiva,
-    this.porAvance,
-    this.porAvanceAuditoria,
-    this.porNivelError,
-    this.porAvanceBodega,
-    this.porAvanceSala,
-    this.nombreLider,
-    this.nombreArchivoOriginal,
-    this.nombreLocal,
-    this.ciudad,
-    this.fechaHoraInicioProgramada,
-    this.horaInicioProgramada,
-    this.horaInicioReal,
-    this.dotacionDiferencia,
-    this.tiempoDesfaceInicio,
-    this.porAvanceUnidades,
-    this.tiempoTranscurridoHoraCapturando,
-    this.tiempoFaltanteHoraCaptura,
-    this.tiempoTranscurrido,
-    this.tiempoFaltante,
-    this.fechaEstimadaCierre,
-    this.fechaInicioAuditoria,
-    this.teoricoCargado,
-    this.operadorRendimiento,
-  });
-
-  factory Avance.fromJson(Map<String, dynamic> json) {
-
-    var operadorRendimientoList = json['operador_rendimiento'] as List;
-
-    List<OperadorRendimiento> operadorList = operadorRendimientoList.map((operadorRendimiento) => OperadorRendimiento.fromJson(operadorRendimiento)).toList();
-
-    return Avance(
-      idInventario: json['idInventario'],
-      jornada: json['jornada'],
-      localMall: json['local_mall'],
-      localCerrado: json['local_cerrado'],
-      estadoInventario: json['estadoInventario'],
-      codCliente: json['cod_cliente'],
-      codLocal: json['cod_local'],
-      fechaInventario: json['fecha_inventario'],
-      capturaUno: json['captura_uno'],
-      cantidadFisica: json['cantidad_fisica'],
-      cantidadTeorica: json['cantidad_teorica'],
-      dotacionEfectiva: json['dotacion_efectiva'],
-      porAvance: json['por_avance'],
-      porAvanceAuditoria: json['por_avance_auditoria'],
-      porNivelError: json['por_nivel_error'],
-      porAvanceBodega: json["por_avance_bodega"],
-      porAvanceSala: json["por_avance_sala"],
-      nombreLider: json['nombre_lider'],
-      nombreArchivoOriginal: json['nombre_archivo_original'],
-      nombreLocal: json['nombre_local'],
-      ciudad: json['ciudad'],
-      fechaHoraInicioProgramada: json['fecha_hora_inicio_programada'],
-      horaInicioProgramada: json['hora_inicio_programada'],
-      horaInicioReal: json['hora_inicio_real'],
-      dotacionDiferencia: json['dotacion_diferencia'],
-      tiempoDesfaceInicio: json['tiempo_desface_inicio'],
-      porAvanceUnidades: json['por_avance_unidades'],
-      tiempoTranscurridoHoraCapturando: json['tiempo_transcurrido_hora_capturando'],
-      tiempoFaltanteHoraCaptura: json['tiempo_faltante_hora_captura'],
-      tiempoTranscurrido: json['tiempo_transcurrido'],
-      tiempoFaltante: json['tiempo_faltante'],
-      fechaEstimadaCierre: json['fecha_estimada_cierre'],
-      fechaInicioAuditoria: json['fecha_inicio_auditoria'],
-      teoricoCargado: json['teorico_cargado'],
-      operadorRendimiento: operadorList,
-    );
-
-  }
-
   String? get obtenerNombreCliente {
 
     return codCliente;
@@ -186,7 +203,7 @@ class Avance {
 
   String? get obtenerNombreLocal {
 
-    return nombreLocal;
+    return nombreLocal!.length > 14 ? nombreLocal!.substring(0, 14) : nombreLocal;
 
   }
 
@@ -196,9 +213,27 @@ class Avance {
 
   }
 
+  String? get obtenerHoraInicioReal {
+
+    return horaInicioReal!.isEmpty ? "-" : horaInicioReal;
+
+  }
+
   String? get obtenerDotacion {
 
-    return dotacionDiferencia;
+    return "${dotacionDiferencia!.split("-")[1]} de ${dotacionDiferencia!.split("-")[0]}";
+
+  }
+
+  String? get obtenerHoraEstimadaCierre {
+
+    return fechaEstimadaCierre;
+
+  }
+
+  bool? get estaEnLinea {
+
+    return online;
 
   }
 
@@ -272,18 +307,46 @@ class OperadorRendimiento {
     
   }
 
-  String toJson() => json.encode(toMap());
+}
 
-  factory OperadorRendimiento.fromMap(Map<String, dynamic> json) => OperadorRendimiento(
-    nombre: json["nombre"],
-    cantidad: json["cantidad"],
-    error: json["error"]?.toDouble(),
-  );
+class TopDiferencia {
 
-  Map<String, dynamic> toMap() => {
-    "nombre": nombre,
-    "cantidad": cantidad,
-    "error": error,
-  };
+  String? interno;
+  String? deescripcion;
+  String? fisico;
+  String? teorico;
+  String? dif;
+  String? valorFisico;
+  String? valorTeorico;
+  String? valorDif;
+  String? barra;
+
+  TopDiferencia({
+    this.interno,
+    this.deescripcion,
+    this.fisico,
+    this.teorico,
+    this.dif,
+    this.valorFisico,
+    this.valorTeorico,
+    this.valorDif,
+    this.barra,
+  });
+
+  factory TopDiferencia.fromJson(Map<String, dynamic> json) {
+
+    return TopDiferencia(
+      interno: json["interno"],
+      deescripcion: json["deescripcion"],
+      fisico: json["fisico"],
+      teorico: json["teorico"],
+      dif: json["dif"],
+      valorFisico: json["valor_fisico"],
+      valorTeorico: json["valor_teorico"],
+      valorDif: json["valor_dif"],
+      barra: json["barra"]
+    );
+
+  }
 
 }

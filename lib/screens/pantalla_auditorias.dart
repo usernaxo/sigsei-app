@@ -190,6 +190,8 @@ class _AuditoriasSmuState extends State<AuditoriasSmu> {
   String fechaInicioFormateada = "";
   String fechaFinFormateada = "";
 
+  bool auditoriasSmuCargadas = false;
+
   @override
   void initState() {
 
@@ -228,6 +230,8 @@ class _AuditoriasSmuState extends State<AuditoriasSmu> {
             final proveedorEstado = Provider.of<ProveedorEstado>(context, listen: false);
 
             listaAuditoriasSmu = proveedorEstado.obtenerAuditoriasSmu(fechaDesde, fechaHasta);
+
+            auditoriasSmuCargadas = false;
 
           });
 
@@ -369,14 +373,17 @@ class _AuditoriasSmuState extends State<AuditoriasSmu> {
               ),
             ),
           ),
-          Expanded(
-            child: FutureBuilder(
-              future: listaAuditoriasSmu,
-              builder: (context, AsyncSnapshot<List<AuditoriaSmu>?> snapshot) {
-              
-                if (snapshot.connectionState == ConnectionState.waiting) {
-              
-                  return Column(
+          FutureBuilder(
+            future: listaAuditoriasSmu,
+            builder: (context, AsyncSnapshot<List<AuditoriaSmu>?> snapshot) {
+            
+              if (snapshot.connectionState == ConnectionState.waiting && auditoriasSmuCargadas == false) {
+          
+                auditoriasSmuCargadas = true;
+          
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 30),
+                  child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -391,19 +398,60 @@ class _AuditoriasSmuState extends State<AuditoriasSmu> {
                       const SizedBox(height: 20),
                       const Text("Obteniendo Auditorias SMU")
                     ],
-                  );
-              
-                } else if (snapshot.hasError) {
-              
-                  return const Center(child: Text("Error"));
-              
-                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              
-                  return const Center(child: Text("Sin Auditorias SMU"));
-              
-                } else {
-              
-                  return RefreshIndicator(
+                  ),
+                );
+            
+              } else if (snapshot.hasError) {
+            
+                return const Center(child: Text("Error"));
+            
+              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            
+                return Padding(
+                  padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 10),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 30),
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(7),
+                      border: Border.all(
+                        color: Tema.primaryLight,
+                        width: 1.5
+                      )
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.sentiment_dissatisfied_rounded,
+                          color: Colors.grey.shade500,
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          "Sin Auditorías SMU Programadas",
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: Colors.grey.shade500
+                          ),
+                        ),
+                        Text(
+                          "Desde $fechaInicioFormateada Hasta $fechaFinFormateada",
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: Colors.grey.shade500,
+                            fontWeight: FontWeight.bold
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                );
+            
+              } else {
+            
+                return Expanded(
+                  child: RefreshIndicator(
                     onRefresh: () async {
                       final proveedorEstado = Provider.of<ProveedorEstado>(context, listen: false);
                       final nuevaListaAuditoriasSmu = await proveedorEstado.obtenerAuditoriasSmu(fechaInicioFormateada, fechaFinFormateada);
@@ -421,12 +469,12 @@ class _AuditoriasSmuState extends State<AuditoriasSmu> {
                                     
                       }).toList(),
                     ),
-                  );
-              
-                }
-              
-              },
-            ),
+                  ),
+                );
+            
+              }
+            
+            },
           )
         ]
       ),
@@ -453,6 +501,8 @@ class _AuditoriasBodegaState extends State<AuditoriasBodega> {
 
   String fechaInicioFormateada = "";
   String fechaFinFormateada = "";
+
+  bool auditoriasBodegaCargadas = false;
 
   @override
   void initState() {
@@ -492,6 +542,8 @@ class _AuditoriasBodegaState extends State<AuditoriasBodega> {
             final proveedorEstado = Provider.of<ProveedorEstado>(context, listen: false);
 
             listaAuditoriasBodega = proveedorEstado.obtenerAuditoriasBodega(fechaDesde, fechaHasta);
+
+            auditoriasBodegaCargadas = false;
 
           });
 
@@ -633,14 +685,17 @@ class _AuditoriasBodegaState extends State<AuditoriasBodega> {
               ),
             ),
           ),
-          Expanded(
-            child: FutureBuilder(
-                future: listaAuditoriasBodega,
-                builder: (context, AsyncSnapshot<List<AuditoriaBodega>?> snapshot) {
-                
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                
-                    return Column(
+          FutureBuilder(
+              future: listaAuditoriasBodega,
+              builder: (context, AsyncSnapshot<List<AuditoriaBodega>?> snapshot) {
+              
+                if (snapshot.connectionState == ConnectionState.waiting && auditoriasBodegaCargadas == false) {
+          
+                  auditoriasBodegaCargadas = true;
+          
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 30),
+                    child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
@@ -655,19 +710,60 @@ class _AuditoriasBodegaState extends State<AuditoriasBodega> {
                         const SizedBox(height: 20),
                         const Text("Obteniendo Auditorias Bodega")
                       ],
-                    );
-                
-                  } else if (snapshot.hasError) {
-                
-                    return const Center(child: Text("Error"));
-                
-                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                
-                    return const Center(child: Text("Sin Auditorias Bodega"));
-                
-                  } else {
-                    
-                    return RefreshIndicator(
+                    ),
+                  );
+              
+                } else if (snapshot.hasError) {
+              
+                  return const Center(child: Text("Error"));
+              
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              
+                  return Padding(
+                    padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 10),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 30),
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(7),
+                        border: Border.all(
+                          color: Tema.primaryLight,
+                          width: 1.5
+                        )
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.sentiment_dissatisfied_rounded,
+                            color: Colors.grey.shade500,
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            "Sin Auditorías Bodega Programadas",
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: Colors.grey.shade500
+                            ),
+                          ),
+                          Text(
+                            "Desde $fechaInicioFormateada Hasta $fechaFinFormateada",
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: Colors.grey.shade500,
+                              fontWeight: FontWeight.bold
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  );
+              
+                } else {
+                  
+                  return Expanded(
+                    child: RefreshIndicator(
                       onRefresh: () async {
                         final proveedorEstado = Provider.of<ProveedorEstado>(context, listen: false);
                         final nuevaListaAuditoriasBodega = await proveedorEstado.obtenerAuditoriasBodega(fechaInicioFormateada, fechaFinFormateada);
@@ -685,13 +781,13 @@ class _AuditoriasBodegaState extends State<AuditoriasBodega> {
                                       
                         }).toList(),
                       ),
-                    );
-                
-                  }
-                
-                },
-              ),
-          )
+                    ),
+                  );
+              
+                }
+              
+              },
+            )
         ]
       ),
     );

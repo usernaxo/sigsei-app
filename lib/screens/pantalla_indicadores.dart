@@ -29,6 +29,8 @@ class PantallaIndicadoresState extends State<PantallaIndicadores> {
   String fechaFormateada = "";
   String selectedItem = "Todos";
 
+  bool indicadoresCargados = false;
+
   @override
   void initState() {
 
@@ -83,7 +85,7 @@ class PantallaIndicadoresState extends State<PantallaIndicadores> {
 
   }
 
-  Future<void> modalFecha1() async {
+  Future<void> modalFecha() async {
 
     ModalFecha(
       context: context,
@@ -104,6 +106,8 @@ class PantallaIndicadoresState extends State<PantallaIndicadores> {
             formatoFecha = DateFormat('EEEE d \'de\' MMMM \'de\' yyyy', 'es_ES').format(fechaInicio);
 
             listaIndicadores = proveedorEstado.obtenerIndicadores(fechaFormateada, fechaFormateada);
+
+            indicadoresCargados = false;
 
           });
 
@@ -128,6 +132,15 @@ class PantallaIndicadoresState extends State<PantallaIndicadores> {
     );
 
   }
+
+      final List<String> items = [
+      'Item1',
+      'Item2',
+      'Item3',
+      'Item4',
+    ];
+
+    String? selectedValue = "Item1";
 
   @override
   Widget build(BuildContext context) {
@@ -229,7 +242,7 @@ class PantallaIndicadoresState extends State<PantallaIndicadores> {
                                 ],
                               )
                             ),
-                            onTap: () => modalFecha1(),
+                            onTap: () => modalFecha(),
                           ),
                         ),
                         const SizedBox(width: 5),
@@ -260,13 +273,14 @@ class PantallaIndicadoresState extends State<PantallaIndicadores> {
                                     selectedItem = value!;
                                   });
                                 },
+                                borderRadius: BorderRadius.circular(7),
                                 items: <String>["Todos", "Diurnos", "Nocturnos"].map<DropdownMenuItem<String>>((String value) {
                                   return DropdownMenuItem<String>(
                                     value: value,
                                     child: Row(
                                       children: [
                                         Icon(
-                                          value == "Todos" ? Icons.inventory_rounded : value == "Diurnos" ? Icons.wb_sunny_rounded : Icons.nightlight_round,
+                                          value == "Todos" ? Icons.fact_check_outlined : value == "Diurnos" ? Icons.wb_sunny_rounded : Icons.nightlight_round,
                                           color: value == "Diurnos" ? Colors.amber : Tema.primary,
                                           size: 15,
                                         ),
@@ -334,14 +348,17 @@ class PantallaIndicadoresState extends State<PantallaIndicadores> {
                 ),
               ),
             ),
-            Expanded(
-              child: FutureBuilder(
-                future: listaIndicadores,
-                builder: (context, AsyncSnapshot<List<Indicador>?> snapshot) {
-
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-
-                    return Column(
+            FutureBuilder(
+              future: listaIndicadores,
+              builder: (context, AsyncSnapshot<List<Indicador>?> snapshot) {
+            
+                if (snapshot.connectionState == ConnectionState.waiting && indicadoresCargados == false) {
+            
+                  indicadoresCargados = true;
+            
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 30),
+                    child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
@@ -356,21 +373,62 @@ class PantallaIndicadoresState extends State<PantallaIndicadores> {
                         const SizedBox(height: 20),
                         const Text("Obteniendo Indicadores")
                       ],
-                    );
-
-                  } else if (snapshot.hasError) {
-
-                    return const Center(child: Text("Error"));
-
-                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-
-                    return const Center(child: Text("Sin Indicadores"));
-
-                  } else {
-
-                    indicadores = selectedItem == "Diurnos" ? snapshot.data!.where((i) => i.esDia!).toList() : selectedItem == "Nocturnos" ? snapshot.data!.where((i) => !i.esDia!).toList() : snapshot.data;
-
-                    return RefreshIndicator(
+                    ),
+                  );
+            
+                } else if (snapshot.hasError) {
+            
+                  return const Center(child: Text("Error"));
+            
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            
+                  return Padding(
+                    padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 10),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 30),
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(7),
+                        border: Border.all(
+                          color: Tema.primaryLight,
+                          width: 1.5
+                        )
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.sentiment_dissatisfied_rounded,
+                            color: Colors.grey.shade500,
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            "Sin Indicadores de Inventarios para",
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: Colors.grey.shade500
+                            ),
+                          ),
+                          Text(
+                            obtenerFechaFormateada(),
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: Colors.grey.shade500,
+                              fontWeight: FontWeight.bold
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  );
+            
+                } else {
+            
+                  indicadores = selectedItem == "Diurnos" ? snapshot.data!.where((i) => i.esDia!).toList() : selectedItem == "Nocturnos" ? snapshot.data!.where((i) => !i.esDia!).toList() : snapshot.data;
+            
+                  return Expanded(
+                    child: RefreshIndicator(
                       onRefresh: () async {
                         final proveedorEstado = Provider.of<ProveedorEstado>(context, listen: false);
                         final nuevaListaIndicadores = await proveedorEstado.obtenerIndicadores(fechaFormateada, fechaFormateada);
@@ -388,12 +446,12 @@ class PantallaIndicadoresState extends State<PantallaIndicadores> {
                       
                         }).toList(),
                       ),
-                    );
-
-                  }
-
-                },
-              )
+                    )
+                  );
+            
+                }
+            
+              },
             )
           ]
         ),

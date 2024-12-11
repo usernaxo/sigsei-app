@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -21,11 +23,15 @@ class PantallaAvances extends StatefulWidget {
 
 class PantallaAvancesState extends State<PantallaAvances> {
 
-  late Future<List<Avance>?> listaAvances;
+  late Future<List<Avance>?> listaAvances = Future.value([]);
   
   String? formatoFecha;
   String fechaFormateada = "";
   String selectedItem = "Todos";
+
+  bool avancesCargados = false;
+
+  Timer? tiempoActualizacion;
 
   @override
   void initState() {
@@ -36,28 +42,54 @@ class PantallaAvancesState extends State<PantallaAvances> {
 
     DateTime fechaActual = DateTime.now();
 
-    if (fechaActual.weekday == DateTime.monday && fechaActual.hour < 16) {
+    fechaFormateada = DateFormat("yyyy-MM-dd").format(fechaActual);
+    formatoFecha = DateFormat('EEEE d \'de\' MMMM \'de\' yyyy', 'es_ES').format(fechaActual);
 
-      fechaFormateada = DateFormat("yyyy-MM-dd").format(DateTime.now().subtract(const Duration(days: 3)));
-      formatoFecha = DateFormat('EEEE d \'de\' MMMM \'de\' yyyy', 'es_ES').format(DateTime.now().subtract(const Duration(days: 3)));
+    if (mounted) {
+      listaAvances = proveedorEstado.obtenerAvances(fechaFormateada, fechaFormateada);
+    }
+
+    iniciarActualizacion();
+
+  }
+
+  @override
+  void dispose() {
+
+    tiempoActualizacion?.cancel();
+
+    super.dispose();
+    
+  }
+
+  void iniciarActualizacion() {
+
+    if (fechaFormateada == DateFormat("yyyy-MM-dd").format(DateTime.now())) {
+
+      tiempoActualizacion = Timer.periodic(const Duration(seconds: 10), (timer) async {
+
+        if (!mounted) return;
+
+        final proveedorEstado = Provider.of<ProveedorEstado>(context, listen: false);
+        final nuevaListaAvances = await proveedorEstado.obtenerAvances(fechaFormateada, fechaFormateada);
+
+        if (mounted) {
+
+          setState(() {
+
+            listaAvances = Future.value(nuevaListaAvances);
+
+          });
+
+        }
+        
+      });
 
     } else {
 
-      if (fechaActual.hour >= 16) {
-
-        fechaFormateada = DateFormat("yyyy-MM-dd").format(DateTime.now());
-        formatoFecha = DateFormat('EEEE d \'de\' MMMM \'de\' yyyy', 'es_ES').format(DateTime.now());
-
-      } else {
-
-        fechaFormateada = DateFormat("yyyy-MM-dd").format(DateTime.now().subtract(const Duration(days: 1)));
-        formatoFecha = DateFormat('EEEE d \'de\' MMMM \'de\' yyyy', 'es_ES').format(DateTime.now().subtract(const Duration(days: 1)));
-
-      }
+      tiempoActualizacion?.cancel();
 
     }
-
-    listaAvances = proveedorEstado.obtenerAvances(fechaFormateada, fechaFormateada);
 
   }
 
@@ -81,7 +113,7 @@ class PantallaAvancesState extends State<PantallaAvances> {
 
   }
 
-  Future<void> modalFecha1() async {
+  Future<void> modalFecha() async {
 
     ModalFecha(
       context: context,
@@ -102,6 +134,10 @@ class PantallaAvancesState extends State<PantallaAvances> {
             formatoFecha = DateFormat('EEEE d \'de\' MMMM \'de\' yyyy', 'es_ES').format(fechaInicio);
 
             listaAvances = proveedorEstado.obtenerAvances(fechaFormateada, fechaFormateada);
+
+            avancesCargados = false;
+
+            iniciarActualizacion();
 
           });
 
@@ -227,7 +263,7 @@ class PantallaAvancesState extends State<PantallaAvances> {
                                 ],
                               )
                             ),
-                            onTap: () => modalFecha1(),
+                            onTap: () => modalFecha(),
                           ),
                         ),
                       ],
@@ -268,20 +304,27 @@ class PantallaAvancesState extends State<PantallaAvances> {
                     ),
                     Expanded(
                       flex: 1,
+                      child: formatearCelda("Avance\nUnidades")
+                    ),
+                    Expanded(
+                      flex: 1,
                       child: formatearCelda("Dotación\nTotal")
                     ),
                   ],
                 ),
               ),
             ),
-            Expanded(
-              child: FutureBuilder(
-                future: listaAvances,
-                builder: (context, AsyncSnapshot<List<Avance>?> snapshot) {
-
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-
-                    return Column(
+            FutureBuilder(
+              future: listaAvances,
+              builder: (context, AsyncSnapshot<List<Avance>?> snapshot) {
+            
+                if (snapshot.connectionState == ConnectionState.waiting && avancesCargados == false) {
+            
+                  avancesCargados = true;
+            
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 30),
+                    child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
@@ -296,19 +339,60 @@ class PantallaAvancesState extends State<PantallaAvances> {
                         const SizedBox(height: 20),
                         const Text("Obteniendo Avances")
                       ],
-                    );
-
-                  } else if (snapshot.hasError) {
-
-                    return const Center(child: Text("Error"));
-
-                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-
-                    return const Center(child: Text("Sin Avances"));
-
-                  } else {
-
-                    return RefreshIndicator(
+                    ),
+                  );
+            
+                } else if (snapshot.hasError) {
+            
+                  return const Center(child: Text("Error"));
+            
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            
+                  return Padding(
+                    padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 10),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 30),
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(7),
+                        border: Border.all(
+                          color: Tema.primaryLight,
+                          width: 1.5
+                        )
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.sentiment_dissatisfied_rounded,
+                            color: Colors.grey.shade500,
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            "Sin Avances de Invetarios para",
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: Colors.grey.shade500
+                            ),
+                          ),
+                          Text(
+                            obtenerFechaFormateada(),
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: Colors.grey.shade500,
+                              fontWeight: FontWeight.bold
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  );
+            
+                } else {
+            
+                  return Expanded(
+                    child: RefreshIndicator(
                       onRefresh: () async {
                         final proveedorEstado = Provider.of<ProveedorEstado>(context, listen: false);
                         final nuevaListaAvances = await proveedorEstado.obtenerAvances(fechaFormateada, fechaFormateada);
@@ -326,12 +410,12 @@ class PantallaAvancesState extends State<PantallaAvances> {
                       
                         }).toList(),
                       ),
-                    );
-
-                  }
-
-                },
-              )
+                    ),
+                  );
+            
+                }
+            
+              },
             )
           ]
         ),

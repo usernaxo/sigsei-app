@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sigsei/helpers/indicador_deficiente.dart';
 import 'package:sigsei/models/avance.dart';
-import 'package:sigsei/models/indicador.dart';
 import 'package:sigsei/themes/tema.dart';
 
 class FilaAvance extends StatefulWidget {
@@ -18,10 +16,33 @@ class FilaAvance extends StatefulWidget {
 
 }
 
-class _FilaAvanceState extends State<FilaAvance> {
+class _FilaAvanceState extends State<FilaAvance> with SingleTickerProviderStateMixin {
+
+  late AnimationController controladorAnimacionEstadoEnLinea;
+  late Animation<double> animacionOpacidadEstadoEnLinea;
 
   bool mostrarAvance = true;
   bool filaExpandida = false;
+
+  @override
+  void initState() {
+
+    super.initState();
+
+    controladorAnimacionEstadoEnLinea = AnimationController(duration: const Duration(milliseconds: 500), vsync: this)..repeat(reverse: true);
+
+    animacionOpacidadEstadoEnLinea = Tween<double>(begin: 0.3, end: 1.0).animate(controladorAnimacionEstadoEnLinea);
+
+  }
+
+  @override
+  void dispose() {
+
+    controladorAnimacionEstadoEnLinea.dispose();
+
+    super.dispose();
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,42 +63,35 @@ class _FilaAvanceState extends State<FilaAvance> {
 
     }
 
-    bool indicadorRojo(Indicador indicador) {
-
-      String horasIg = indicador.obtenerIgHours!;
-      String notaPromedio = indicador.obtenerAvgScores!;
-      String errorSei = indicador.obtenerSeiError!;
-      String estandarSei = indicador.obtenerSeiStandard!;
-      String varianza = indicador.obtenerVarianza!;
-
-      if (IndicadorDeficiente.esHorasIgDeficiente(horasIg) || IndicadorDeficiente.esNotaPromedioDeficiente(notaPromedio) || IndicadorDeficiente.esErrorSeiDeficiente(errorSei) || IndicadorDeficiente.esEstandarSeiDeficiente(estandarSei) || IndicadorDeficiente.esVarianzaDeficiente(varianza)) {
-
-        return true;
-
-      }
-
-      return false;
-
-    }
-
-    bool indicadorAmarillo(Indicador indicador) {
-
-      if (indicador.indicator == null || indicador.leader!.toLowerCase().contains("suspendido")) {
-
-        return true;
-
-      }
-
-      return false;
-
-    }
-
     Widget estadoAvance(Avance avance) {
 
-      return Icon(
-        Icons.circle,
-        size: 7,
-        color: Colors.red
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.circle,
+            size: 7,
+            color: avance.obtenerHoraEstimadaCierre!.isEmpty ? Colors.red : Colors.green
+          ),
+          const SizedBox(width: 5),
+          AnimatedBuilder(
+            animation: controladorAnimacionEstadoEnLinea,
+            builder: (context, child) {
+
+              return Opacity(
+                opacity: avance.estaEnLinea! ? animacionOpacidadEstadoEnLinea.value : 1.0,
+                child: Text(
+                  avance.estaEnLinea! ? "Online" : "Offline",
+                  style: TextStyle(
+                    color: avance.estaEnLinea! ? Colors.green : Colors.grey.shade500,
+                    fontSize: 9
+                  ),
+                ),
+              );
+
+            },
+          )
+        ],
       );
 
     }
@@ -128,7 +142,11 @@ class _FilaAvanceState extends State<FilaAvance> {
               ),
               Expanded(
                 flex: 1,
-                child: formatearCelda(widget.avance.obtenerHoraInicio!)
+                child: formatearCelda(widget.avance.obtenerHoraInicioReal!)
+              ),
+              Expanded(
+                flex: 1,
+                child: formatearCelda(widget.avance.obtenerPorAvanceUnidades)
               ),
               Expanded(
                 flex: 1,

@@ -29,6 +29,8 @@ class PantallaInventarioGeneralState extends State<PantallaInventarioGeneral> {
   String fechaFinFormateada = "";
   String selectedItem = "Todos";
 
+  bool inventariosGeneralesCargados = false;
+
   @override
   void initState() {
 
@@ -67,6 +69,8 @@ class PantallaInventarioGeneralState extends State<PantallaInventarioGeneral> {
             final proveedorEstado = Provider.of<ProveedorEstado>(context, listen: false);
 
             listaInventarioGeneral = proveedorEstado.obtenerInventarioGeneral(fechaDesde, fechaHasta);
+
+            inventariosGeneralesCargados = false;
 
           });
 
@@ -227,6 +231,7 @@ class PantallaInventarioGeneralState extends State<PantallaInventarioGeneral> {
                                     selectedItem = value!;
                                   });
                                 },
+                                borderRadius: BorderRadius.circular(7),
                                 items: <String>["Todos", "Diurnos", "Nocturnos"].map<DropdownMenuItem<String>>((String value) {
                                   return DropdownMenuItem<String>(
                                     value: value,
@@ -297,14 +302,17 @@ class PantallaInventarioGeneralState extends State<PantallaInventarioGeneral> {
                 ),
               ),
             ),
-            Expanded(
-              child: FutureBuilder(
-                future: listaInventarioGeneral,
-                builder: (context, AsyncSnapshot<List<InventarioGeneral>?> snapshot) {
-
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-
-                    return Column(
+            FutureBuilder(
+              future: listaInventarioGeneral,
+              builder: (context, AsyncSnapshot<List<InventarioGeneral>?> snapshot) {
+            
+                if (snapshot.connectionState == ConnectionState.waiting && inventariosGeneralesCargados == false) {
+            
+                  inventariosGeneralesCargados = true;
+            
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 30),
+                    child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
@@ -319,21 +327,62 @@ class PantallaInventarioGeneralState extends State<PantallaInventarioGeneral> {
                         const SizedBox(height: 20),
                         const Text("Obteniendo Inventarios")
                       ],
-                    );
-
-                  } else if (snapshot.hasError) {
-
-                    return const Center(child: Text("Error"));
-
-                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-
-                    return const Center(child: Text("Sin Inventarios"));
-
-                  } else {
-
-                    inventarios = selectedItem == "Diurnos" ? snapshot.data!.where((i) => !i.esNoche!).toList() : selectedItem == "Nocturnos" ? snapshot.data!.where((i) => i.esNoche!).toList() : snapshot.data;
-
-                    return RefreshIndicator(
+                    ),
+                  );
+            
+                } else if (snapshot.hasError) {
+            
+                  return const Center(child: Text("Error"));
+            
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            
+                  return Padding(
+                    padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 10),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 30),
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(7),
+                        border: Border.all(
+                          color: Tema.primaryLight,
+                          width: 1.5
+                        )
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.sentiment_dissatisfied_rounded,
+                            color: Colors.grey.shade500,
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            "Sin Inventarios Programados",
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: Colors.grey.shade500
+                            ),
+                          ),
+                          Text(
+                            "Desde $fechaInicioFormateada Hasta $fechaFinFormateada",
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: Colors.grey.shade500,
+                              fontWeight: FontWeight.bold
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  );
+            
+                } else {
+            
+                  inventarios = selectedItem == "Diurnos" ? snapshot.data!.where((i) => !i.esNoche!).toList() : selectedItem == "Nocturnos" ? snapshot.data!.where((i) => i.esNoche!).toList() : snapshot.data;
+            
+                  return Expanded(
+                    child: RefreshIndicator(
                       onRefresh: () async {
                         final proveedorEstado = Provider.of<ProveedorEstado>(context, listen: false);
                         final nuevaListaInventarioGeneral = await proveedorEstado.obtenerInventarioGeneral(fechaInicioFormateada, fechaFinFormateada);
@@ -351,12 +400,12 @@ class PantallaInventarioGeneralState extends State<PantallaInventarioGeneral> {
                       
                         }).toList(),
                       ),
-                    );
-
-                  }
-
-                },
-              )
+                    ),
+                  );
+            
+                }
+            
+              },
             )
           ]
         ),

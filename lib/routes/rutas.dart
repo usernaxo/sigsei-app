@@ -6,6 +6,7 @@ import 'package:sigsei/screens/pantalla_avances.dart';
 import 'package:sigsei/screens/pantalla_indicadores.dart';
 import 'package:sigsei/screens/pantalla_inventario_general.dart';
 import 'package:sigsei/screens/pantalla_modulos.dart';
+import 'package:sigsei/screens/pantalla_usuario.dart';
 
 class Rutas {
 
@@ -21,6 +22,7 @@ class Rutas {
     "pantalla_auditorias_smu": (BuildContext context) => const PantallaAuditorias(),
     "pantalla_inventario_general": (BuildContext context) => const PantallaInventarioGeneral(),
     "pantalla_agendas": (BuildContext context) => const PantallaAgendas(),
+    "pantalla_usuario": (BuildContext context) => const PantallaUsuario()
 
   };
 

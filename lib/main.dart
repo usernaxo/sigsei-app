@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
@@ -10,6 +11,11 @@ import 'package:sigsei/routes/rutas.dart';
 import 'package:sigsei/themes/tema.dart';
 
 void main() async {
+
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle( 
+    statusBarColor: Color.alphaBlend(Tema.primary.withOpacity(0.8), Colors.black),
+    statusBarIconBrightness: Brightness.light
+  )); 
 
   WidgetsFlutterBinding.ensureInitialized();
 

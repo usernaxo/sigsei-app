@@ -13,6 +13,7 @@ import 'package:sigsei/models/indicador.dart';
 import 'package:sigsei/models/inventario_general.dart';
 import 'package:sigsei/models/token.dart';
 import 'package:http/http.dart' as http;
+import 'package:sigsei/models/usuario_datos.dart';
 
 class ProveedorEstado extends ChangeNotifier {
 
@@ -30,6 +31,7 @@ class ProveedorEstado extends ChangeNotifier {
   bool cargando = false;
 
   Token? tokenUsuario;
+  UsuarioDatos? usuarioDatos;
   List<Indicador>? listaIndicadores = [];
   List<AuditoriaSmu> listaAuditoriasSmu = [];
   List<AuditoriaBodega> listaAuditoriasBodega = [];
@@ -156,6 +158,50 @@ class ProveedorEstado extends ChangeNotifier {
 
   }
 
+  Future<UsuarioDatos?> obtenerDatosUsuario() async {
+
+    const almacenamiento = FlutterSecureStorage();
+    
+    final tokenUsuario = await almacenamiento.read(key: "tokenUsuario");
+    
+    try {
+
+      Uri peticionObtenerDatosUsuario = Uri.https(servidor, datosUsuarioEndpoint);
+
+      final respuestaObtenerDatosUsuario = await http.get(
+        peticionObtenerDatosUsuario,
+        headers: {
+          "Authorization": "Bearer $tokenUsuario"
+        }
+      );
+
+      if (respuestaObtenerDatosUsuario.statusCode == 200) {
+
+        usuarioDatos = UsuarioDatos.fromJson(json.decode(respuestaObtenerDatosUsuario.body));
+
+        return usuarioDatos!;
+          
+      } else {
+
+        return null;
+
+      }
+
+    } catch (excepcion, stack) {
+
+      print(stack);
+
+      return null;
+
+    } finally {
+
+      cargando = false;
+
+      notifyListeners();
+
+    }
+
+  }
 
   Future<List<Avance>?> obtenerAvances(String fechaInicio, String fechaFin) async {
 

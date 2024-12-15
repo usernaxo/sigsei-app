@@ -3,18 +3,39 @@ import 'package:flutter/material.dart';
 class Tema {
 
   static Color primary = Colors.lightBlue.shade900;
-  static Color primaryLight = Colors.black12;
+  static Color primaryLight = Colors.grey.shade100;
+  static Color secondaryLight = Colors.grey.shade300;
 
   static ThemeData light = ThemeData.light().copyWith(
     primaryColor: primary,
     primaryColorLight: primaryLight,
+    scaffoldBackgroundColor: Colors.white,
+    drawerTheme: const DrawerThemeData(
+      backgroundColor: Colors.white
+    ),
+    cardTheme: CardTheme(
+      color: primaryLight,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(7),
+      )
+    ),
+    canvasColor: Colors.white,
+    expansionTileTheme: ExpansionTileThemeData(
+      shape: RoundedRectangleBorder(
+        side: BorderSide(
+          color: Tema.secondaryLight,
+          width: 2
+        ),
+        borderRadius: BorderRadius.circular(7)
+      ),
+    ),
     textTheme: const TextTheme(
       bodySmall: TextStyle(fontSize: 12, color: Colors.black),
       bodyMedium: TextStyle(fontSize: 12, color: Colors.black),
       bodyLarge: TextStyle(fontSize: 12, color: Colors.black),
     ),
     colorScheme: ThemeData.light().colorScheme.copyWith(
-      primary: primary
+      primary: primary,
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,

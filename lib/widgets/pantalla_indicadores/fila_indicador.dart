@@ -105,13 +105,6 @@ class _FilaIndicadorState extends State<FilaIndicador> {
           minTileHeight: 10,
           childrenPadding: EdgeInsets.zero,
           showTrailingIcon: false,
-          shape: RoundedRectangleBorder(
-            side: BorderSide(
-              color: Tema.primaryLight,
-              width: 2
-            ),
-            borderRadius: BorderRadius.circular(7)
-          ),
           title: Row(
             children: [
               Expanded(
@@ -353,7 +346,7 @@ class ContenidoAvance extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    Widget buildRow(List<String> listaCadenas, {bool esBold = false}) {
+    Widget buildRow(List<String> listaCadenas, {bool esBold = false, Color color = Colors.black}) {
 
       return Row(
         children: listaCadenas.asMap().entries.map((entry) {
@@ -371,6 +364,7 @@ class ContenidoAvance extends StatelessWidget {
               style: TextStyle(
                 fontSize: 9,
                 fontWeight: esBold ? FontWeight.bold : FontWeight.normal,
+                color: color
               )
             ),
           );
@@ -380,55 +374,21 @@ class ContenidoAvance extends StatelessWidget {
 
     }
 
-    Text formatearCadena(String cadena, {bool esBold = false}) {
-
-      return Text(
-        cadena,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-        style: TextStyle(
-          fontSize: 9,
-          fontWeight: esBold ? FontWeight.bold : FontWeight.normal,
-        )
-      );
-
-    }
-
     Widget progresoAvance() {
 
       double? porcentajeAvance = double.tryParse(indicador.avance!.obtenerPorAvanceUnidades.replaceAll("%", ""));
 
-      if (porcentajeAvance != null) {
-
-        return Padding(
-          padding: const EdgeInsets.only(left: 15, right: 5),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Stack(
-                alignment: Alignment.center,
-                children: [
-                  CircularProgressIndicator(
-                    value: porcentajeAvance / 100,
-                    valueColor: const AlwaysStoppedAnimation(Colors.green),
-                    backgroundColor: Colors.red,
-                  ),
-                  Text(
-                    "${indicador.avance!.obtenerPorAvanceUnidades.split(".")[0]} %",
-                    style: const TextStyle(
-                      fontSize: 10, 
-                      fontWeight: FontWeight.bold, 
-                    ),
-                  ),
-                ],
-              ),
-            ],
+      return Expanded(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 5),
+          child: LinearProgressIndicator(
+            value: porcentajeAvance != null ? porcentajeAvance / 100 : 0,
+            valueColor: const AlwaysStoppedAnimation(Colors.green),
+            backgroundColor: Colors.red,
+            borderRadius: BorderRadius.circular(7),
           ),
-        );
-
-      }
-
-      return Container();
+        ),
+      );
       
     }
 
@@ -444,42 +404,35 @@ class ContenidoAvance extends StatelessWidget {
           children: [
             Row(
               children: [
-                Expanded(
-                  flex: 2,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      formatearCadena("Avance de Inventario", esBold: true),
-                      Divider(color: Colors.green.shade200),
-                      formatearCadena("Hora de Inicio Programada"),
-                      formatearCadena("Hora de Comienzo"),
-                      formatearCadena("Dotación"),
-                    ],
+                const Text(
+                  "Avance de Inventario",
+                  style: TextStyle(
+                    fontSize: 9,
+                    fontWeight: FontWeight.bold
                   ),
                 ),
-                Expanded(
-                  flex: 1,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      formatearCadena("Conteo", esBold: true),
-                      Divider(color: Colors.green.shade200),
-                      formatearCadena(indicador.avance!.horaInicioProgramada!),
-                      formatearCadena(indicador.avance!.horaInicioReal!),
-                      formatearCadena(indicador.avance!.dotacionDiferencia!),
-                    ],
+                progresoAvance(),
+                Text(
+                  indicador.avance!.obtenerPorAvanceUnidades,
+                  style:  TextStyle(
+                    fontSize: 9,
+                    fontWeight: FontWeight.bold,
+                    color: Tema.primary
                   ),
-                ),
-                progresoAvance()
+                )
               ],
             ),
+            Divider(color: Colors.green.shade200),
+            buildRow(["Hora de inicio programada", "", indicador.avance!.obtenerHoraInicio!]),
+            buildRow(["Hora de comienzo", "", indicador.avance!.obtenerHoraInicioReal!]),
+            buildRow(["Dotación total", "", indicador.avance!.obtenerDotacion!]),
             Divider(color: Colors.green.shade200),
             buildRow(["Stock Teórico", indicador.avance!.obtenerCantidadTeorica, "100.00 %"]),
             buildRow(["Avance Uni. Contadas", indicador.avance!.obtenerCantidadFisica, indicador.avance!.obtenerPorAvanceUnidades]),
             buildRow(["Avance Sala", "", indicador.avance!.obtenerPorAvanceSala]),
             buildRow(["Avance Bodega", "", indicador.avance!.obtenerPorAvanceBodega]),
             Divider(color: Colors.green.shade200),
-            buildRow(["Auditoría", "", "Avance %"], esBold: true),
+            buildRow(["Auditoría", "", "Avance %"], esBold: true, color: Tema.primary),
             buildRow(["Avance Items", "", indicador.avance!.obtenerPorAvanceAuditoria]),
             buildRow(["Error", "", indicador.avance!.obtenerPorNivelError]),
             Divider(color: Colors.green.shade200),

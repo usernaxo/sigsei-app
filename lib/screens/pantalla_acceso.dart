@@ -108,7 +108,7 @@ class _PantallaAccesoState extends State<PantallaAcceso> {
                           key: claveFormulario,
                           child: Column(
                             children: [
-                              const Divider(),
+                              Divider(color: Tema.secondaryLight),
                               const Padding(
                                 padding: EdgeInsets.symmetric(vertical: 7),
                                 child: Row(
@@ -154,7 +154,7 @@ class _PantallaAccesoState extends State<PantallaAcceso> {
                                   onSaved: (value) => clave = value,
                                 ),
                               ),
-                              const Divider(),
+                              Divider(color: Tema.secondaryLight),
                               Padding(
                                 padding: const EdgeInsets.symmetric(vertical: 15),
                                 child: SizedBox(

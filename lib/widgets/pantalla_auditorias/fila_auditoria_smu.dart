@@ -68,13 +68,6 @@ class _FilaAuditoriaSmuState extends State<FilaAuditoriaSmu> {
           minTileHeight: 10,
           childrenPadding: EdgeInsets.zero,
           showTrailingIcon: false,
-          shape: RoundedRectangleBorder(
-            side: BorderSide(
-              color: Tema.primaryLight,
-              width: 2
-            ),
-            borderRadius: BorderRadius.circular(7)
-          ),
           title: Row(
             children: [
               Expanded(

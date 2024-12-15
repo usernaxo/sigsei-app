@@ -7,8 +7,10 @@ import 'package:sigsei/models/modulo.dart';
 import 'package:sigsei/models/indicador.dart';
 import 'package:sigsei/models/usuario.dart';
 import 'package:sigsei/providers/proveedor_estado.dart';
+import 'package:sigsei/routes/rutas.dart';
 import 'package:sigsei/themes/tema.dart';
 import 'package:sigsei/widgets/pantalla_general/barra_usuario.dart';
+import 'package:sigsei/widgets/pantalla_general/menu_usuario.dart';
 
 class PantallaModulos extends StatefulWidget {
   
@@ -21,10 +23,12 @@ class PantallaModulos extends StatefulWidget {
 
 class _PantallaModulosState extends State<PantallaModulos> {
 
+  final GlobalKey<ScaffoldState> clavePantallaModulos = GlobalKey<ScaffoldState>();
+
   late Future<List<Indicador>?> listaIndicadores;
   late Future<Usuario?> usuario;
 
-    @override
+  @override
   void initState() {
 
     super.initState();
@@ -59,17 +63,25 @@ class _PantallaModulosState extends State<PantallaModulos> {
 
     if (fechaActual.weekday == DateTime.monday && fechaActual.hour < 16) {
 
-      fechaFormateada = DateFormat("yyyy-MM-dd").format(DateTime.now().subtract(const Duration(days: 3)));
+      fechaFormateada = DateFormat("yyyy-MM-dd").format(fechaActual.subtract(const Duration(days: 3)));
+
+    } else if (fechaActual.weekday == DateTime.saturday) {
+
+      fechaFormateada = DateFormat("yyyy-MM-dd").format(fechaActual.subtract(const Duration(days: 1)));
+
+    } else if (fechaActual.weekday == DateTime.sunday) {
+
+      fechaFormateada = DateFormat("yyyy-MM-dd").format(fechaActual.subtract(const Duration(days: 2)));
 
     } else {
 
       if (fechaActual.hour >= 16) {
 
-        fechaFormateada = DateFormat("yyyy-MM-dd").format(DateTime.now());
+        fechaFormateada = DateFormat("yyyy-MM-dd").format(fechaActual);
 
       } else {
 
-        fechaFormateada = DateFormat("yyyy-MM-dd").format(DateTime.now().subtract(const Duration(days: 1)));
+        fechaFormateada = DateFormat("yyyy-MM-dd").format(fechaActual.subtract(const Duration(days: 1)));
 
       }
 
@@ -164,6 +176,39 @@ class _PantallaModulosState extends State<PantallaModulos> {
     }
 
     return Scaffold(
+      key: clavePantallaModulos,
+      drawer: FutureBuilder(
+        future: usuario,
+        builder: (context, snapshot) {
+
+          if (snapshot.connectionState == ConnectionState.waiting) {
+
+            return const Center(
+              child: SizedBox(
+                width: 25,
+                height: 25,
+                child: CircularProgressIndicator(
+                  strokeWidth: 1.5
+                ),
+              )
+            );
+
+          } else if (snapshot.hasError) {
+
+            return const Center(child: Text("Error"));
+
+          } else if (snapshot.hasData) {
+
+            final usuarioData = snapshot.data;
+
+            return MenuUsuario(usuario: usuarioData!);
+
+          }
+
+          return Container();
+
+        }
+      ),
       body: FutureBuilder(
         future: Future.wait([usuario, listaIndicadores]),
         builder: (context, snapshot) {
@@ -206,15 +251,15 @@ class _PantallaModulosState extends State<PantallaModulos> {
                 SafeArea(
                   child: Column(
                     children: [
-                      BarraUsuario(usuario: usuarioData, botonRetroceso: false),
-                      const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                      BarraUsuario(usuario: usuarioData, claveMenu: clavePantallaModulos, botonRetroceso: false),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                         child: Column(
                           children: [
                             Row(
                               children: [
-                                Icon(Icons.arrow_drop_down_rounded),
-                                Text.rich(
+                                const Icon(Icons.arrow_drop_down_rounded),
+                                const Text.rich(
                                   TextSpan(
                                     text: "Gestión Operacional ",
                                     children: [
@@ -229,8 +274,8 @@ class _PantallaModulosState extends State<PantallaModulos> {
                                 ),
                                 Expanded(
                                   child: Padding(
-                                    padding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-                                    child: Divider()
+                                    padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+                                    child: Divider(color: Tema.secondaryLight)
                                   ),
                                 ),
                               ],
@@ -248,12 +293,6 @@ class _PantallaModulosState extends State<PantallaModulos> {
 
                               return Card(
                                 elevation: 0,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(7),
-                                  side: BorderSide(
-                                    color: Tema.primaryLight
-                                  )
-                                ),
                                 child: ListTile(
                                   contentPadding: const EdgeInsets.symmetric(horizontal: 10),
                                   trailing: index == 1 ? estadoIndicador(indicadoresData) : null,
@@ -271,10 +310,37 @@ class _PantallaModulosState extends State<PantallaModulos> {
                                   ),
                                   onTap: () {
 
-                                    Navigator.pushNamed(context, modulos[index].ruta, arguments: {
-                                      "modulo" : modulos[index],
-                                      "usuario" : usuarioData
-                                    });
+                                    final WidgetBuilder? builder = Rutas.rutas[modulos[index].ruta];
+
+                                    Navigator.of(context).push(
+                                      
+                                      PageRouteBuilder(
+                                        settings: RouteSettings(name: modulos[index].ruta, arguments: {
+                                          "modulo" : modulos[index],
+                                          "usuario" : usuarioData
+                                        }),
+                                        pageBuilder: (context, animation, secondaryAnimation) {
+
+                                          return builder!(context);
+
+                                        },
+                                        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+
+                                          const begin = Offset(1, 0);
+                                          const end = Offset.zero;
+                                          const curve = Curves.decelerate;
+
+                                          var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                                          var offsetAnimation = animation.drive(tween);
+
+                                          return SlideTransition(
+                                            position: offsetAnimation,
+                                            child: child,
+                                          );
+
+                                        },
+                                      )
+                                    );
                               
                                   }
 
@@ -300,6 +366,7 @@ class _PantallaModulosState extends State<PantallaModulos> {
     );
 
   }
+
 }
 
 class CurvaFondoInferior extends CustomClipper<Path> {

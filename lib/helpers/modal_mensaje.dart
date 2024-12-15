@@ -69,6 +69,7 @@ class ModalMensaje {
                 maxHeight: MediaQuery.sizeOf(context).height * 0.5,
               ),
               child: Material(
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(7),
                 child: Padding(
                   padding: const EdgeInsets.all(20),

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:sigsei/helpers/modal_usuario.dart';
 import 'package:sigsei/models/usuario.dart';
 import 'package:sigsei/themes/tema.dart';
 
@@ -7,24 +6,27 @@ class BarraUsuario extends StatelessWidget {
 
   final Usuario usuario;
   final bool botonRetroceso;
+
+  final GlobalKey<ScaffoldState> claveMenu;
   
   const BarraUsuario({
     super.key,
     required this.usuario,
-    required this.botonRetroceso
+    required this.botonRetroceso,
+    required this.claveMenu
   });
 
   @override
   Widget build(BuildContext context) {
 
     return Padding(
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.only(bottom: 10),
       child: Container(
         padding: const EdgeInsets.all(10),
         width: double.infinity,
         decoration: BoxDecoration(
           color: Tema.primary,
-          borderRadius: BorderRadius.circular(7)
+          borderRadius: BorderRadius.circular(0)
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -33,17 +35,19 @@ class BarraUsuario extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 if (botonRetroceso)
-                  GestureDetector(
-                    onTap: () => Navigator.of(context).pop(),
-                    child: Container(
-                      padding: const EdgeInsets.all(0),
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        Icons.arrow_back,
-                        color: Tema.primary,
+                  Material(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(100)
+                    ),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(100),
+                      onTap: () => Navigator.of(context).pop(),
+                      child: Container(
+                        padding: const EdgeInsets.all(0),
+                        child: Icon(
+                          Icons.arrow_back,
+                          color: Tema.primary,
+                        ),
                       ),
                     ),
                   ),
@@ -74,17 +78,21 @@ class BarraUsuario extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 5),
-                GestureDetector(
-                  child: CircleAvatar(
-                    backgroundColor: Colors.white,
-                    foregroundColor: Tema.primary,
-                    maxRadius: 15,
-                    child: const Icon(
-                      Icons.person_rounded,
-                      size: 17,
-                    ),  
+                Material(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(100)
                   ),
-                  onTap: () => ModalUsuario(usuario: usuario).show(context),
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(100),
+                    child: const Padding(
+                      padding: EdgeInsets.all(10),
+                      child: Icon(
+                        Icons.person_rounded,
+                        size: 17,
+                      ),
+                    ),
+                    onTap: () => claveMenu.currentState?.openDrawer(),
+                  ),
                 ),
               ],
             )

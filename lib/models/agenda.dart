@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 
 class Agenda {
 
+  String id;
   String fecha;
   String hora;
   String descripcion;
   Color color;
 
   Agenda({
+    required this.id,
     required this.fecha,
     required this.hora,
     required this.descripcion,
@@ -17,6 +19,7 @@ class Agenda {
   factory Agenda.fromJson(Map<String, dynamic> json) {
 
     return Agenda(
+      id: json["id"],
       fecha: json["fecha"],
       hora: json["hora"],
       descripcion: json["descripcion"],
@@ -27,6 +30,7 @@ class Agenda {
 
   Map<String, dynamic> toJson() => {
 
+    "id": id,
     "fecha": fecha,
     "hora": hora,
     "descripcion": descripcion,

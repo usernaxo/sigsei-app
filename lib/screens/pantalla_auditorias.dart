@@ -11,6 +11,7 @@ import 'package:sigsei/themes/tema.dart';
 import 'package:sigsei/widgets/pantalla_auditorias/fila_auditoria_bodega.dart';
 import 'package:sigsei/widgets/pantalla_auditorias/fila_auditoria_smu.dart';
 import 'package:sigsei/widgets/pantalla_general/barra_usuario.dart';
+import 'package:sigsei/widgets/pantalla_general/menu_usuario.dart';
 
 class PantallaAuditorias extends StatefulWidget {
 
@@ -22,6 +23,8 @@ class PantallaAuditorias extends StatefulWidget {
 }
 
 class PantallaAuditoriasState extends State<PantallaAuditorias> {
+
+  final GlobalKey<ScaffoldState> clavePantallaAuditorias = GlobalKey<ScaffoldState>();
 
   bool mostrarAuditoriasSmu = false;
   bool mostrarAuditoriasBodega = true;
@@ -42,10 +45,12 @@ class PantallaAuditoriasState extends State<PantallaAuditorias> {
     Usuario usuario = argumentos["usuario"];
 
     return Scaffold(
+      key: clavePantallaAuditorias,
+      drawer: MenuUsuario(usuario: usuario),
       body: SafeArea(
         child: Column(
           children: [
-            BarraUsuario(usuario: usuario, botonRetroceso: true),
+            BarraUsuario(usuario: usuario, claveMenu: clavePantallaAuditorias, botonRetroceso: true),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
               child: Row(
@@ -70,7 +75,7 @@ class PantallaAuditoriasState extends State<PantallaAuditorias> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 15),
               child: Divider(
-                color: Tema.primaryLight
+                color: Tema.secondaryLight
               )
             ),
             Padding(
@@ -78,82 +83,90 @@ class PantallaAuditoriasState extends State<PantallaAuditorias> {
               child: Row(
                 children: [         
                   Expanded(
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(7),
-                      child: ClipRRect(
+                    child: Material(
+                      color: mostrarAuditoriasSmu ? Tema.primary : Tema.primaryLight,
+                      shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(7),
-                        child: ColoredBox(
-                          color: mostrarAuditoriasSmu ? Tema.primary : Colors.black12,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                            child: Row(
-                              children: [
-                                Icon(
-                                  Icons.content_paste_search_rounded,
-                                  size: 11,
-                                  color: mostrarAuditoriasSmu ? Colors.white : Tema.primary,
+                        side: BorderSide(
+                          color: Tema.secondaryLight,
+                          width: 1.5
+                        )
+                      ),
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(7),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.content_paste_search_rounded,
+                                size: 11,
+                                color: mostrarAuditoriasSmu ? Colors.white : Tema.primary,
+                              ),
+                              const SizedBox(
+                                width: 5,
+                              ),
+                              Text(
+                                "Ver Auditorias SMU",
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: mostrarAuditoriasSmu ? Colors.white : Colors.black,
                                 ),
-                                const SizedBox(
-                                  width: 5,
-                                ),
-                                Text(
-                                  "Ver Auditorias SMU",
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    color: mostrarAuditoriasSmu ? Colors.white : Colors.black,
-                                  ),
-                                ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
+                        onTap: () {
+                          setState(() {
+                            mostrarAuditoriasSmu = true;
+                            mostrarAuditoriasBodega = false;
+                          });
+                        },
                       ),
-                      onTap: () {
-                        setState(() {
-                          mostrarAuditoriasSmu = true;
-                          mostrarAuditoriasBodega = false;
-                        });
-                      },
                     ),
                   ),
                   const SizedBox(width: 5),
                   Expanded(
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(7),
-                      child: ClipRRect(
+                    child: Material(
+                      color: mostrarAuditoriasBodega ? Tema.primary : Tema.primaryLight,
+                      shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(7),
-                        child: ColoredBox(
-                          color: mostrarAuditoriasBodega ? Tema.primary : Colors.black12,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                            child: Row(
-                              children: [
-                                Icon(
-                                  Icons.content_paste_search_rounded,
-                                  size: 11,
-                                  color: mostrarAuditoriasBodega ? Colors.white : Tema.primary,
+                        side: BorderSide(
+                          color: Tema.secondaryLight,
+                          width: 1.5
+                        )
+                      ),
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(7),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.content_paste_search_rounded,
+                                size: 11,
+                                color: mostrarAuditoriasBodega ? Colors.white : Tema.primary,
+                              ),
+                              const SizedBox(
+                                width: 5,
+                              ),
+                              Text(
+                                "Ver Auditorias Bodega",
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: mostrarAuditoriasBodega ? Colors.white : Colors.black,
                                 ),
-                                const SizedBox(
-                                  width: 5,
-                                ),
-                                Text(
-                                  "Ver Auditorias Bodega",
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    color: mostrarAuditoriasBodega ? Colors.white : Colors.black,
-                                  ),
-                                ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
+                        onTap: () {
+                          setState(() {
+                            mostrarAuditoriasBodega = true;
+                            mostrarAuditoriasSmu = false;
+                          });
+                        },
                       ),
-                      onTap: () {
-                        setState(() {
-                          mostrarAuditoriasBodega = true;
-                          mostrarAuditoriasSmu = false;
-                        });
-                      },
                     ),
                   ),
                 ],
@@ -271,62 +284,69 @@ class _AuditoriasSmuState extends State<AuditoriasSmu> {
                   child: Row(
                     children: [
                       Expanded(
-                        child: GestureDetector(
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                            decoration: BoxDecoration(
-                              color: Tema.primaryLight,
-                              borderRadius: BorderRadius.circular(7),
-                            ),
-                            child: Row(
-                              children: [
-                                const Icon(
-                                  Icons.calendar_month_rounded,
-                                  size: 15
-                                ),
-                                const SizedBox(width: 5),
-                                Expanded(
-                                  child: Text.rich(
-                                    TextSpan(
-                                      children: [
-                                        TextSpan(
-                                          text: "Desde ",
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Tema.primary,
-                                            fontSize: 11
-                                          ),
-                                        ),
-                                        TextSpan(
-                                          text: fechaInicioFormateada,
-                                          style: const TextStyle(
-                                            fontSize: 11,
-                                          ),
-                                        ),
-                                        TextSpan(
-                                          text: " Hasta ",
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Tema.primary,
-                                            fontSize: 11
-                                          ),
-                                        ),
-                                        TextSpan(
-                                          text: fechaFinFormateada,
-                                          style: const TextStyle(
-                                            fontSize: 11,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1,
-                                  ),
-                                ),
-                              ],
+                        child: Material(
+                          color: Tema.primaryLight,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(7),
+                            side: BorderSide(
+                              color: Tema.secondaryLight,
+                              width: 1.5
                             )
                           ),
-                          onTap: () => modalRangoFechas(),
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(7),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                              child: Row(
+                                children: [
+                                  const Icon(
+                                    Icons.calendar_month_rounded,
+                                    size: 15
+                                  ),
+                                  const SizedBox(width: 5),
+                                  Expanded(
+                                    child: Text.rich(
+                                      TextSpan(
+                                        children: [
+                                          TextSpan(
+                                            text: "Desde ",
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Tema.primary,
+                                              fontSize: 11
+                                            ),
+                                          ),
+                                          TextSpan(
+                                            text: fechaInicioFormateada,
+                                            style: const TextStyle(
+                                              fontSize: 11,
+                                            ),
+                                          ),
+                                          TextSpan(
+                                            text: " Hasta ",
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Tema.primary,
+                                              fontSize: 11
+                                            ),
+                                          ),
+                                          TextSpan(
+                                            text: fechaFinFormateada,
+                                            style: const TextStyle(
+                                              fontSize: 11,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                    ),
+                                  ),
+                                ],
+                              )
+                            ),
+                            onTap: () => modalRangoFechas(),
+                          ),
                         ),
                       )
                     ],
@@ -377,7 +397,7 @@ class _AuditoriasSmuState extends State<AuditoriasSmu> {
             future: listaAuditoriasSmu,
             builder: (context, AsyncSnapshot<List<AuditoriaSmu>?> snapshot) {
             
-              if (snapshot.connectionState == ConnectionState.waiting && auditoriasSmuCargadas == false) {
+              if (snapshot.connectionState == ConnectionState.waiting || auditoriasSmuCargadas == false) {
           
                 auditoriasSmuCargadas = true;
           
@@ -413,10 +433,10 @@ class _AuditoriasSmuState extends State<AuditoriasSmu> {
                     padding: const EdgeInsets.symmetric(vertical: 30),
                     width: double.infinity,
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Tema.primaryLight,
                       borderRadius: BorderRadius.circular(7),
                       border: Border.all(
-                        color: Tema.primaryLight,
+                        color: Tema.secondaryLight,
                         width: 1.5
                       )
                     ),
@@ -583,62 +603,69 @@ class _AuditoriasBodegaState extends State<AuditoriasBodega> {
                   child: Row(
                     children: [
                       Expanded(
-                        child: GestureDetector(
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                            decoration: BoxDecoration(
-                              color: Tema.primaryLight,
-                              borderRadius: BorderRadius.circular(7),
-                            ),
-                            child: Row(
-                              children: [
-                                const Icon(
-                                  Icons.calendar_month_rounded,
-                                  size: 15
-                                ),
-                                const SizedBox(width: 5),
-                                Expanded(
-                                  child: Text.rich(
-                                    TextSpan(
-                                      children: [
-                                        TextSpan(
-                                          text: "Desde ",
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Tema.primary,
-                                            fontSize: 11
-                                          ),
-                                        ),
-                                        TextSpan(
-                                          text: fechaInicioFormateada,
-                                          style: const TextStyle(
-                                            fontSize: 11,
-                                          ),
-                                        ),
-                                        TextSpan(
-                                          text: " Hasta ",
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Tema.primary,
-                                            fontSize: 11
-                                          ),
-                                        ),
-                                        TextSpan(
-                                          text: fechaFinFormateada,
-                                          style: const TextStyle(
-                                            fontSize: 11,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1,
-                                  ),
-                                ),
-                              ],
+                        child: Material(
+                          color: Tema.primaryLight,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(7),
+                            side: BorderSide(
+                              color: Tema.secondaryLight,
+                              width: 1.5
                             )
                           ),
-                          onTap: () => modalRangoFechas(),
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(7),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                              child: Row(
+                                children: [
+                                  const Icon(
+                                    Icons.calendar_month_rounded,
+                                    size: 15
+                                  ),
+                                  const SizedBox(width: 5),
+                                  Expanded(
+                                    child: Text.rich(
+                                      TextSpan(
+                                        children: [
+                                          TextSpan(
+                                            text: "Desde ",
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Tema.primary,
+                                              fontSize: 11
+                                            ),
+                                          ),
+                                          TextSpan(
+                                            text: fechaInicioFormateada,
+                                            style: const TextStyle(
+                                              fontSize: 11,
+                                            ),
+                                          ),
+                                          TextSpan(
+                                            text: " Hasta ",
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Tema.primary,
+                                              fontSize: 11
+                                            ),
+                                          ),
+                                          TextSpan(
+                                            text: fechaFinFormateada,
+                                            style: const TextStyle(
+                                              fontSize: 11,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                    ),
+                                  ),
+                                ],
+                              )
+                            ),
+                            onTap: () => modalRangoFechas(),
+                          ),
                         ),
                       )
                     ],
@@ -689,7 +716,7 @@ class _AuditoriasBodegaState extends State<AuditoriasBodega> {
               future: listaAuditoriasBodega,
               builder: (context, AsyncSnapshot<List<AuditoriaBodega>?> snapshot) {
               
-                if (snapshot.connectionState == ConnectionState.waiting && auditoriasBodegaCargadas == false) {
+                if (snapshot.connectionState == ConnectionState.waiting || auditoriasBodegaCargadas == false) {
           
                   auditoriasBodegaCargadas = true;
           
@@ -725,10 +752,10 @@ class _AuditoriasBodegaState extends State<AuditoriasBodega> {
                       padding: const EdgeInsets.symmetric(vertical: 30),
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: Tema.primaryLight,
                         borderRadius: BorderRadius.circular(7),
                         border: Border.all(
-                          color: Tema.primaryLight,
+                          color: Tema.secondaryLight,
                           width: 1.5
                         )
                       ),

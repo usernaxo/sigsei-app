@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sigsei/themes/tema.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class ModalFecha {
@@ -60,11 +61,16 @@ class ModalFecha {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    monthViewSettings: const DateRangePickerMonthViewSettings(
-                      enableSwipeSelection: false
+                    monthCellStyle: DateRangePickerMonthCellStyle(
+                      specialDatesDecoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Tema.primary.withAlpha(30),
+                      ),
                     ),
-                    initialSelectedDate: tipoModalFecha == simple ? fechaInicio : null,
-                    initialSelectedRange: fechaInicio != null && fechaFin != null ? PickerDateRange(fechaInicio, fechaFin) : null,
+                    monthViewSettings: DateRangePickerMonthViewSettings(
+                      enableSwipeSelection: false,
+                      specialDates: tipoModalFecha == rango ? [fechaInicio!, fechaFin!] : [fechaInicio!],
+                    ),
                     onSelectionChanged: (fecha) {
                   
                       if (fecha.value != null) {

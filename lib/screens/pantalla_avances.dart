@@ -11,6 +11,7 @@ import 'package:sigsei/providers/proveedor_estado.dart';
 import 'package:sigsei/themes/tema.dart';
 import 'package:sigsei/widgets/pantalla_avances/fila_avance.dart';
 import 'package:sigsei/widgets/pantalla_general/barra_usuario.dart';
+import 'package:sigsei/widgets/pantalla_general/menu_usuario.dart';
 
 class PantallaAvances extends StatefulWidget {
 
@@ -22,6 +23,8 @@ class PantallaAvances extends StatefulWidget {
 }
 
 class PantallaAvancesState extends State<PantallaAvances> {
+
+  final GlobalKey<ScaffoldState> clavePantallaAvances = GlobalKey<ScaffoldState>();
 
   late Future<List<Avance>?> listaAvances = Future.value([]);
   
@@ -42,8 +45,27 @@ class PantallaAvancesState extends State<PantallaAvances> {
 
     DateTime fechaActual = DateTime.now();
 
-    fechaFormateada = DateFormat("yyyy-MM-dd").format(fechaActual);
-    formatoFecha = DateFormat('EEEE d \'de\' MMMM \'de\' yyyy', 'es_ES').format(fechaActual);
+    if (fechaActual.weekday == DateTime.monday) {
+
+      fechaFormateada = DateFormat("yyyy-MM-dd").format(fechaActual.subtract(const Duration(days: 3)));
+      formatoFecha = DateFormat('EEEE d \'de\' MMMM \'de\' yyyy', 'es_ES').format(fechaActual.subtract(const Duration(days: 3)));
+
+    } else if (fechaActual.weekday == DateTime.saturday) {
+
+      fechaFormateada = DateFormat("yyyy-MM-dd").format(fechaActual.subtract(const Duration(days: 1)));
+      formatoFecha = DateFormat('EEEE d \'de\' MMMM \'de\' yyyy', 'es_ES').format(fechaActual.subtract(const Duration(days: 1)));
+
+    } else if (fechaActual.weekday == DateTime.sunday) {
+
+      fechaFormateada = DateFormat("yyyy-MM-dd").format(DateTime.now().subtract(const Duration(days: 2)));
+      formatoFecha = DateFormat('EEEE d \'de\' MMMM \'de\' yyyy', 'es_ES').format(fechaActual.subtract(const Duration(days: 2)));
+
+    } else {
+
+      fechaFormateada = DateFormat("yyyy-MM-dd").format(fechaActual);
+      formatoFecha = DateFormat('EEEE d \'de\' MMMM \'de\' yyyy', 'es_ES').format(fechaActual);
+
+    }
 
     if (mounted) {
       listaAvances = proveedorEstado.obtenerAvances(fechaFormateada, fechaFormateada);
@@ -172,10 +194,12 @@ class PantallaAvancesState extends State<PantallaAvances> {
     Usuario usuario = argumentos["usuario"];
 
     return Scaffold(
+      key: clavePantallaAvances,
+      drawer: MenuUsuario(usuario: usuario),
       body: SafeArea(
         child: Column(
           children: [
-            BarraUsuario(usuario: usuario, botonRetroceso: true),
+            BarraUsuario(usuario: usuario, claveMenu: clavePantallaAvances, botonRetroceso: true),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               child: Row(
@@ -210,7 +234,7 @@ class PantallaAvancesState extends State<PantallaAvances> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 15),
               child: Divider(
-                color: Tema.primaryLight
+                color: Tema.secondaryLight
               )
             ),
             Padding(
@@ -222,48 +246,55 @@ class PantallaAvancesState extends State<PantallaAvances> {
                       children: [
                         Expanded(
                           flex: 2,
-                          child: GestureDetector(
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                              decoration: BoxDecoration(
-                                color: Tema.primaryLight,
-                                borderRadius: BorderRadius.circular(7),
-                              ),
-                              child: Row(
-                                children: [
-                                  const Icon(
-                                    Icons.calendar_month_rounded,
-                                    size: 15
-                                  ),
-                                  const SizedBox(width: 5),
-                                  Expanded(
-                                    child: Text.rich(
-                                      TextSpan(
-                                        children: [
-                                          TextSpan(
-                                            text: "Fecha ",
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: Tema.primary,
-                                              fontSize: 11
-                                            ),
-                                          ),
-                                          TextSpan(
-                                            text: fechaFormateada,
-                                            style: const TextStyle(
-                                              fontSize: 11,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 1,
-                                    ),
-                                  ),
-                                ],
+                          child: Material(
+                            color: Tema.primaryLight,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(7),
+                              side: BorderSide(
+                                color: Tema.secondaryLight,
+                                width: 1.5
                               )
                             ),
-                            onTap: () => modalFecha(),
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(7),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                                child: Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.calendar_month_rounded,
+                                      size: 15
+                                    ),
+                                    const SizedBox(width: 5),
+                                    Expanded(
+                                      child: Text.rich(
+                                        TextSpan(
+                                          children: [
+                                            TextSpan(
+                                              text: "Fecha ",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Tema.primary,
+                                                fontSize: 11
+                                              ),
+                                            ),
+                                            TextSpan(
+                                              text: fechaFormateada,
+                                              style: const TextStyle(
+                                                fontSize: 11,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              ),
+                              onTap: () => modalFecha(),
+                            ),
                           ),
                         ),
                       ],
@@ -354,10 +385,10 @@ class PantallaAvancesState extends State<PantallaAvances> {
                       padding: const EdgeInsets.symmetric(vertical: 30),
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: Tema.primaryLight,
                         borderRadius: BorderRadius.circular(7),
                         border: Border.all(
-                          color: Tema.primaryLight,
+                          color: Tema.secondaryLight,
                           width: 1.5
                         )
                       ),
@@ -370,7 +401,7 @@ class PantallaAvancesState extends State<PantallaAvances> {
                           ),
                           const SizedBox(height: 10),
                           Text(
-                            "Sin Avances de Invetarios para",
+                            "Sin Avances de Inventarios para",
                             style: TextStyle(
                               fontSize: 10,
                               color: Colors.grey.shade500

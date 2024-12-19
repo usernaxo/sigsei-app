@@ -103,138 +103,165 @@ class _FilaAuditoriaBodegaState extends State<FilaAuditoriaBodega> {
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Row(
-                children: [
-                  InkWell(
-                    borderRadius: BorderRadius.circular(7),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(7),
-                      child: ColoredBox(
-                        color: mostrarResumen ? Colors.blue.shade100 : Colors.transparent,
-                        child: Padding(
-                          padding: const EdgeInsets.all(10),
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.assessment_outlined,
-                                size: 10,
-                                color: Tema.primary,
-                              ),
-                              const SizedBox(
-                                width: 5,
-                              ),
-                              const Text(
-                                "Resumen",
-                                style: TextStyle( 
-                                  fontSize: 9
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    onTap: () {
-                      setState(() {
-                        mostrarResumen = true;
-                        mostrarDiferencias = false;
-                        mostrarExcluyente = false;
-                      });
-                    },
-                  ),
-                  if (widget.auditoriaBodega.obtenerUltimoIndicadorAvance() != null)
-                    InkWell(
-                      borderRadius: BorderRadius.circular(7),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(7),
-                        child: ColoredBox(
-                          color: mostrarDiferencias ? Colors.black12 : Colors.transparent,
-                          child: Padding(
-                            padding: const EdgeInsets.all(10),
-                            child: Row(
-                              children: [
-                                Icon(
-                                  Icons.timeline_rounded,
-                                  size: 10,
-                                  color: Tema.primary,
-                                ),
-                                const SizedBox(
-                                  width: 5,
-                                ),
-                                const Text(
-                                  "Diferencias",
-                                  style: TextStyle( 
-                                    fontSize: 9
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(right: 5),
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(7),
+                          child: Material(
+                            color: mostrarResumen ? Colors.deepPurple.shade50 : Colors.transparent,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(7),
+                              side: BorderSide(
+                                color: Tema.secondaryLight,
+                                width: 1.5
+                              )
+                            ),
+                            child: const Padding(
+                              padding: EdgeInsets.all(10),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.content_paste_search_rounded,
+                                    size: 10,
+                                    color: Colors.deepPurple,
                                   ),
-                                ),
-                              ],
+                                  SizedBox(
+                                    width: 5,
+                                  ),
+                                  Text(
+                                    "Resumen",
+                                    style: TextStyle( 
+                                      fontSize: 9
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
+                          onTap: () {
+                            setState(() {
+                              mostrarResumen = true;
+                              mostrarDiferencias = false;
+                              mostrarExcluyente = false;
+                            });
+                          },
                         ),
                       ),
-                      onTap: () {
-                        setState(() {
-                          mostrarDiferencias = true;
-                          mostrarResumen = false;
-                          mostrarExcluyente = false;
-                        });
-                      },
-                    ),
-                  if (widget.auditoriaBodega.obtenerEstadoCierre != null)
-                    InkWell(
-                      borderRadius: BorderRadius.circular(7),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(7),
-                        child: ColoredBox(
-                          color: mostrarExcluyente ? Colors.black12 : Colors.transparent,
-                          child: Padding(
-                            padding: const EdgeInsets.all(10),
-                            child: Row(
-                              children: [
-                                Icon(
-                                  Icons.error_outline_rounded,
-                                  size: 10,
-                                  color: Tema.primary,
+                      if (widget.auditoriaBodega.obtenerUltimoIndicadorAvance() != null)
+                        Padding(
+                          padding: const EdgeInsets.only(right: 5),
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(7),
+                            child: Material(
+                              color: mostrarDiferencias ? Tema.secondaryLight : Colors.transparent,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(7),
+                                side: BorderSide(
+                                  color: Tema.secondaryLight,
+                                  width: 1.5
+                                )
+                              ),
+                              child: const Padding(
+                                padding: EdgeInsets.all(10),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.swap_horiz_rounded,
+                                      size: 10,
+                                      color: Colors.deepPurple,
+                                    ),
+                                    SizedBox(
+                                      width: 5,
+                                    ),
+                                    Text(
+                                      "Diferencias",
+                                      style: TextStyle( 
+                                        fontSize: 9
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                const SizedBox(
-                                  width: 3,
-                                ),
-                                Text.rich(
-                                  style: const TextStyle(
-                                    fontSize: 9
-                                  ),
-                                  TextSpan(
-                                    children: [
-                                      const TextSpan(
-                                        text: "Excluyente: ",
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold
-                                        )
+                              ),
+                            ),
+                            onTap: () {
+                              setState(() {
+                                mostrarDiferencias = true;
+                                mostrarResumen = false;
+                                mostrarExcluyente = false;
+                              });
+                            },
+                          ),
+                        ),
+                      if (widget.auditoriaBodega.obtenerEstadoCierre != null)
+                        Padding(
+                          padding: const EdgeInsets.only(right: 5),
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(7),
+                            child: Material(
+                              color: mostrarExcluyente ? Tema.secondaryLight : Colors.transparent,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(7),
+                                side: BorderSide(
+                                  color: Tema.secondaryLight,
+                                  width: 1.5
+                                )
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(10),
+                                child: Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.error_outline_rounded,
+                                      size: 10,
+                                      color: Colors.deepPurple,
+                                    ),
+                                    const SizedBox(
+                                      width: 3,
+                                    ),
+                                    Text.rich(
+                                      style: const TextStyle(
+                                        fontSize: 9
                                       ),
                                       TextSpan(
-                                        text: widget.auditoriaBodega.obtenerEstadoCierre,
-                                        style: const TextStyle(
-                                          color: Colors.green,
-                                          fontWeight: FontWeight.bold
-                                        )
-                                      ),
-                                    ]
-                                  )
-                                )
-                              ],
+                                        children: [
+                                          const TextSpan(
+                                            text: "Excluyente: ",
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold
+                                            )
+                                          ),
+                                          TextSpan(
+                                            text: widget.auditoriaBodega.obtenerEstadoCierre,
+                                            style: const TextStyle(
+                                              color: Colors.green,
+                                              fontWeight: FontWeight.bold
+                                            )
+                                          ),
+                                        ]
+                                      )
+                                    )
+                                  ],
+                                ),
+                              ),
                             ),
+                            onTap: () {
+                              setState(() {
+                                mostrarExcluyente = true;
+                                mostrarResumen = false;
+                                mostrarDiferencias = false;
+                              });
+                            },
                           ),
                         ),
-                      ),
-                      onTap: () {
-                        setState(() {
-                          mostrarExcluyente = true;
-                          mostrarResumen = false;
-                          mostrarDiferencias = false;
-                        });
-                      },
-                    ),
-                ],
+                    ],
+                  ),
+                ),
               ),
             ),
             if (mostrarResumen)
@@ -290,7 +317,7 @@ class ContenidoResumen extends StatelessWidget {
               style: TextStyle(
                 fontSize: 9,
                 fontWeight: esBold || esDeficiente ? FontWeight.bold : FontWeight.normal,
-                color: colorPrimario ? Tema.primary : (esDeficiente ? Colors.red : Colors.black)
+                color: colorPrimario ? Colors.deepPurple : (esDeficiente ? Colors.red : Colors.black)
               )
             ),
           );
@@ -302,29 +329,35 @@ class ContenidoResumen extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.all(10),
-      child: Container(
-        padding: const EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          color: Colors.blue.shade100,
+      child: Material(
+        color: Colors.deepPurple.shade50,
+        shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(7),
+          side: BorderSide(
+            color: Tema.secondaryLight,
+            width: 1.5
+          )
         ),
-        child: Column(
-          children: [
-            buildRow(["Auditoría - N° ${auditoriaBodega.obtenerNumero}", DateFormat("EEEE d MMM yyyy", "es_ES").format(DateTime.parse(auditoriaBodega.obtenerFecha!))], esBold: true),
-            Divider(color: Colors.blue.shade200),
-            buildRow(["Local", auditoriaBodega.obtenerNombre!], colorPrimario: true, esBold: true),
-            buildRow(["Auditor", auditoriaBodega.obtenerAuditor!]),
-            buildRow(["Región", auditoriaBodega.obtenerRegion!]),
-            buildRow(["Comuna", auditoriaBodega.obtenerComuna!]),
-            buildRow(["Dirección", auditoriaBodega.obtenerDireccion!]),
-            Divider(color: Colors.blue.shade200),
-            buildRow(["Avance General", auditoriaBodega.obtenerPorcentajeGeneralAvance!]),
-            buildRow(["Error Unidad ABS", auditoriaBodega.obtenerPorcentajeGeneralError!], esDeficiente: IndicadorDeficiente.esErrorAbsDeficiente(auditoriaBodega.obtenerPorcentajeGeneralError!)),
-            buildRow(["Error Cierre", auditoriaBodega.obtenerPorcentajeError!]),
-            buildRow(["Hora Cierre", auditoriaBodega.obtenerHoraCierre!]),
-            Divider(color: Colors.blue.shade200),
-            buildRow(["Registro", auditoriaBodega.obtenerRegistro!], esBold: true),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Column(
+            children: [
+              buildRow(["Auditoría - N° ${auditoriaBodega.obtenerNumero}", DateFormat("EEEE d MMM yyyy", "es_ES").format(DateTime.parse(auditoriaBodega.obtenerFecha!))], esBold: true),
+              Divider(color: Colors.deepPurple.shade100),
+              buildRow(["Local", auditoriaBodega.obtenerNombre!], colorPrimario: true, esBold: true),
+              buildRow(["Auditor", auditoriaBodega.obtenerAuditor!]),
+              buildRow(["Región", auditoriaBodega.obtenerRegion!]),
+              buildRow(["Comuna", auditoriaBodega.obtenerComuna!]),
+              buildRow(["Dirección", auditoriaBodega.obtenerDireccion!]),
+              Divider(color: Colors.deepPurple.shade100),
+              buildRow(["Avance General", auditoriaBodega.obtenerPorcentajeGeneralAvance!]),
+              buildRow(["Error Unidad ABS", auditoriaBodega.obtenerPorcentajeGeneralError!], esDeficiente: IndicadorDeficiente.esErrorAbsDeficiente(auditoriaBodega.obtenerPorcentajeGeneralError!)),
+              buildRow(["Error Cierre", auditoriaBodega.obtenerPorcentajeError!]),
+              buildRow(["Hora Cierre", auditoriaBodega.obtenerHoraCierre!]),
+              Divider(color: Colors.deepPurple.shade100),
+              buildRow(["Registro", auditoriaBodega.obtenerRegistro!], esBold: true),
+            ],
+          ),
         ),
       ),
     );
@@ -388,56 +421,64 @@ class _ContenidoDiferenciasState extends State<ContenidoDiferencias> {
 
     return Padding(
       padding: const EdgeInsets.all(10),
-      child: Container(
-        padding: const EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          color: Colors.black87,
+      child: Material(
+        color: Colors.black87,
+        shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(7),
+          side: BorderSide(
+            color: Tema.secondaryLight,
+            width: 1.5
+          )
         ),
-        child: Column(
-          children: [
-            buildRow(["Fecha", widget.auditoriaBodega.auditoria!.fechaProgramada!], esPrimeraSeccion: true),
-            buildRow(["Avance General", widget.auditoriaBodega.obtenerPorcentajeGeneralAvance!], esPrimeraSeccion: true),
-            buildRow(["Error Unidad ABS", widget.auditoriaBodega.obtenerPorcentajeGeneralError!], esPrimeraSeccion: true),
-            buildRow(["PTT Cantidad", widget.auditoriaBodega.ultimoIndicadorAvance!.obtenerCantidadPatentes!], esPrimeraSeccion: true),
-            buildRow(["PTT Avance", widget.auditoriaBodega.ultimoIndicadorAvance!.obtenerAvancePatentes!], esPrimeraSeccion: true),
-            const Divider(color: Colors.white),
-            buildRow(["#", "PTT", "SKU", "Descripción", "ZMIG", "SEI", "Dif. U", "Val. A"], esBold: true, esFilaDeTabla: true),
-            for (var detalle in widget.auditoriaBodega.obtenerDetallesAvance()!.asMap().entries)
-              buildRow([(detalle.key + 1).toString(), detalle.value.obtenerPatente!, detalle.value.obtenerSku!, detalle.value.obtenerDescripcion!, detalle.value.obtenerConteoZmig!, detalle.value.obtenerConteoSei!, detalle.value.obtenerDiferenciaUnidades!, detalle.value.obtenerValorAjuste!], esFilaDeTabla: true),
-            const Divider(color: Colors.white),
-            buildRow(["Total", "", "", "", widget.auditoriaBodega.ultimoIndicadorAvance!.obtenerTotalZmig!, widget.auditoriaBodega.ultimoIndicadorAvance!.obtenerTotalSei!, widget.auditoriaBodega.ultimoIndicadorAvance!.obtenerTotalDiferenciaUnidades!, widget.auditoriaBodega.ultimoIndicadorAvance!.obtenerTotalValorAjuste!], esBold: true),
-            Padding(
-              padding: const EdgeInsets.only(top: 10),
-              child: Row(
-                children: [
-                  const Icon(
-                    Icons.format_size_rounded,
-                    size: 10,
-                  ),
-                  Expanded(
-                    child: Slider(
-                      value: valorSlider,
-                      min: 5,
-                      max: 10,
-                      divisions: 5,
-                      label: valorSlider.round().toString(),
-                      onChanged: (value) {
-                        setState(() {
-                          valorSlider = value;
-                        });
-                      },
-                      onChangeEnd: (value) {
-                        setState(() {
-                          tamanoLetra = value;
-                        });
-                      },
+        child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Column(
+            children: [
+              buildRow(["Fecha", widget.auditoriaBodega.auditoria!.fechaProgramada!], esPrimeraSeccion: true),
+              buildRow(["Avance General", widget.auditoriaBodega.obtenerPorcentajeGeneralAvance!], esPrimeraSeccion: true),
+              buildRow(["Error Unidad ABS", widget.auditoriaBodega.obtenerPorcentajeGeneralError!], esPrimeraSeccion: true),
+              buildRow(["PTT Cantidad", widget.auditoriaBodega.ultimoIndicadorAvance!.obtenerCantidadPatentes!], esPrimeraSeccion: true),
+              buildRow(["PTT Avance", widget.auditoriaBodega.ultimoIndicadorAvance!.obtenerAvancePatentes!], esPrimeraSeccion: true),
+              const Divider(color: Colors.white),
+              buildRow(["#", "PTT", "SKU", "Descripción", "ZMIG", "SEI", "Dif. U", "Val. A"], esBold: true, esFilaDeTabla: true),
+              for (var detalle in widget.auditoriaBodega.obtenerDetallesAvance()!.asMap().entries)
+                buildRow([(detalle.key + 1).toString(), detalle.value.obtenerPatente!, detalle.value.obtenerSku!, detalle.value.obtenerDescripcion!, detalle.value.obtenerConteoZmig!, detalle.value.obtenerConteoSei!, detalle.value.obtenerDiferenciaUnidades!, detalle.value.obtenerValorAjuste!], esFilaDeTabla: true),
+              const Divider(color: Colors.white),
+              buildRow(["Total", "", "", "", widget.auditoriaBodega.ultimoIndicadorAvance!.obtenerTotalZmig!, widget.auditoriaBodega.ultimoIndicadorAvance!.obtenerTotalSei!, widget.auditoriaBodega.ultimoIndicadorAvance!.obtenerTotalDiferenciaUnidades!, widget.auditoriaBodega.ultimoIndicadorAvance!.obtenerTotalValorAjuste!], esBold: true),
+              Padding(
+                padding: const EdgeInsets.only(top: 10),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.format_size_rounded,
+                      color: Colors.deepPurple.shade300,
+                      size: 10,
                     ),
-                  ),
-                ],
-              ),
-            )
-          ],
+                    Expanded(
+                      child: Slider(
+                        activeColor: Colors.deepPurple.shade300,
+                        value: valorSlider,
+                        min: 5,
+                        max: 10,
+                        divisions: 5,
+                        label: valorSlider.round().toString(),
+                        onChanged: (value) {
+                          setState(() {
+                            valorSlider = value;
+                          });
+                        },
+                        onChangeEnd: (value) {
+                          setState(() {
+                            tamanoLetra = value;
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -573,213 +614,232 @@ class _ContenidoExcluyenteState extends State<ContenidoExcluyente> {
 
           return Padding(
             padding: const EdgeInsets.all(10),
-            child: Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: Colors.white,
+            child: Material(
+              shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(7),
+                side: BorderSide(
+                  color: Tema.secondaryLight,
+                  width: 1.5
+                )
               ),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          "Excluyente - CE ${snapshot.data!.local!.numero}",
-                          style: TextStyle(
-                            fontSize: tamanoLetra,
-                            fontWeight: FontWeight.bold
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Text(
-                          "${widget.estadoExcluyente} por ${snapshot.data!.resumenCierre!.usuario}",
-                          textAlign: TextAlign.end,
-                          style: TextStyle(
-                            color: Colors.green,
-                            fontSize: tamanoLetra,
-                            fontWeight: FontWeight.bold
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Divider(color: Tema.primaryLight),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          "Error: ",
-                          style: TextStyle(
-                            color: Tema.primary,
-                            fontSize: tamanoLetra,
-                            fontWeight: FontWeight.bold
-                          ),
-                        ),
-                      ),
-                      Row(
-                        children: [
-                          Text.rich(
-                            style: TextStyle(
-                              fontSize: tamanoLetra
-                            ),
-                            TextSpan(
-                              children: [
-                                const TextSpan(
-                                  text: "Unidad ABS: ",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold
-                                  )
-                                ),
-                                TextSpan(
-                                  text: snapshot.data!.obtenerTotalUnidadAbs
-                                )
-                              ]
-                            )
-                          ),
-                          const SizedBox(width: 5),
-                          Text.rich(
-                            style: TextStyle(
-                              fontSize: tamanoLetra
-                            ),
-                            TextSpan(
-                              children: [
-                                const TextSpan(
-                                  text: "Valor ABS: ",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold
-                                  )
-                                ),
-                                TextSpan(
-                                  text: snapshot.data!.obtenerTotalValorAbs,
-                                )
-                              ]
-                            )
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          "Total Muestra: ",
-                          style: TextStyle(
-                            color: Tema.primary,
-                            fontSize: tamanoLetra,
-                            fontWeight: FontWeight.bold
-                          ),
-                        ),
-                      ),
-                      Row(
-                        children: [
-                          Text.rich(
-                            style: TextStyle(
-                              fontSize: tamanoLetra
-                            ),
-                            TextSpan(
-                              children: [
-                                const TextSpan(
-                                  text: "Unidad: ",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold
-                                  )
-                                ),
-                                TextSpan(
-                                  text: snapshot.data!.generalConteo!.obtenerTotalMuestraUnidades,
-                                )
-                              ]
-                            )
-                          ),
-                          const SizedBox(width: 5),
-                          Text.rich(
-                            style: TextStyle(
-                              fontSize: tamanoLetra
-                            ),
-                            TextSpan(
-                              children: [
-                                const TextSpan(
-                                  text: "Valor: ",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold
-                                  )
-                                ),
-                                TextSpan(
-                                  text: snapshot.data!.generalConteo!.obtenerTotalMuestraValorizada,
-                                )
-                              ]
-                            )
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          "Observación: ",
-                          style: TextStyle(
-                            color: Tema.primary,
-                            fontSize: tamanoLetra,
-                            fontWeight: FontWeight.bold
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Align(
-                          alignment: Alignment.centerRight,
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Text(
-                              snapshot.data!.obtenerObservacion!,
-                              style: TextStyle(
-                                fontSize: tamanoLetra
-                              ),
-                            ),
-                          ),
-                        )
-                      ),
-                    ],
-                  ),
-                  Divider(color: Tema.primaryLight),
-                  buildRow(["#", "PTT", "SKU", "Descripción", "ZMIG", "SEI", "Dif. U", "Excluido"], esBold: true, color: Tema.primary, esFilaDeTabla: true),
-                  for (var detalleConteo in snapshot.data!.obtenerDetalleConteo!.asMap().entries)
-                    buildRow([(detalleConteo.key + 1).toString(), detalleConteo.value.obtenerPatente!, detalleConteo.value.obtenerSku!, detalleConteo.value.obtenerDescripcion!, detalleConteo.value.obtenerConteoZmig!, detalleConteo.value.obtenerConteoSei!, detalleConteo.value.obtenerDiferenciaUnidades!, ""], esExcluido: detalleConteo.value.esExcluido!, esIcono: true, esFilaDeTabla: true),
-                  Divider(color: Tema.primaryLight),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10),
-                    child: Row(
+              child: Padding(
+                padding: const EdgeInsets.all(10),
+                child: Column(
+                  children: [
+                    Row(
                       children: [
-                        const Icon(
-                          Icons.format_size_rounded,
-                          size: 10,
+                        Expanded(
+                          child: Text(
+                            "Excluyente - CE ${snapshot.data!.local!.numero}",
+                            style: TextStyle(
+                              fontSize: tamanoLetra,
+                              fontWeight: FontWeight.bold
+                            ),
+                          ),
                         ),
                         Expanded(
-                          child: Slider(
-                            value: valorSlider,
-                            min: 5,
-                            max: 10,
-                            divisions: 5,
-                            label: valorSlider.round().toString(),
-                            onChanged: (value) {
-                              setState(() {
-                                valorSlider = value;
-                              });
-                            },
-                            onChangeEnd: (value) {
-                              setState(() {
-                                tamanoLetra = value;
-                              });
-                            },
+                          child: Text(
+                            "${widget.estadoExcluyente} por ${snapshot.data!.resumenCierre!.usuario}",
+                            textAlign: TextAlign.end,
+                            style: TextStyle(
+                              color: Colors.green,
+                              fontSize: tamanoLetra,
+                              fontWeight: FontWeight.bold
+                            ),
                           ),
                         ),
                       ],
                     ),
-                  )
-                ],
+                    Divider(color: Tema.primaryLight),
+                    Row(
+                      children: [
+                        Text(
+                          "Error: ",
+                          style: TextStyle(
+                            color: Colors.deepPurple,
+                            fontSize: tamanoLetra,
+                            fontWeight: FontWeight.bold
+                          ),
+                        ),
+                        Expanded(
+                          child: Align(
+                            alignment: Alignment.centerRight,
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: [
+                                  Text.rich(
+                                    style: TextStyle(
+                                      fontSize: tamanoLetra
+                                    ),
+                                    TextSpan(
+                                      children: [
+                                        const TextSpan(
+                                          text: "Unidad ABS: ",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold
+                                          )
+                                        ),
+                                        TextSpan(
+                                          text: snapshot.data!.obtenerTotalUnidadAbs
+                                        )
+                                      ]
+                                    )
+                                  ),
+                                  const SizedBox(width: 5),
+                                  Text.rich(
+                                    style: TextStyle(
+                                      fontSize: tamanoLetra
+                                    ),
+                                    TextSpan(
+                                      children: [
+                                        const TextSpan(
+                                          text: "Valor ABS: ",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold
+                                          )
+                                        ),
+                                        TextSpan(
+                                          text: snapshot.data!.obtenerTotalValorAbs,
+                                        )
+                                      ]
+                                    )
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          "Total Muestra: ",
+                          style: TextStyle(
+                            color: Colors.deepPurple,
+                            fontSize: tamanoLetra,
+                            fontWeight: FontWeight.bold
+                          ),
+                        ),
+                        Expanded(
+                          child: Align(
+                            alignment: Alignment.centerRight,
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: [
+                                  Text.rich(
+                                    style: TextStyle(
+                                      fontSize: tamanoLetra
+                                    ),
+                                    TextSpan(
+                                      children: [
+                                        const TextSpan(
+                                          text: "Unidad: ",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold
+                                          )
+                                        ),
+                                        TextSpan(
+                                          text: snapshot.data!.generalConteo!.obtenerTotalMuestraUnidades,
+                                        )
+                                      ]
+                                    )
+                                  ),
+                                  const SizedBox(width: 5),
+                                  Text.rich(
+                                    style: TextStyle(
+                                      fontSize: tamanoLetra
+                                    ),
+                                    TextSpan(
+                                      children: [
+                                        const TextSpan(
+                                          text: "Valor: ",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold
+                                          )
+                                        ),
+                                        TextSpan(
+                                          text: snapshot.data!.generalConteo!.obtenerTotalMuestraValorizada,
+                                        )
+                                      ]
+                                    )
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            "Observación: ",
+                            style: TextStyle(
+                              color: Colors.deepPurple,
+                              fontSize: tamanoLetra,
+                              fontWeight: FontWeight.bold
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Align(
+                            alignment: Alignment.centerRight,
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Text(
+                                snapshot.data!.obtenerObservacion!,
+                                style: TextStyle(
+                                  fontSize: tamanoLetra
+                                ),
+                              ),
+                            ),
+                          )
+                        ),
+                      ],
+                    ),
+                    Divider(color: Tema.primaryLight),
+                    buildRow(["#", "PTT", "SKU", "Descripción", "ZMIG", "SEI", "Dif. U", "Excluido"], esBold: true, color: Colors.deepPurple, esFilaDeTabla: true),
+                    for (var detalleConteo in snapshot.data!.obtenerDetalleConteo!.asMap().entries)
+                      buildRow([(detalleConteo.key + 1).toString(), detalleConteo.value.obtenerPatente!, detalleConteo.value.obtenerSku!, detalleConteo.value.obtenerDescripcion!, detalleConteo.value.obtenerConteoZmig!, detalleConteo.value.obtenerConteoSei!, detalleConteo.value.obtenerDiferenciaUnidades!, ""], esExcluido: detalleConteo.value.esExcluido!, esIcono: true, esFilaDeTabla: true),
+                    Divider(color: Tema.primaryLight),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.format_size_rounded,
+                            color: Colors.deepPurple.shade300,
+                            size: 10,
+                          ),
+                          Expanded(
+                            child: Slider(
+                              activeColor: Colors.deepPurple.shade300,
+                              value: valorSlider,
+                              min: 5,
+                              max: 10,
+                              divisions: 5,
+                              label: valorSlider.round().toString(),
+                              onChanged: (value) {
+                                setState(() {
+                                  valorSlider = value;
+                                });
+                              },
+                              onChangeEnd: (value) {
+                                setState(() {
+                                  tamanoLetra = value;
+                                });
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
               ),
             ),
           );
@@ -818,144 +878,162 @@ class _BotonesDescargarArchivosBodegaState extends State<BotonesDescargarArchivo
 
     return Padding(
       padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          if (descargaIniciada)
-            Expanded(
-              child: Column(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(7),
-                    child: Column(
-                      children: [
-                        ColoredBox(
-                          color: Colors.black12,
-                          child: Padding(
-                            padding: const EdgeInsets.all(10),
-                            child: Row(
-                              children: [
-                                const Icon(
-                                  Icons.file_download_rounded,
-                                  size: 10,
-                                  color: Colors.green,
+      child: Align(
+        alignment: Alignment.centerRight,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              if (descargaIniciada)
+                Expanded(
+                  child: Column(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(7),
+                        child: Column(
+                          children: [
+                            ColoredBox(
+                              color: Colors.black12,
+                              child: Padding(
+                                padding: const EdgeInsets.all(10),
+                                child: Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.file_download_rounded,
+                                      size: 10,
+                                      color: Colors.green,
+                                    ),
+                                    const SizedBox(width: 5),
+                                    Text(
+                                      "Descargando $archivoDescargando ${progreso.toStringAsFixed(0)} %",
+                                      style: const TextStyle(fontSize: 9),
+                                    ),
+                                  ],
                                 ),
-                                const SizedBox(width: 5),
-                                Text(
-                                  "Descargando $archivoDescargando ${progreso.toStringAsFixed(0)} %",
-                                  style: const TextStyle(fontSize: 9),
-                                ),
-                              ],
+                              ),
+                            ),
+                            LinearProgressIndicator(
+                              value: progreso / 100,
+                              color: Tema.primaryLight,
+                              valueColor: const AlwaysStoppedAnimation(Colors.green),
+                              borderRadius: BorderRadius.circular(3),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              if (!descargaIniciada)
+                InkWell(
+                  borderRadius: BorderRadius.circular(7),
+                  onTap: (){},
+                  child: Material(
+                    color: widget.auditoriaBodega.obtenerPatente! ? Colors.green.shade50 : Colors.red.shade50,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(7),
+                      side: BorderSide(
+                        color: Tema.secondaryLight,
+                        width: 1.5
+                      )
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Row(
+                        children: [
+                          Icon(
+                            widget.auditoriaBodega.obtenerPatente! ? Icons.check_circle_outline_rounded : Icons.error_outline_rounded,
+                            size: 10,
+                            color: widget.auditoriaBodega.obtenerPatente! ? Colors.green : Colors.red,
+                          ),
+                          const SizedBox(width: 5),
+                          const Text(
+                            "Patentes",
+                            style: TextStyle(
+                              fontSize: 9,
                             ),
                           ),
-                        ),
-                        LinearProgressIndicator(
-                          value: progreso / 100,
-                          color: Tema.primaryLight,
-                          valueColor: const AlwaysStoppedAnimation(Colors.green),
-                          borderRadius: BorderRadius.circular(3),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          if (!descargaIniciada)
-            InkWell(
-              borderRadius: BorderRadius.circular(7),
-              onTap: (){},
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(7),
-                child: ColoredBox(
-                  color: widget.auditoriaBodega.obtenerPatente! ? Colors.green.shade100 : Colors.red.shade100,
-                  child: Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: Row(
-                      children: [
-                        Icon(
-                          widget.auditoriaBodega.obtenerPatente! ? Icons.check_circle_outline_rounded : Icons.error_outline_rounded,
-                          size: 10,
-                          color: widget.auditoriaBodega.obtenerPatente! ? Colors.green : Colors.red,
-                        ),
-                        const SizedBox(width: 5),
-                        const Text(
-                          "Patentes",
-                          style: TextStyle(
-                            fontSize: 9,
-                          ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ),
-          if (!descargaIniciada)
-            const SizedBox(width: 5),
-          if (!descargaIniciada)
-            InkWell(
-              borderRadius: BorderRadius.circular(7),
-              onTap: (){},
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(7),
-                child: ColoredBox(
-                  color: widget.auditoriaBodega.obtenerZmig43! ? Colors.green.shade100 : Colors.red.shade100,
-                  child: Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: Row(
-                      children: [
-                        Icon(
-                          widget.auditoriaBodega.obtenerZmig43! ? Icons.check_circle_outline_rounded : Icons.error_outline_rounded,
-                          size: 10,
-                          color: widget.auditoriaBodega.obtenerZmig43! ? Colors.green : Colors.red,
-                        ),
-                        const SizedBox(width: 5),
-                        const Text(
-                          "ZMIG43",
-                          style: TextStyle(
-                            fontSize: 9,
+              if (!descargaIniciada)
+                const SizedBox(width: 5),
+              if (!descargaIniciada)
+                InkWell(
+                  borderRadius: BorderRadius.circular(7),
+                  onTap: (){},
+                  child: Material(
+                    color: widget.auditoriaBodega.obtenerZmig43! ? Colors.green.shade50 : Colors.red.shade50,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(7),
+                      side: BorderSide(
+                        color: Tema.secondaryLight,
+                        width: 1.5
+                      )
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Row(
+                        children: [
+                          Icon(
+                            widget.auditoriaBodega.obtenerZmig43! ? Icons.check_circle_outline_rounded : Icons.error_outline_rounded,
+                            size: 10,
+                            color: widget.auditoriaBodega.obtenerZmig43! ? Colors.green : Colors.red,
                           ),
-                        ),
-                      ],
+                          const SizedBox(width: 5),
+                          const Text(
+                            "ZMIG43",
+                            style: TextStyle(
+                              fontSize: 9,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ),
-          if (!descargaIniciada)
-            const SizedBox(width: 5),
-          if (!descargaIniciada)
-            InkWell(
-              borderRadius: BorderRadius.circular(7),
-              onTap: (){},
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(7),
-                child: ColoredBox(
-                  color: widget.auditoriaBodega.obtenerMuestra! ? Colors.green.shade100 : Colors.red.shade100,
-                  child: Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: Row(
-                      children: [
-                        Icon(
-                          widget.auditoriaBodega.obtenerMuestra! ? Icons.check_circle_outline_rounded : Icons.error_outline_rounded,
-                          size: 10,
-                          color: widget.auditoriaBodega.obtenerMuestra! ? Colors.green : Colors.red,
-                        ),
-                        const SizedBox(width: 5),
-                        const Text(
-                          "Muestra",
-                          style: TextStyle(
-                            fontSize: 9,
+              if (!descargaIniciada)
+                const SizedBox(width: 5),
+              if (!descargaIniciada)
+                InkWell(
+                  borderRadius: BorderRadius.circular(7),
+                  onTap: (){},
+                  child: Material(
+                    color: widget.auditoriaBodega.obtenerMuestra! ? Colors.green.shade50 : Colors.red.shade50,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(7),
+                      side: BorderSide(
+                        color: Tema.secondaryLight,
+                        width: 1.5
+                      )
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Row(
+                        children: [
+                          Icon(
+                            widget.auditoriaBodega.obtenerMuestra! ? Icons.check_circle_outline_rounded : Icons.error_outline_rounded,
+                            size: 10,
+                            color: widget.auditoriaBodega.obtenerMuestra! ? Colors.green : Colors.red,
                           ),
-                        ),
-                      ],
+                          const SizedBox(width: 5),
+                          const Text(
+                            "Muestra",
+                            style: TextStyle(
+                              fontSize: 9,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ),
-            ),      
-        ],
+                ),      
+            ],
+          ),
+        ),
       ),
     );
 

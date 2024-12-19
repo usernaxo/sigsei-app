@@ -3,6 +3,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:sigsei/helpers/indicador_deficiente.dart';
+import 'package:sigsei/models/avance.dart';
 import 'package:sigsei/models/modulo.dart';
 import 'package:sigsei/models/indicador.dart';
 import 'package:sigsei/models/usuario.dart';
@@ -26,6 +27,7 @@ class _PantallaModulosState extends State<PantallaModulos> {
   final GlobalKey<ScaffoldState> clavePantallaModulos = GlobalKey<ScaffoldState>();
 
   late Future<List<Indicador>?> listaIndicadores;
+  late Future<List<Avance>?> listaAvances;
   late Future<Usuario?> usuario;
 
   @override
@@ -34,6 +36,7 @@ class _PantallaModulosState extends State<PantallaModulos> {
     super.initState();
 
     listaIndicadores = obtenerIndicadores();
+    listaAvances = obtenerAvances();
     usuario = obtenerDatos();
 
   }
@@ -57,6 +60,7 @@ class _PantallaModulosState extends State<PantallaModulos> {
   Future<List<Indicador>?> obtenerIndicadores() async {
 
     final proveedorEstado = Provider.of<ProveedorEstado>(context, listen: false);
+
     DateTime fechaActual = DateTime.now();
     
     String fechaFormateada;
@@ -91,6 +95,32 @@ class _PantallaModulosState extends State<PantallaModulos> {
 
   }
 
+  Future<List<Avance>?> obtenerAvances() async {
+
+    final proveedorEstado = Provider.of<ProveedorEstado>(context, listen: false);
+
+    DateTime fechaActual = DateTime.now();
+    
+    String fechaFormateada;
+
+    if (fechaActual.weekday == DateTime.saturday) {
+
+      fechaFormateada = DateFormat("yyyy-MM-dd").format(fechaActual.subtract(const Duration(days: 1)));
+
+    } else if (fechaActual.weekday == DateTime.sunday) {
+
+      fechaFormateada = DateFormat("yyyy-MM-dd").format(fechaActual.subtract(const Duration(days: 2)));
+
+    } else {
+
+      fechaFormateada = DateFormat("yyyy-MM-dd").format(fechaActual);
+
+    }
+
+    return await proveedorEstado.obtenerAvances(fechaFormateada, fechaFormateada);
+
+  }
+
   @override
   Widget build(BuildContext context) {
     
@@ -98,7 +128,7 @@ class _PantallaModulosState extends State<PantallaModulos> {
       Modulo(
         titulo: "Avance de Inventarios",
         ruta: "pantalla_avances",
-        icono: Icons.autorenew_rounded
+        icono: Icons.timeline_rounded
       ),
       Modulo(
         titulo: "Indicadores de Inventarios",
@@ -175,6 +205,30 @@ class _PantallaModulosState extends State<PantallaModulos> {
       
     }
 
+    Widget estadoAvance(List<Avance> avances) {
+
+      bool avancesOkay = avances.every((avance) => avance.obtenerHoraEstimadaCierre!.isNotEmpty);
+
+      if (avancesOkay) {
+
+        return const Icon(
+          Icons.circle,
+          size: 10,
+          color: Colors.green,
+        );
+
+      } else {
+
+        return const Icon(
+          Icons.circle,
+          size: 10,
+          color: Colors.red,
+        );
+
+      }
+      
+    }
+
     return Scaffold(
       key: clavePantallaModulos,
       drawer: FutureBuilder(
@@ -210,7 +264,7 @@ class _PantallaModulosState extends State<PantallaModulos> {
         }
       ),
       body: FutureBuilder(
-        future: Future.wait([usuario, listaIndicadores]),
+        future: Future.wait([usuario, listaIndicadores, listaAvances]),
         builder: (context, snapshot) {
 
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -233,6 +287,7 @@ class _PantallaModulosState extends State<PantallaModulos> {
 
             final usuarioData = snapshot.data?[0] as Usuario;
             final indicadoresData = snapshot.data?[1] as List<Indicador>;
+            final avancesData = snapshot.data?[2] as List<Avance>;
 
             return Stack(
               children: [
@@ -295,7 +350,7 @@ class _PantallaModulosState extends State<PantallaModulos> {
                                 elevation: 0,
                                 child: ListTile(
                                   contentPadding: const EdgeInsets.symmetric(horizontal: 10),
-                                  trailing: index == 1 ? estadoIndicador(indicadoresData) : null,
+                                  trailing: index == 0 ? estadoAvance(avancesData) : (index == 1 ? estadoIndicador(indicadoresData) : null),
                                   title: Row(
                                     children: [
                                       Padding(
@@ -305,7 +360,12 @@ class _PantallaModulosState extends State<PantallaModulos> {
                                           size: 15,
                                         ),
                                       ),
-                                      Text(modulos[index].titulo),
+                                      Expanded(
+                                        child: Text(
+                                          modulos[index].titulo,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
                                     ],
                                   ),
                                   onTap: () {

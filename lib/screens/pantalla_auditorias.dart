@@ -106,11 +106,14 @@ class PantallaAuditoriasState extends State<PantallaAuditorias> {
                               const SizedBox(
                                 width: 5,
                               ),
-                              Text(
-                                "Ver Auditorias SMU",
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  color: mostrarAuditoriasSmu ? Colors.white : Colors.black,
+                              Expanded(
+                                child: Text(
+                                  "Ver Auditorias SMU",
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    color: mostrarAuditoriasSmu ? Colors.white : Colors.black,
+                                  ),
                                 ),
                               ),
                             ],
@@ -150,11 +153,14 @@ class PantallaAuditoriasState extends State<PantallaAuditorias> {
                               const SizedBox(
                                 width: 5,
                               ),
-                              Text(
-                                "Ver Auditorias Bodega",
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  color: mostrarAuditoriasBodega ? Colors.white : Colors.black,
+                              Expanded(
+                                child: Text(
+                                  "Ver Auditorias Bodega",
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    color: mostrarAuditoriasBodega ? Colors.white : Colors.black,
+                                  ),
                                 ),
                               ),
                             ],
@@ -296,7 +302,7 @@ class _AuditoriasSmuState extends State<AuditoriasSmu> {
                           child: InkWell(
                             borderRadius: BorderRadius.circular(7),
                             child: Container(
-                              padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
                               child: Row(
                                 children: [
                                   const Icon(
@@ -416,7 +422,10 @@ class _AuditoriasSmuState extends State<AuditoriasSmu> {
                         ),
                       ),
                       const SizedBox(height: 20),
-                      const Text("Obteniendo Auditorias SMU")
+                      const Text(
+                        "Obteniendo Auditorias SMU",
+                        textAlign: TextAlign.center
+                      )
                     ],
                   ),
                 );
@@ -450,6 +459,7 @@ class _AuditoriasSmuState extends State<AuditoriasSmu> {
                         const SizedBox(height: 10),
                         Text(
                           "Sin Auditorías SMU Programadas",
+                          textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 10,
                             color: Colors.grey.shade500
@@ -457,6 +467,7 @@ class _AuditoriasSmuState extends State<AuditoriasSmu> {
                         ),
                         Text(
                           "Desde $fechaInicioFormateada Hasta $fechaFinFormateada",
+                          textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 10,
                             color: Colors.grey.shade500,
@@ -615,7 +626,7 @@ class _AuditoriasBodegaState extends State<AuditoriasBodega> {
                           child: InkWell(
                             borderRadius: BorderRadius.circular(7),
                             child: Container(
-                              padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
                               child: Row(
                                 children: [
                                   const Icon(
@@ -735,7 +746,10 @@ class _AuditoriasBodegaState extends State<AuditoriasBodega> {
                           ),
                         ),
                         const SizedBox(height: 20),
-                        const Text("Obteniendo Auditorias Bodega")
+                        const Text(
+                          "Obteniendo Auditorias Bodega",
+                          textAlign: TextAlign.center,
+                        )
                       ],
                     ),
                   );
@@ -769,6 +783,7 @@ class _AuditoriasBodegaState extends State<AuditoriasBodega> {
                           const SizedBox(height: 10),
                           Text(
                             "Sin Auditorías Bodega Programadas",
+                            textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 10,
                               color: Colors.grey.shade500
@@ -776,6 +791,7 @@ class _AuditoriasBodegaState extends State<AuditoriasBodega> {
                           ),
                           Text(
                             "Desde $fechaInicioFormateada Hasta $fechaFinFormateada",
+                            textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 10,
                               color: Colors.grey.shade500,

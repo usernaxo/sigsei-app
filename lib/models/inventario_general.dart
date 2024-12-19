@@ -428,6 +428,12 @@ class InventarioGeneral {
 
   }
 
+  String? get obtenerDotacionTotal {
+
+    return esNoche! ? "$nnocheDotTotal-$nnocheDotOperadores" : "$ndiaDotTotal-$ndiaDotOperadores";
+
+  }
+
   String? get obtenerComuna {
 
     return localComuna;
@@ -511,8 +517,8 @@ class InventarioGeneral {
     final estadoNomina = {
       2: {"estado": "Pendiente", "fontColor": contieneDadosBaja! ? Colors.white : Colors.black ,"backgroundColor": contieneDadosBaja! ? Colors.black : Colors.amber.shade100},
       3: {"estado": "Aceptada", "fontColor": contieneDadosBaja! ? Colors.white : Colors.black ,"backgroundColor": contieneDadosBaja! ? Colors.black : Colors.green.shade100},
-      4: {"estado": "Aprobada", "fontColor": contieneDadosBaja! ? Colors.white : Colors.black ,"backgroundColor": contieneDadosBaja! ? Colors.black : Colors.blue.shade100},
-      5: {"estado": "Informada", "fontColor": contieneDadosBaja! ? Colors.white : Colors.black ,"backgroundColor": contieneDadosBaja! ? Colors.black : Colors.blue.shade300},
+      4: {"estado": "Aprobada", "fontColor": contieneDadosBaja! ? Colors.white : Colors.black ,"backgroundColor": contieneDadosBaja! ? Colors.black : Colors.blue.shade50},
+      5: {"estado": "Informada", "fontColor": contieneDadosBaja! ? Colors.white : Colors.black ,"backgroundColor": contieneDadosBaja! ? Colors.black : Colors.blue.shade100},
     };
 
     final estado = esNoche! ? estadoNomina[nnocheIdEstadoNomina] : estadoNomina[ndiaIdEstadoNomina];

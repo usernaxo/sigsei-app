@@ -44,13 +44,8 @@ class PantallaAvancesState extends State<PantallaAvances> {
     final proveedorEstado = Provider.of<ProveedorEstado>(context, listen: false);
 
     DateTime fechaActual = DateTime.now();
-
-    if (fechaActual.weekday == DateTime.monday) {
-
-      fechaFormateada = DateFormat("yyyy-MM-dd").format(fechaActual.subtract(const Duration(days: 3)));
-      formatoFecha = DateFormat('EEEE d \'de\' MMMM \'de\' yyyy', 'es_ES').format(fechaActual.subtract(const Duration(days: 3)));
-
-    } else if (fechaActual.weekday == DateTime.saturday) {
+    
+    if (fechaActual.weekday == DateTime.saturday) {
 
       fechaFormateada = DateFormat("yyyy-MM-dd").format(fechaActual.subtract(const Duration(days: 1)));
       formatoFecha = DateFormat('EEEE d \'de\' MMMM \'de\' yyyy', 'es_ES').format(fechaActual.subtract(const Duration(days: 1)));
@@ -258,7 +253,7 @@ class PantallaAvancesState extends State<PantallaAvances> {
                             child: InkWell(
                               borderRadius: BorderRadius.circular(7),
                               child: Container(
-                                padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
                                 child: Row(
                                   children: [
                                     const Icon(
@@ -314,32 +309,40 @@ class PantallaAvancesState extends State<PantallaAvances> {
                 child: Row(
                   children: [
                     Expanded(
-                      flex: 1,
-                      child: formatearCelda("Estado\nAvance")
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: formatearCelda("Nombre\nCliente")
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: formatearCelda("Código\nCECO")
+                      flex: 2,
+                      child: formatearCelda("Est.\nAvance")
                     ),
                     Expanded(
                       flex: 2,
-                      child: formatearCelda("Nombre\nLocal")
+                      child: formatearCelda("Nom.\nCliente")
                     ),
                     Expanded(
-                      flex: 1,
+                      flex: 2,
+                      child: formatearCelda("Cod.\nCECO")
+                    ),
+                    Expanded(
+                      flex: 3,
+                      child: formatearCelda("Nom.\nLocal")
+                    ),
+                    Expanded(
+                      flex: 2,
+                      child: formatearCelda("Hora\nProg.")
+                    ),
+                    Expanded(
+                      flex: 2,
                       child: formatearCelda("Hora\nInicio")
                     ),
                     Expanded(
-                      flex: 1,
-                      child: formatearCelda("Avance\nUnidades")
+                      flex: 2,
+                      child: formatearCelda("Av.\nUni.")
+                    ),
+                    Expanded(
+                      flex: 2,
+                      child: formatearCelda("Por.\nError")
                     ),
                     Expanded(
                       flex: 1,
-                      child: formatearCelda("Dotación\nTotal")
+                      child: formatearCelda("Dot.\nTotal")
                     ),
                   ],
                 ),
@@ -368,7 +371,10 @@ class PantallaAvancesState extends State<PantallaAvances> {
                           ),
                         ),
                         const SizedBox(height: 20),
-                        const Text("Obteniendo Avances")
+                        const Text(
+                          "Obteniendo Avances",
+                          textAlign: TextAlign.center,
+                        )
                       ],
                     ),
                   );
@@ -402,6 +408,7 @@ class PantallaAvancesState extends State<PantallaAvances> {
                           const SizedBox(height: 10),
                           Text(
                             "Sin Avances de Inventarios para",
+                            textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 10,
                               color: Colors.grey.shade500
@@ -409,6 +416,7 @@ class PantallaAvancesState extends State<PantallaAvances> {
                           ),
                           Text(
                             obtenerFechaFormateada(),
+                            textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 10,
                               color: Colors.grey.shade500,

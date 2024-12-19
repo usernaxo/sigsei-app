@@ -31,43 +31,44 @@ class BarraUsuario extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                if (botonRetroceso)
-                  Material(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(100)
-                    ),
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(100),
-                      onTap: () => Navigator.of(context).pop(),
-                      child: Container(
-                        padding: const EdgeInsets.all(0),
-                        child: Icon(
-                          Icons.arrow_back,
-                          color: Tema.primary,
+            Expanded(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  if (botonRetroceso)
+                    Material(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(100)
+                      ),
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(100),
+                        onTap: () => Navigator.of(context).pop(),
+                        child: Container(
+                          padding: const EdgeInsets.all(0),
+                          child: Icon(
+                            Icons.arrow_back,
+                            color: Tema.primary,
+                          ),
                         ),
                       ),
                     ),
+                  Image.asset(
+                    width: 80,
+                    "assets/images/sei.png",
+                    color: Colors.white,
                   ),
-                Image.asset(
-                  width: 80,
-                  "assets/images/sei.png",
-                  color: Colors.white,
-                ),
-                const Row(
-                  children: [
-                    Text(
+                  Expanded(
+                    child: Text(
                       "Consultores",
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Colors.white
                       ),
                     ),
-                  ],
-                )
-              ],
+                  )
+                ],
+              ),
             ),
             Row(
               children: [

@@ -39,7 +39,7 @@ class _PantallaAccesoState extends State<PantallaAcceso> {
 
         if (respuestaIniciarSesion["success"]) {
 
-          Navigator.pushReplacementNamed(context, "pantalla_modulos");
+          Navigator.pushNamedAndRemoveUntil(context, "pantalla_modulos", (route) => false);
           
         } else {
 
@@ -118,7 +118,12 @@ class _PantallaAccesoState extends State<PantallaAcceso> {
                                       size: 15,
                                     ),
                                     SizedBox(width: 5),
-                                    Text("Ingrese email y clave para acceder")
+                                    Expanded(
+                                      child: Text(
+                                        "Ingrese email y clave para acceder",
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    )
                                   ],
                                 ),
                               ),

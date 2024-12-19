@@ -99,44 +99,57 @@ class _FilaAuditoriaSmuState extends State<FilaAuditoriaSmu> {
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Row(
-                children: [
-                  InkWell(
-                    borderRadius: BorderRadius.circular(7),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(7),
-                      child: ColoredBox(
-                        color: mostrarResumenAuditoria ? Colors.blue.shade100 : Colors.transparent,
-                        child: const Padding(
-                          padding: EdgeInsets.all(10),
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.assessment_outlined,
-                                size: 10,
-                                color: Colors.blue,
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(right: 5),
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(7),
+                          child: Material(
+                            color: mostrarResumenAuditoria ? Colors.deepPurple.shade50 : Colors.transparent,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(7),
+                              side: BorderSide(
+                                color: Tema.secondaryLight,
+                                width: 1.5
+                              )
+                            ),
+                            child: const Padding(
+                              padding: EdgeInsets.all(10),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.assessment_outlined,
+                                    size: 10,
+                                    color: Colors.deepPurple,
+                                  ),
+                                  SizedBox(
+                                    width: 5,
+                                  ),
+                                  Text(
+                                    "Resumen",
+                                    style: TextStyle( 
+                                      fontSize: 9
+                                    ),
+                                  ),
+                                ],
                               ),
-                              SizedBox(
-                                width: 5,
-                              ),
-                              Text(
-                                "Resumen",
-                                style: TextStyle( 
-                                  fontSize: 9
-                                ),
-                              ),
-                            ],
+                            ),
                           ),
+                          onTap: () {
+                            setState(() {
+                              mostrarResumenAuditoria = true;
+                            });
+                          },
                         ),
                       ),
-                    ),
-                    onTap: () {
-                      setState(() {
-                        mostrarResumenAuditoria = true;
-                      });
-                    },
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
             if (mostrarResumenAuditoria)
@@ -188,7 +201,7 @@ class ContenidoResumenAuditoria extends StatelessWidget {
               style: TextStyle(
                 fontSize: 9,
                 fontWeight: esBold || esDeficiente ? FontWeight.bold : FontWeight.normal,
-                color: colorPrimario ? Tema.primary : (esDeficiente ? Colors.red : Colors.black)
+                color: colorPrimario ? Colors.deepPurple : (esDeficiente ? Colors.red : Colors.black)
               )
             ),
           );
@@ -200,29 +213,35 @@ class ContenidoResumenAuditoria extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.all(10),
-      child: Container(
-        padding: const EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          color: Colors.blue.shade100,
+      child: Material(
+        color: Colors.deepPurple.shade50,
+        shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(7),
+          side: BorderSide(
+            color: Tema.secondaryLight,
+            width: 1.5
+          )
         ),
-        child: Column(
-          children: [
-            buildRow(["Auditoría - N° ${auditoriaSmu.obtenerNumero}", DateFormat("EEEE d MMM yyyy", "es_ES").format(DateTime.parse(auditoriaSmu.obtenerFecha!))], esBold: true),
-            Divider(color: Colors.blue.shade200),
-            buildRow(["Local", auditoriaSmu.obtenerNombre!], colorPrimario: true, esBold: true),
-            buildRow(["Auditor", auditoriaSmu.obtenerAuditor!]),
-            buildRow(["Región", auditoriaSmu.obtenerRegion!]),
-            buildRow(["Comuna", auditoriaSmu.obtenerComuna!]),
-            buildRow(["Dirección", auditoriaSmu.obtenerDireccion!]),
-            Divider(color: Colors.blue.shade200),
-            buildRow(["Hora Inicio", auditoriaSmu.obtenerHoraInicio!]),
-            buildRow(["Hora Termino", auditoriaSmu.obtenerHoraTermino!]),
-            buildRow(["Tiempo Proceso", auditoriaSmu.obtenerTiempoProceso!]),
-            Divider(color: Colors.blue.shade200),
-            buildRow(["Conteo", auditoriaSmu.obtenerPorcentajeConteo!], esBold: true, esDeficiente: IndicadorDeficiente.esConteoDeficiente(auditoriaSmu.obtenerPorcentajeConteo!)),
-            buildRow(["Checklist", auditoriaSmu.obtenerPorcentajeChecklist!], esBold: true, esDeficiente: IndicadorDeficiente.esChecklistDeficiente(auditoriaSmu.obtenerPorcentajeChecklist!)),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Column(
+            children: [
+              buildRow(["Auditoría - N° ${auditoriaSmu.obtenerNumero}", DateFormat("EEEE d MMM yyyy", "es_ES").format(DateTime.parse(auditoriaSmu.obtenerFecha!))], esBold: true),
+              Divider(color: Colors.deepPurple.shade100),
+              buildRow(["Local", auditoriaSmu.obtenerNombre!], colorPrimario: true, esBold: true),
+              buildRow(["Auditor", auditoriaSmu.obtenerAuditor!]),
+              buildRow(["Región", auditoriaSmu.obtenerRegion!]),
+              buildRow(["Comuna", auditoriaSmu.obtenerComuna!]),
+              buildRow(["Dirección", auditoriaSmu.obtenerDireccion!]),
+              Divider(color: Colors.deepPurple.shade100),
+              buildRow(["Hora Inicio", auditoriaSmu.obtenerHoraInicio!]),
+              buildRow(["Hora Termino", auditoriaSmu.obtenerHoraTermino!]),
+              buildRow(["Tiempo Proceso", auditoriaSmu.obtenerTiempoProceso!]),
+              Divider(color: Colors.deepPurple.shade100),
+              buildRow(["Conteo", auditoriaSmu.obtenerPorcentajeConteo!], esBold: true, esDeficiente: IndicadorDeficiente.esConteoDeficiente(auditoriaSmu.obtenerPorcentajeConteo!)),
+              buildRow(["Checklist", auditoriaSmu.obtenerPorcentajeChecklist!], esBold: true, esDeficiente: IndicadorDeficiente.esChecklistDeficiente(auditoriaSmu.obtenerPorcentajeChecklist!)),
+            ],
+          ),
         ),
       ),
     );
@@ -256,112 +275,126 @@ class _BotonesDescargarArchivosSmuState extends State<BotonesDescargarArchivosSm
 
     return Padding(
       padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          if (descargaIniciada)
-            Expanded(
-              child: Column(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(7),
-                    child: Column(
-                      children: [
-                        ColoredBox(
-                          color: Colors.black12,
-                          child: Padding(
-                            padding: const EdgeInsets.all(10),
-                            child: Row(
-                              children: [
-                                const Icon(
-                                  Icons.file_download_rounded,
-                                  size: 10,
-                                  color: Colors.green,
+      child: Align(
+        alignment: Alignment.centerRight,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              if (descargaIniciada)
+                Expanded(
+                  child: Column(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(7),
+                        child: Column(
+                          children: [
+                            ColoredBox(
+                              color: Colors.black12,
+                              child: Padding(
+                                padding: const EdgeInsets.all(10),
+                                child: Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.file_download_rounded,
+                                      size: 10,
+                                      color: Colors.green,
+                                    ),
+                                    const SizedBox(width: 5),
+                                    Text(
+                                      "Descargando $archivoDescargando ${progreso.toStringAsFixed(0)} %",
+                                      style: const TextStyle(fontSize: 9),
+                                    ),
+                                  ],
                                 ),
-                                const SizedBox(width: 5),
-                                Text(
-                                  "Descargando $archivoDescargando ${progreso.toStringAsFixed(0)} %",
-                                  style: const TextStyle(fontSize: 9),
-                                ),
-                              ],
+                              ),
+                            ),
+                            LinearProgressIndicator(
+                              value: progreso / 100,
+                              color: Tema.primaryLight,
+                              valueColor: const AlwaysStoppedAnimation(Colors.green),
+                              borderRadius: BorderRadius.circular(3),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              if (!descargaIniciada)
+                InkWell(
+                  borderRadius: BorderRadius.circular(7),
+                  onTap: (){},
+                  child: Material(
+                    color: widget.auditoriaSmu.obtenerMm60! ? Colors.green.shade50 : Colors.red.shade50,                    
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(7),
+                      side: BorderSide(
+                        color: Tema.secondaryLight,
+                        width: 1.5
+                      )
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Row(
+                        children: [
+                          Icon(
+                            widget.auditoriaSmu.obtenerMm60! ? Icons.check_circle_outline_rounded : Icons.error_outline_rounded,
+                            size: 10,
+                            color: widget.auditoriaSmu.obtenerMm60! ? Colors.green : Colors.red,
+                          ),
+                          const SizedBox(width: 5),
+                          const Text(
+                            "MM60",
+                            style: TextStyle(
+                              fontSize: 9,
                             ),
                           ),
-                        ),
-                        LinearProgressIndicator(
-                          value: progreso / 100,
-                          color: Tema.primaryLight,
-                          valueColor: const AlwaysStoppedAnimation(Colors.green),
-                          borderRadius: BorderRadius.circular(3),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          if (!descargaIniciada)
-            InkWell(
-              borderRadius: BorderRadius.circular(7),
-              onTap: (){},
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(7),
-                child: ColoredBox(
-                  color: widget.auditoriaSmu.obtenerMm60! ? Colors.green.shade100 : Colors.red.shade100,
-                  child: Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: Row(
-                      children: [
-                        Icon(
-                          widget.auditoriaSmu.obtenerMm60! ? Icons.check_circle_outline_rounded : Icons.error_outline_rounded,
-                          size: 10,
-                          color: widget.auditoriaSmu.obtenerMm60! ? Colors.green : Colors.red,
-                        ),
-                        const SizedBox(width: 5),
-                        const Text(
-                          "MM60",
-                          style: TextStyle(
-                            fontSize: 9,
-                          ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ),
-          if (!descargaIniciada)
-            const SizedBox(width: 5),
-          if (!descargaIniciada)
-            InkWell(
-              borderRadius: BorderRadius.circular(7),
-              onTap: (){},
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(7),
-                child: ColoredBox(
-                  color: widget.auditoriaSmu.obtenerZmig43! ? Colors.green.shade100 : Colors.red.shade100,
-                  child: Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: Row(
-                      children: [
-                        Icon(
-                          widget.auditoriaSmu.obtenerZmig43! ? Icons.check_circle_outline_rounded : Icons.error_outline_rounded,
-                          size: 10,
-                          color: widget.auditoriaSmu.obtenerZmig43! ? Colors.green : Colors.red,
-                        ),
-                        const SizedBox(width: 5),
-                        const Text(
-                          "ZMIG43",
-                          style: TextStyle(
-                            fontSize: 9,
+              if (!descargaIniciada)
+                const SizedBox(width: 5),
+              if (!descargaIniciada)
+                InkWell(
+                  borderRadius: BorderRadius.circular(7),
+                  onTap: (){},
+                  child: Material(
+                    color: widget.auditoriaSmu.obtenerZmig43! ? Colors.green.shade50 : Colors.red.shade50,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(7),
+                      side: BorderSide(
+                        color: Tema.secondaryLight,
+                        width: 1.5
+                      )
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Row(
+                        children: [
+                          Icon(
+                            widget.auditoriaSmu.obtenerZmig43! ? Icons.check_circle_outline_rounded : Icons.error_outline_rounded,
+                            size: 10,
+                            color: widget.auditoriaSmu.obtenerZmig43! ? Colors.green : Colors.red,
                           ),
-                        ),
-                      ],
+                          const SizedBox(width: 5),
+                          const Text(
+                            "ZMIG43",
+                            style: TextStyle(
+                              fontSize: 9,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ),
-            ),      
-        ],
+                ),      
+            ],
+          ),
+        ),
       ),
     );
 

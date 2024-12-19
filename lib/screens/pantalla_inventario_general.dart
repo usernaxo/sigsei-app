@@ -215,7 +215,7 @@ class PantallaInventarioGeneralState extends State<PantallaInventarioGeneral> {
                                 child: InkWell(
                                   borderRadius: BorderRadius.circular(7),
                                   child: Container(
-                                    padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
                                     child: Row(
                                       children: [
                                         const Icon(
@@ -292,19 +292,22 @@ class PantallaInventarioGeneralState extends State<PantallaInventarioGeneral> {
                                                               
                                   },
                                   child: Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
                                     child: Row(
                                       children: [
                                         Icon(
-                                          filtroSeleccionado == "Todos" ? Icons.fact_check_outlined : filtroSeleccionado == "Diurnos" ? Icons.wb_sunny_rounded : Icons.nightlight_round,
-                                          color: filtroSeleccionado == "Diurnos" ? Colors.amber : Tema.primary,
+                                          filtroSeleccionado == "Todos" ? Icons.fact_check_outlined : filtroSeleccionado == "Diurnos" ? Icons.wb_sunny_rounded : Icons.nights_stay_rounded,
+                                          color: filtroSeleccionado == "Diurnos" ? Colors.amber : filtroSeleccionado == "Nocturnos" ? Colors.blue.shade300 : Tema.primary,
                                           size: 15,
                                         ),
                                         const SizedBox(width: 5),
-                                        Text(
-                                          filtroSeleccionado,
-                                          style: const TextStyle(
-                                            fontSize: 11
+                                        Expanded(
+                                          child: Text(
+                                            filtroSeleccionado,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: const TextStyle(
+                                              fontSize: 11
+                                            ),
                                           ),
                                         ),
                                         const Spacer(),
@@ -390,7 +393,10 @@ class PantallaInventarioGeneralState extends State<PantallaInventarioGeneral> {
                               ),
                             ),
                             const SizedBox(height: 20),
-                            const Text("Obteniendo Inventarios")
+                            const Text(
+                              "Obteniendo Inventarios",
+                              textAlign: TextAlign.center,
+                            )
                           ],
                         ),
                       );
@@ -424,6 +430,7 @@ class PantallaInventarioGeneralState extends State<PantallaInventarioGeneral> {
                               const SizedBox(height: 10),
                               Text(
                                 "Sin Inventarios Programados",
+                                textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontSize: 10,
                                   color: Colors.grey.shade500
@@ -431,6 +438,7 @@ class PantallaInventarioGeneralState extends State<PantallaInventarioGeneral> {
                               ),
                               Text(
                                 "Desde $fechaInicioFormateada Hasta $fechaFinFormateada",
+                                textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontSize: 10,
                                   color: Colors.grey.shade500,
@@ -471,6 +479,7 @@ class PantallaInventarioGeneralState extends State<PantallaInventarioGeneral> {
                                 const SizedBox(height: 10),
                                 Text(
                                   "Sin Inventarios $filtroSeleccionado",
+                                  textAlign: TextAlign.center,
                                   style: TextStyle(
                                     fontSize: 10,
                                     color: Colors.grey.shade500
@@ -478,6 +487,7 @@ class PantallaInventarioGeneralState extends State<PantallaInventarioGeneral> {
                                 ),
                                 Text(
                                   "Desde $fechaInicioFormateada Hasta $fechaFinFormateada",
+                                  textAlign: TextAlign.center,
                                   style: TextStyle(
                                     fontSize: 10,
                                     color: Colors.grey.shade500,
@@ -521,7 +531,7 @@ class PantallaInventarioGeneralState extends State<PantallaInventarioGeneral> {
             ),
             if (menuFiltroAbierto)
               Positioned(
-                top: (claveMenuFiltro.currentContext?.findRenderObject() as RenderBox).localToGlobal(Offset.zero).dy + 5,
+                top: (claveMenuFiltro.currentContext?.findRenderObject() as RenderBox).localToGlobal(Offset.zero).dy,
                 left: (claveMenuFiltro.currentContext?.findRenderObject() as RenderBox).localToGlobal(Offset.zero).dx,
                 child: Container(
                   width: tamanoMenuFiltro?.width,
@@ -546,15 +556,18 @@ class PantallaInventarioGeneralState extends State<PantallaInventarioGeneral> {
                             child: Row(
                               children: [
                                 Icon(
-                                  filtro == "Todos" ? Icons.fact_check_outlined : filtro == "Diurnos" ? Icons.wb_sunny_rounded : Icons.nightlight_round,
-                                  color: filtro == "Diurnos" ? Colors.amber : Tema.primary,
+                                  filtro == "Todos" ? Icons.fact_check_outlined : filtro == "Diurnos" ? Icons.wb_sunny_rounded : Icons.nights_stay_rounded,
+                                  color: filtro == "Diurnos" ? Colors.amber : filtro == "Nocturnos" ? Colors.blue.shade300 : Tema.primary,
                                   size: 15,
                                 ),
                                 const SizedBox(width: 5),
-                                Text(
-                                  filtro,
-                                  style: const TextStyle(
-                                    fontSize: 11
+                                Expanded(
+                                  child: Text(
+                                    filtro,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontSize: 11
+                                    ),
                                   ),
                                 )
                               ],

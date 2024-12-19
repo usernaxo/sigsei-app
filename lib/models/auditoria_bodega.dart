@@ -275,7 +275,7 @@ class AuditoriaBodega {
 
   Color get obtenerEstado {
 
-    return obtenerMuestra! ? (obtenerHoraCierre!.isNotEmpty ? Colors.green : Colors.deepOrange.shade400) : Tema.primaryLight;
+    return obtenerMuestra! ? (obtenerHoraCierre!.isNotEmpty ? Colors.green : Colors.deepOrange.shade400) : Tema.secondaryLight;
 
   }
 

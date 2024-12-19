@@ -135,6 +135,12 @@ class Avance {
 
   }
 
+  bool get esDiurna {
+
+    return jornada == 2;
+
+  }
+
   String get obtenerTiempoFaltante {
 
     return tiempoFaltanteHoraCaptura!;
@@ -221,7 +227,7 @@ class Avance {
 
   String? get obtenerDotacion {
 
-    return "${dotacionDiferencia!.split("-")[1]} de ${dotacionDiferencia!.split("-")[0]}";
+    return dotacionDiferencia;
 
   }
 
@@ -283,6 +289,36 @@ class Avance {
 
   }
 
+  List<OperadorRendimiento>? get obtenerOperadorRendimiento {
+
+    return operadorRendimiento;
+
+  }
+
+  String? get obtenerOperadorRendimientoTotales {
+
+    int cantidadTotal = 0;
+
+    if (operadorRendimiento!.isNotEmpty && operadorRendimiento != null) {
+
+      for (var operador in operadorRendimiento!) {
+
+        cantidadTotal = cantidadTotal + operador.cantidad!;
+        
+      }
+
+    }
+
+    return NumberFormat("#,###", "es_ES").format(cantidadTotal);
+
+  }
+
+  List<TopDiferencia>? get obtenerDiferencias {
+
+    return topDiferencias;
+
+  }
+
 }
 
 class OperadorRendimiento {
@@ -305,6 +341,18 @@ class OperadorRendimiento {
       error: json['error'].toDouble(),
     );
     
+  }
+
+  String? get obtenerNombre {
+
+    return nombre;
+    
+  }
+
+  String? get obtenerCantidad {
+
+    return NumberFormat("#,###", "es_ES").format(cantidad);
+
   }
 
 }
@@ -346,6 +394,112 @@ class TopDiferencia {
       valorDif: json["valor_dif"],
       barra: json["barra"]
     );
+
+  }
+
+  String? get obtenerSku {
+
+    return interno;
+
+  }
+
+  String? get obtenerBarra {
+
+    return barra!.isEmpty ? "-" : barra;
+
+  }
+  
+  String? get obtenerProducto {
+
+    return deescripcion;
+
+  }
+
+  String? get obtenerFisico {
+
+    int? conteoFisico = int.tryParse(fisico!);
+
+    if (conteoFisico != null) {
+
+      if (conteoFisico < 0) {
+
+        return "-${NumberFormat("#,###", "es_ES").format(conteoFisico.abs())}";
+
+      } else {
+
+        return NumberFormat("#,###", "es_ES").format(conteoFisico);
+
+      }
+      
+    }
+
+    return "0";
+
+  }
+
+  String? get obtenerTeorico {
+
+    int? conteoTeorico = int.tryParse(teorico!);
+
+    if (conteoTeorico != null) {
+
+      if (conteoTeorico < 0) {
+
+        return "-${NumberFormat("#,###", "es_ES").format(conteoTeorico.abs())}";
+
+      } else {
+
+        return NumberFormat("#,###", "es_ES").format(conteoTeorico);
+
+      }
+      
+    }
+
+    return "0";
+
+  }
+  
+  String? get obtenerDiferencia {
+
+    int? conteoDiferencia = int.tryParse(dif!);
+
+    if (conteoDiferencia != null) {
+
+      if (conteoDiferencia < 0) {
+
+        return "-${NumberFormat("#,###", "es_ES").format(conteoDiferencia.abs())}";
+
+      } else {
+
+        return NumberFormat("#,###", "es_ES").format(conteoDiferencia);
+
+      }
+      
+    }
+
+    return "0";
+
+  }
+
+  String? get obtenerDiferenciaValorizada {
+
+    int? conteoDiferenciaValorizada = int.tryParse(valorDif!);
+
+    if (conteoDiferenciaValorizada != null) {
+
+      if (conteoDiferenciaValorizada < 0) {
+
+        return "-${NumberFormat("#,###", "es_ES").format(conteoDiferenciaValorizada.abs())}";
+
+      } else {
+
+        return NumberFormat("#,###", "es_ES").format(conteoDiferenciaValorizada);
+
+      }
+      
+    }
+
+    return "0";
 
   }
 

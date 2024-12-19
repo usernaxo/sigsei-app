@@ -250,7 +250,7 @@ class PantallaIndicadoresState extends State<PantallaIndicadores> {
                                 child: InkWell(
                                   borderRadius: BorderRadius.circular(7),
                                   child: Container(
-                                    padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
                                     child: Row(
                                       children: [
                                         const Icon(
@@ -313,19 +313,22 @@ class PantallaIndicadoresState extends State<PantallaIndicadores> {
                                                               
                                   },
                                   child: Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
                                     child: Row(
                                       children: [
                                         Icon(
-                                          filtroSeleccionado == "Todos" ? Icons.fact_check_outlined : filtroSeleccionado == "Diurnos" ? Icons.wb_sunny_rounded : Icons.nightlight_round,
-                                          color: filtroSeleccionado == "Diurnos" ? Colors.amber : Tema.primary,
+                                          filtroSeleccionado == "Todos" ? Icons.inventory_rounded : filtroSeleccionado == "Diurnos" ? Icons.wb_sunny_rounded : Icons.nights_stay_rounded,
+                                          color: filtroSeleccionado == "Diurnos" ? Colors.amber : filtroSeleccionado == "Nocturnos" ? Colors.blue.shade300 : Tema.primary,
                                           size: 15,
                                         ),
                                         const SizedBox(width: 5),
-                                        Text(
-                                          filtroSeleccionado,
-                                          style: const TextStyle(
-                                            fontSize: 11
+                                        Expanded(
+                                          child: Text(
+                                            filtroSeleccionado,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: const TextStyle(
+                                              fontSize: 11
+                                            ),
                                           ),
                                         ),
                                         const Spacer(),
@@ -415,7 +418,10 @@ class PantallaIndicadoresState extends State<PantallaIndicadores> {
                               ),
                             ),
                             const SizedBox(height: 20),
-                            const Text("Obteniendo Indicadores")
+                            const Text(
+                              "Obteniendo Indicadores",
+                              textAlign: TextAlign.center,
+                            )
                           ],
                         ),
                       );
@@ -449,6 +455,7 @@ class PantallaIndicadoresState extends State<PantallaIndicadores> {
                               const SizedBox(height: 10),
                               Text(
                                 "Sin Indicadores de Inventarios para",
+                                textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontSize: 10,
                                   color: Colors.grey.shade500
@@ -456,6 +463,7 @@ class PantallaIndicadoresState extends State<PantallaIndicadores> {
                               ),
                               Text(
                                 obtenerFechaFormateada(),
+                                textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontSize: 10,
                                   color: Colors.grey.shade500,
@@ -496,6 +504,7 @@ class PantallaIndicadoresState extends State<PantallaIndicadores> {
                                 const SizedBox(height: 10),
                                 Text(
                                   "Sin Inventarios $filtroSeleccionado Para",
+                                  textAlign: TextAlign.center,
                                   style: TextStyle(
                                     fontSize: 10,
                                     color: Colors.grey.shade500
@@ -503,6 +512,7 @@ class PantallaIndicadoresState extends State<PantallaIndicadores> {
                                 ),
                                 Text(
                                   obtenerFechaFormateada(),
+                                  textAlign: TextAlign.center,
                                   style: TextStyle(
                                     fontSize: 10,
                                     color: Colors.grey.shade500,
@@ -546,7 +556,7 @@ class PantallaIndicadoresState extends State<PantallaIndicadores> {
             ),
             if (menuFiltroAbierto)
               Positioned(
-                top: (claveMenuFiltro.currentContext?.findRenderObject() as RenderBox).localToGlobal(Offset.zero).dy + 5,
+                top: (claveMenuFiltro.currentContext?.findRenderObject() as RenderBox).localToGlobal(Offset.zero).dy,
                 left: (claveMenuFiltro.currentContext?.findRenderObject() as RenderBox).localToGlobal(Offset.zero).dx,
                 child: Container(
                   width: tamanoMenuFiltro?.width,
@@ -571,15 +581,18 @@ class PantallaIndicadoresState extends State<PantallaIndicadores> {
                             child: Row(
                               children: [
                                 Icon(
-                                  filtro == "Todos" ? Icons.fact_check_outlined : filtro == "Diurnos" ? Icons.wb_sunny_rounded : Icons.nightlight_round,
-                                  color: filtro == "Diurnos" ? Colors.amber : Tema.primary,
+                                  filtro == "Todos" ? Icons.inventory_rounded : filtro == "Diurnos" ? Icons.wb_sunny_rounded : Icons.nights_stay_rounded,
+                                  color: filtro == "Diurnos" ? Colors.amber : filtro == "Nocturnos" ? Colors.blue.shade300 : Tema.primary,
                                   size: 15,
                                 ),
                                 const SizedBox(width: 5),
-                                Text(
-                                  filtro,
-                                  style: const TextStyle(
-                                    fontSize: 11
+                                Expanded(
+                                  child: Text(
+                                    filtro,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontSize: 11
+                                    ),
                                   ),
                                 )
                               ],

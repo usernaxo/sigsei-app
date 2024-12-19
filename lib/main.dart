@@ -1,11 +1,8 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
-import 'package:sigsei/helpers/certificado_prueba.dart';
 import 'package:sigsei/providers/proveedor_estado.dart';
 import 'package:sigsei/routes/rutas.dart';
 import 'package:sigsei/themes/tema.dart';
@@ -18,8 +15,6 @@ void main() async {
   )); 
 
   WidgetsFlutterBinding.ensureInitialized();
-
-  HttpOverrides.global = CertificadoPrueba();
 
   const almacenamiento = FlutterSecureStorage();
   final tokenUsuario = await almacenamiento.read(key: "tokenUsuario");

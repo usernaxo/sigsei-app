@@ -455,7 +455,7 @@ class PantallaAgendasState extends State<PantallaAgendas> {
                                         ),
                                         const SizedBox(width: 5),
                                         Text(
-                                          "Fijar Hora: ",
+                                          "Hora: ",
                                           style: TextStyle(
                                             fontSize: 10,
                                             color: Tema.primary,
@@ -715,8 +715,11 @@ class PantallaAgendasState extends State<PantallaAgendas> {
                     size: 15,
                   ),
                   SizedBox(width: 5),
-                  Text(
-                    "Compromisos Programados"
+                  Expanded(
+                    child: Text(
+                      "Compromisos Programados",
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   )
                 ],
               )
@@ -783,6 +786,7 @@ class PantallaAgendasState extends State<PantallaAgendas> {
                             const SizedBox(height: 10),
                             Text(
                               "No hay compromisos programados para",
+                              textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontSize: 10,
                                 color: Colors.grey.shade500
@@ -790,6 +794,7 @@ class PantallaAgendasState extends State<PantallaAgendas> {
                             ),
                             Text(
                               obtenerFechaFormateada(),
+                              textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontSize: 10,
                                 color: Colors.grey.shade500,

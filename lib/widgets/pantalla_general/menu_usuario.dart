@@ -87,25 +87,28 @@ class MenuUsuario extends StatelessWidget {
                   ),
                 ),
                 Expanded(
-                  child: Column(
-                    children: [
-                      Text(
-                        usuario.obtenerNombre!,
-                        style: const TextStyle(
-                          color: Colors.white,
-
-                          fontSize: 12
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    child: Column(
+                      children: [
+                        Text(
+                          usuario.obtenerNombre!,
+                          style: const TextStyle(
+                            color: Colors.white,
+                    
+                            fontSize: 12
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 5),
-                      Text(
-                        usuario.obtenerEmail!,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold
-                        ),
-                      )
-                    ]
+                        const SizedBox(height: 5),
+                        Text(
+                          usuario.obtenerEmail!,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold
+                          ),
+                        )
+                      ]
+                    ),
                   )
                 )
               ]
@@ -270,7 +273,7 @@ class MenuUsuario extends StatelessWidget {
                               
                   await almacenamiento.deleteAll();
                               
-                  Navigator.pushReplacementNamed(context, "pantalla_acceso");
+                  Navigator.pushNamedAndRemoveUntil(context, "pantalla_acceso", (route) => false);
                               
                 } else {
                               
